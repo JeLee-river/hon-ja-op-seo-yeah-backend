@@ -1,5 +1,5 @@
 export class CreateDestinationDto {
-  id: string;
+  id: number;
   category_id: string;
   title: string;
   homepage: string;
