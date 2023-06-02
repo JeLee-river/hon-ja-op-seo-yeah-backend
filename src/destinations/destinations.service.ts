@@ -28,7 +28,6 @@ export class DestinationsService {
       const response = await fetch(url);
       const result = await response.json();
       const data = result.response.body.items.item;
-      // console.log(data);
 
       await this.fetchDataIncludesOverview(data);
     } catch (e) {
@@ -41,8 +40,6 @@ export class DestinationsService {
     const destinations: any[] = [];
 
     const promises = data.map(async ({ contentid }) => {
-      // console.log(`contentid: ${contentid}`);
-
       // TODO: API 호출 건수는 2,000건으로 제한되어있으므로, 데이터 범위를 나누어서 여러 일에 걸쳐서 데이터를 호출하여 가져와야한다.
       // TODO: ex. 총 2,350건이라면 하루는 2,000건, 다음날에 350건...
       const url = `https://apis.data.go.kr/B551011/KorService1/detailCommon1?serviceKey=gYxeW4UBcFMVnEbeclSlXiybRNht4DCVRd5g7YeF8ippmVNRo9bc1rwDyu%2Fz8OT7yVPSy0%2BrLZ3LtaDUsIHrvg%3D%3D&MobileOS=ETC&MobileApp=AppTest&_type=json&contentId=${contentid}&defaultYN=Y&firstImageYN=Y&addrinfoYN=Y&mapinfoYN=Y&overviewYN=Y&numOfRows=10&pageNo=1`;

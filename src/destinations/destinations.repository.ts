@@ -12,9 +12,6 @@ export class DestinationsRepository extends Repository<Destination> {
   async insertDestinations(
     destinationsToInsert: CreateDestinationDto[],
   ): Promise<void> {
-    console.log('@@@@@@@@@@@@@@@@@@@@@@');
-    // console.log(destinationsToInsert);
-
     const promises = destinationsToInsert.map(async (destination) => {
       const data = await this.create(destination);
       await this.save(data);
