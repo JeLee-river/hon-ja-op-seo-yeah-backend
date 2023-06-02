@@ -100,4 +100,8 @@ export class DestinationsService {
   getDestinationsByCategory(categoryId: string): Promise<Destination[]> {
     return this.destinationsRepository.getDestinationsByCategory(categoryId);
   }
+
+  getDestination(destinationId: number): Promise<Destination> {
+    return this.destinationsRepository.getDestination(destinationId);
+  }
 }

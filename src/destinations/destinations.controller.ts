@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
 import { DestinationsService } from './destinations.service';
 import { Destination } from './entities/destination.entity';
 
@@ -21,5 +21,12 @@ export class DestinationsController {
     @Param('categoryId') categoryId: string,
   ): Promise<Destination[]> {
     return this.destinationsService.getDestinationsByCategory(categoryId);
+  }
+
+  @Get('/destinations/:destinationId')
+  getDestination(
+    @Param('destinationId', ParseIntPipe) destinationId,
+  ): Promise<Destination> {
+    return this.destinationsService.getDestination(destinationId);
   }
 }

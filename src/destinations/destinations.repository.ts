@@ -34,4 +34,14 @@ export class DestinationsRepository extends Repository<Destination> {
 
     return destinations;
   }
+
+  async getDestination(destinationId: number): Promise<Destination> {
+    const destination = await this.findOne({
+      where: {
+        id: destinationId,
+      },
+    });
+
+    return destination;
+  }
 }
