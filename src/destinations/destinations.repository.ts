@@ -12,14 +12,36 @@ export class DestinationsRepository extends Repository<Destination> {
   async insertDestinations(
     destinationsToInsert: CreateDestinationDto[],
   ): Promise<void> {
-    console.log('@@@@@@@@@@@@@@@@@@@@@@');
-    // console.log(destinationsToInsert);
-
     const promises = destinationsToInsert.map(async (destination) => {
       const data = await this.create(destination);
       await this.save(data);
     });
 
     await Promise.all(promises);
+  }
+
+  async getAllDestinations(): Promise<Destination[]> {
+    const destinations = await this.find();
+    return destinations;
+  }
+
+  async getDestinationsByCategory(categoryId: string): Promise<Destination[]> {
+    const destinations = await this.find({
+      where: {
+        category_id: categoryId,
+      },
+    });
+
+    return destinations;
+  }
+
+  async getDestination(destinationId: number): Promise<Destination> {
+    const destination = await this.findOne({
+      where: {
+        id: destinationId,
+      },
+    });
+
+    return destination;
   }
 }

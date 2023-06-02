@@ -3,7 +3,7 @@ import { Column, Entity, PrimaryColumn } from 'typeorm';
 @Entity()
 export class Destination {
   @PrimaryColumn()
-  id: string;
+  id: number;
 
   @Column()
   category_id: string;
