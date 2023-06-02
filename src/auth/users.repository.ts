@@ -1,6 +1,10 @@
 import { User } from './entities/user.entity';
 import { DataSource, Repository } from 'typeorm';
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { AuthCredentialDto } from './dto/auth-credential.dto';
 
 @Injectable()
@@ -14,7 +18,15 @@ export class UsersRepository extends Repository<User> {
   ): Promise<{ message: string; user: User }> {
     const user = this.create(authCredentialDto);
 
-    await this.save(user);
+    try {
+      await this.save(user);
+    } catch (error) {
+      if (error.code === '23505') {
+        throw new ConflictException('이미 존재하는 별명입니다.');
+      } else {
+        throw new InternalServerErrorException();
+      }
+    }
 
     delete user.password;
 
