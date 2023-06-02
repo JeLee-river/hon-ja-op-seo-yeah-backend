@@ -24,4 +24,14 @@ export class DestinationsRepository extends Repository<Destination> {
     const destinations = await this.find();
     return destinations;
   }
+
+  async getDestinationsByCategory(categoryId: string): Promise<Destination[]> {
+    const destinations = await this.find({
+      where: {
+        category_id: categoryId,
+      },
+    });
+
+    return destinations;
+  }
 }

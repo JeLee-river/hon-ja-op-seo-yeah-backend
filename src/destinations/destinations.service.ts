@@ -96,4 +96,8 @@ export class DestinationsService {
   getAllDestinations(): Promise<Destination[]> {
     return this.destinationsRepository.getAllDestinations();
   }
+
+  getDestinationsByCategory(categoryId: string): Promise<Destination[]> {
+    return this.destinationsRepository.getDestinationsByCategory(categoryId);
+  }
 }
