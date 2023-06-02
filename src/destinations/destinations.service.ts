@@ -92,4 +92,8 @@ export class DestinationsService {
       console.log(e);
     }
   }
+
+  getAllDestinations(): Promise<Destination[]> {
+    return this.destinationsRepository.getAllDestinations();
+  }
 }

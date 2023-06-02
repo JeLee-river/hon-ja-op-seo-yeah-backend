@@ -19,4 +19,9 @@ export class DestinationsRepository extends Repository<Destination> {
 
     await Promise.all(promises);
   }
+
+  async getAllDestinations(): Promise<Destination[]> {
+    const destinations = await this.find();
+    return destinations;
+  }
 }
