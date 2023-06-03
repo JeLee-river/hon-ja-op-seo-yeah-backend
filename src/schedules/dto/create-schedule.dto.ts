@@ -24,4 +24,6 @@ export class CreateScheduleDto {
 
   @IsString()
   image: string;
+
+  detail?: number[][];
 }
