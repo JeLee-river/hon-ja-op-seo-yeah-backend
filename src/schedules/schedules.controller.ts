@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, ValidationPipe } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  ValidationPipe,
+} from '@nestjs/common';
 import { SchedulesService } from './schedules.service';
 import { Schedule } from './entities/schedule.entity';
 import { CreateScheduleDto } from './dto/create-schedule.dto';
@@ -21,5 +29,12 @@ export class SchedulesController {
   @Get()
   getAllSchedules(): Promise<Schedule[]> {
     return this.schedulesService.getAllSchedules();
+  }
+
+  @Get('/:scheduleId')
+  getScheduleById(
+    @Param('scheduleId', ParseIntPipe) scheduleId: number,
+  ): Promise<Schedule> {
+    return this.schedulesService.getScheduleById(scheduleId);
   }
 }

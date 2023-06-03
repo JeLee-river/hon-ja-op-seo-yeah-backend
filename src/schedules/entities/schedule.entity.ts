@@ -2,9 +2,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { ScheduleDetail } from './schedule-detail.entity';
 
 @Entity()
 export class Schedule {
@@ -40,4 +42,10 @@ export class Schedule {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @OneToMany(
+    (type) => ScheduleDetail,
+    (schedule_detail) => schedule_detail.schedule,
+  )
+  schedule_details: ScheduleDetail[];
 }

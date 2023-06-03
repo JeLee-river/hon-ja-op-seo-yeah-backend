@@ -79,4 +79,11 @@ export class SchedulesService {
   getAllSchedules(): Promise<Schedule[]> {
     return this.schedulesRepository.getAllSchedules();
   }
+
+  getScheduleById(scheduleId: number): Promise<Schedule> {
+    // 기본 정보와 상세 정보를 모두 가져와야 한다.
+    const schedule = this.schedulesRepository.getScheduleById(scheduleId);
+
+    return schedule;
+  }
 }

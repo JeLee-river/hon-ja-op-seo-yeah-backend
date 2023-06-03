@@ -2,9 +2,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Schedule } from './schedule.entity';
+import { Destination } from '../../destinations/entities/destination.entity';
 
 @Entity()
 export class ScheduleDetail {
@@ -18,7 +22,7 @@ export class ScheduleDetail {
   destination_id: number;
 
   @Column()
-  day: string;
+  day: number;
 
   @Column()
   tour_order: number;
@@ -28,4 +32,12 @@ export class ScheduleDetail {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @ManyToOne((type) => Schedule, (schedule) => schedule.schedule_details)
+  @JoinColumn({ name: 'schedule_id' })
+  schedule: Schedule;
+
+  @ManyToOne(() => Destination, (destination) => destination.schedule_details)
+  @JoinColumn({ name: 'destination_id' })
+  destination: Destination;
 }

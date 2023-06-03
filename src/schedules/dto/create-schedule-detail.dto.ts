@@ -8,7 +8,7 @@ export class CreateScheduleDetailDto {
   destination_id: number;
 
   @IsString()
-  day: string;
+  day: number;
 
   @IsNumber()
   tour_order: number;
