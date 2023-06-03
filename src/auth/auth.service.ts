@@ -1,9 +1,4 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthCredentialDto } from './dto/auth-credential.dto';
@@ -29,17 +24,35 @@ export class AuthService {
   async signIn(signInDto: SignInDto): Promise<{ accessToken: string }> {
     const { id, password } = signInDto;
 
-    const user = await this.usersRepository.findUserById(id);
+    try {
+      const user = await this.usersRepository.findUserById(id);
+      await this.verifyPassword(password, user.password);
 
-    if (user && (await bcrypt.compare(password, user.password))) {
-      // 액세스 토큰 생성 (secret + payload)
       const payload = { id };
       const accessToken = this.jwtService.sign(payload);
 
       return { accessToken };
-    } else {
-      throw new UnauthorizedException(
+    } catch (error) {
+      throw new HttpException(
         '아이디 또는 비밀번호가 일치하지 않습니다.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async verifyPassword(
+    plainTextPassword: string,
+    hashedPassword: string,
+  ): Promise<void> {
+    const isPasswordMatching = await bcrypt.compare(
+      plainTextPassword,
+      hashedPassword,
+    );
+
+    if (!isPasswordMatching) {
+      throw new HttpException(
+        '아이디 또는 비밀번호가 일치하지 않습니다.',
+        HttpStatus.BAD_REQUEST,
       );
     }
   }
