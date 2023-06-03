@@ -14,6 +14,7 @@ import { GetUser } from './get-user.decorator';
 import {
   ApiBody,
   ApiCreatedResponse,
+  ApiExcludeEndpoint,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
@@ -54,6 +55,7 @@ export class AuthController {
    */
   @Post('/test')
   @UseGuards(AuthGuard())
+  @ApiExcludeEndpoint() // Swagger 에서 제외하는 데코레이터
   @ApiOperation({ summary: '테스트 API : 추후 삭제 예정' })
   test(@GetUser() user: Omit<User, 'password'>) {
     console.log(user);
