@@ -12,7 +12,6 @@ export function setupSwagger(app: INestApplication): void {
     .setTitle('Project - 혼자옵서예')
     .setDescription('혼자옵서예 프로젝트를 위한 API 문서입니다.')
     .setVersion('1.0')
-    .addTag('jeju')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api-docs', app, document);

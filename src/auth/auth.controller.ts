@@ -11,19 +11,34 @@ import { User } from './entities/user.entity';
 import { SignInDto } from './dto/sign-in.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from './get-user.decorator';
+import {
+  ApiBody,
+  ApiCreatedResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @Controller('auth')
+@ApiTags('사용자 (Users)')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('/signup')
+  @ApiOperation({ summary: '회원가입' })
+  @ApiCreatedResponse({ description: '유저를 생성한다.', type: User })
+  @ApiBody({
+    type: AuthCredentialDto,
+    description: '회원가입 시 입력할 정보',
+  })
   signUp(
-    @Body(ValidationPipe) authCredentialDto: AuthCredentialDto,
+    @Body(ValidationPipe)
+    authCredentialDto: AuthCredentialDto,
   ): Promise<{ message: string; user: User }> {
     return this.authService.signUp(authCredentialDto);
   }
 
   @Post('/signin')
+  @ApiOperation({ summary: '로그인' })
   signIn(
     @Body(ValidationPipe) signInDto: SignInDto,
   ): Promise<{ accessToken: string }> {
@@ -39,6 +54,7 @@ export class AuthController {
    */
   @Post('/test')
   @UseGuards(AuthGuard())
+  @ApiOperation({ summary: '테스트 API : 추후 삭제 예정' })
   test(@GetUser() user: Omit<User, 'password'>) {
     console.log(user);
   }
