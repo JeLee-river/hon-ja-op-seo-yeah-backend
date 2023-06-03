@@ -15,6 +15,7 @@ import {
   ApiBody,
   ApiCreatedResponse,
   ApiExcludeEndpoint,
+  ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
@@ -40,6 +41,13 @@ export class AuthController {
 
   @Post('/signin')
   @ApiOperation({ summary: '로그인' })
+  @ApiOkResponse({
+    description: '액세스 토큰을 발급한다.',
+    schema: {
+      type: 'string',
+      example: { accessToken: 'yourExampleTokenHere' },
+    },
+  })
   signIn(
     @Body(ValidationPipe) signInDto: SignInDto,
   ): Promise<{ accessToken: string }> {
