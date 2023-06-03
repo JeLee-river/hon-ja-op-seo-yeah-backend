@@ -46,13 +46,7 @@ export class AuthService {
 
   async findUserById(userId: string): Promise<User> {
     const user: User = await this.usersRepository.findUserById(userId);
-    if (!user) {
-      throw new HttpException(
-        '존재하지 않는 아이디입니다.',
-        HttpStatus.NOT_FOUND,
-      );
-    }
 
-    return;
+    return user;
   }
 }
