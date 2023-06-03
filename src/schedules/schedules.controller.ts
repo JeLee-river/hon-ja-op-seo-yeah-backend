@@ -1,0 +1,40 @@
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  ValidationPipe,
+} from '@nestjs/common';
+import { SchedulesService } from './schedules.service';
+import { Schedule } from './entities/schedule.entity';
+import { CreateScheduleDto } from './dto/create-schedule.dto';
+import { ScheduleDetail } from './entities/schedule-detail.entity';
+
+@Controller('schedules')
+export class SchedulesController {
+  constructor(private readonly schedulesService: SchedulesService) {}
+
+  @Post()
+  createSchedule(
+    @Body(ValidationPipe) createScheduleDto: CreateScheduleDto,
+  ): Promise<{
+    schedule: Schedule;
+    scheduleDetails: Omit<ScheduleDetail, 'idx'>[];
+  }> {
+    return this.schedulesService.createSchedule(createScheduleDto);
+  }
+
+  @Get()
+  getAllSchedulesWithDetails(): Promise<Schedule[]> {
+    return this.schedulesService.getAllSchedules();
+  }
+
+  @Get('/:scheduleId')
+  getScheduleById(
+    @Param('scheduleId', ParseIntPipe) scheduleId: number,
+  ): Promise<Schedule> {
+    return this.schedulesService.getScheduleById(scheduleId);
+  }
+}
