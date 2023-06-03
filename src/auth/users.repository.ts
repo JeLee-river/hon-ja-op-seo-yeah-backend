@@ -2,8 +2,6 @@ import { User } from './entities/user.entity';
 import { DataSource, Repository } from 'typeorm';
 import {
   ConflictException,
-  HttpException,
-  HttpStatus,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
@@ -63,13 +61,6 @@ export class UsersRepository extends Repository<User> {
         id: userId,
       },
     });
-
-    if (!user) {
-      throw new HttpException(
-        '존재하지 않는 아이디입니다.',
-        HttpStatus.NOT_FOUND,
-      );
-    }
 
     return user;
   }
