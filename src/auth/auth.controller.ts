@@ -1,0 +1,45 @@
+import {
+  Body,
+  Controller,
+  Post,
+  UseGuards,
+  ValidationPipe,
+} from '@nestjs/common';
+import { AuthService } from './auth.service';
+import { AuthCredentialDto } from './dto/auth-credential.dto';
+import { User } from './entities/user.entity';
+import { SignInDto } from './dto/sign-in.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from './get-user.decorator';
+
+@Controller('auth')
+export class AuthController {
+  constructor(private readonly authService: AuthService) {}
+
+  @Post('/signup')
+  signUp(
+    @Body(ValidationPipe) authCredentialDto: AuthCredentialDto,
+  ): Promise<{ message: string; user: User }> {
+    return this.authService.signUp(authCredentialDto);
+  }
+
+  @Post('/signin')
+  signIn(
+    @Body(ValidationPipe) signInDto: SignInDto,
+  ): Promise<{ accessToken: string }> {
+    return this.authService.signIn(signInDto);
+  }
+
+  /**
+   * 테스트 : 추후에 삭제할 것.
+   *
+   * 사용자가 로그인하여 얻은 액세스 토큰으로 /test 요청 시,
+   * Request 안에 있는 user 정보를 가져온다.
+   * @param user
+   */
+  @Post('/test')
+  @UseGuards(AuthGuard())
+  test(@GetUser() user: Omit<User, 'password'>) {
+    console.log(user);
+  }
+}
