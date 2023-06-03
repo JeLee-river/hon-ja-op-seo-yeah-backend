@@ -6,6 +6,7 @@ import { typeORMConfig } from './configs/typeORMConfig';
 import { DestinationsModule } from './destinations/destinations.module';
 import { CategoriesModule } from './categories/categories.module';
 import { AuthModule } from './auth/auth.module';
+import { SchedulesModule } from './schedules/schedules.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { AuthModule } from './auth/auth.module';
     DestinationsModule,
     CategoriesModule,
     AuthModule,
+    SchedulesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

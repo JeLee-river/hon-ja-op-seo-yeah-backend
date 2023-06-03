@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import { ScheduleDetail } from '../../schedules/entities/schedule-detail.entity';
 
 @Entity()
 export class Destination {
@@ -40,4 +41,10 @@ export class Destination {
 
   @Column()
   overview: string;
+
+  @OneToMany(
+    () => ScheduleDetail,
+    (schedule_detail) => schedule_detail.destination,
+  )
+  schedule_details: ScheduleDetail[];
 }
