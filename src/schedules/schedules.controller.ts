@@ -27,7 +27,7 @@ export class SchedulesController {
   }
 
   @Get()
-  getAllSchedules(): Promise<Schedule[]> {
+  getAllSchedulesWithDetails(): Promise<Schedule[]> {
     return this.schedulesService.getAllSchedules();
   }
 

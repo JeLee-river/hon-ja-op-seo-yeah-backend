@@ -20,11 +20,28 @@ export class SchedulesRepository extends Repository<Schedule> {
   }
 
   async getAllSchedules(): Promise<Schedule[]> {
-    return await this.find({
-      where: {
-        status: 'PUBLIC',
-      },
-    });
+    const query = this.createQueryBuilder('a')
+      .select([
+        'a.user_id',
+        'a.title',
+        'a.summary',
+        'a.start_date',
+        'a.end_date',
+        'a.duration',
+        'b.day',
+        'b.tour_order',
+        'c.title',
+      ])
+      .leftJoinAndSelect('a.schedule_details', 'b')
+      .leftJoinAndSelect('b.destination', 'c')
+      .where('a.status = :status', { status: 'PUBLIC' })
+      .orderBy({
+        'b.day': 'ASC',
+        'b.tour_order': 'ASC',
+      });
+
+    const result = await query.getMany();
+    return result;
   }
 
   async getScheduleById(scheduleId: number): Promise<Schedule> {
