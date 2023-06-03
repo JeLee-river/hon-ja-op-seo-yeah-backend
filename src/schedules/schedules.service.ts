@@ -80,10 +80,34 @@ export class SchedulesService {
     return this.schedulesRepository.getAllSchedules();
   }
 
-  getScheduleById(scheduleId: number): Promise<Schedule> {
+  async getScheduleById(scheduleId: number): Promise<Schedule> {
     // 기본 정보와 상세 정보를 모두 가져와야 한다.
-    const schedule = this.schedulesRepository.getScheduleById(scheduleId);
+    const schedule = await this.schedulesRepository.getScheduleById(scheduleId);
 
-    return schedule;
+    const { duration, schedule_details } = schedule;
+
+    const FIRST_DAY_OF_DURATION = 1;
+
+    // 상세 일정을 day 별로 묶기
+    const schedule_details_group_by_day = [];
+    for (let i = FIRST_DAY_OF_DURATION; i <= duration; i++) {
+      let dayCount = 1;
+      const details = [];
+      schedule_details.forEach((detail) => {
+        if (detail.day === dayCount) {
+          details.push(detail);
+        }
+      });
+
+      schedule_details_group_by_day.push(details);
+      dayCount += 1;
+    }
+
+    const new_schedule = {
+      ...schedule,
+      schedule_details: schedule_details_group_by_day,
+    };
+
+    return new_schedule;
   }
 }

@@ -40,6 +40,11 @@ export class SchedulesRepository extends Repository<Schedule> {
         'b.tour_order',
         'c.title',
       ])
+      // TODO: 만약 특정 컬럼들만 조회하려면 다음과 같이 leftJoin, addSelect 로 나누어서 해야한다.
+      // .leftJoin('a.schedule_details', 'b')
+      // .addSelect(['b.day', 'b.tour_order'])
+      // .leftJoin('b.destination', 'c')
+      // .addSelect(['c.title'])
       .leftJoinAndSelect('a.schedule_details', 'b')
       .leftJoinAndSelect('b.destination', 'c')
       .where('a.schedule_id = :scheduleId', { scheduleId })
