@@ -1,4 +1,9 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UsersRepository } from './users.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthCredentialDto } from './dto/auth-credential.dto';
@@ -37,5 +42,17 @@ export class AuthService {
         '아이디 또는 비밀번호가 일치하지 않습니다.',
       );
     }
+  }
+
+  async findUserById(userId: string): Promise<User> {
+    const user: User = await this.usersRepository.findUserById(userId);
+    if (!user) {
+      throw new HttpException(
+        '존재하지 않는 아이디입니다.',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return;
   }
 }

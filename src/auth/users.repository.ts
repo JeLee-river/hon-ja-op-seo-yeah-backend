@@ -45,10 +45,10 @@ export class UsersRepository extends Repository<User> {
     };
   }
 
-  async findUserById(id: string): Promise<User> {
+  async findUserById(userId: string): Promise<User> {
     const user = await this.findOne({
       where: {
-        id,
+        id: userId,
       },
     });
 
