@@ -44,4 +44,14 @@ export class UsersRepository extends Repository<User> {
       user,
     };
   }
+
+  async findUserById(id: string): Promise<User> {
+    const user = await this.findOne({
+      where: {
+        id,
+      },
+    });
+
+    return user;
+  }
 }
