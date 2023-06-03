@@ -18,4 +18,8 @@ export class SchedulesService {
       throw new InternalServerErrorException('일정 등록에 실패하였습니다.');
     }
   }
+
+  getAllSchedules(): Promise<Schedule[]> {
+    return this.schedulesRepository.getAllSchedules();
+  }
 }

@@ -18,4 +18,12 @@ export class SchedulesRepository extends Repository<Schedule> {
 
     return schedule;
   }
+
+  async getAllSchedules(): Promise<Schedule[]> {
+    return this.find({
+      where: {
+        status: 'PUBLIC',
+      },
+    });
+  }
 }
