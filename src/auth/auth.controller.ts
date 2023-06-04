@@ -1,7 +1,10 @@
 import {
   Body,
   Controller,
+  Get,
   Post,
+  Req,
+  Res,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
@@ -19,6 +22,7 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { Request, Response } from 'express';
 
 @Controller('auth')
 @ApiTags('사용자 (Users)')
@@ -48,10 +52,20 @@ export class AuthController {
       example: { accessToken: 'yourExampleTokenHere' },
     },
   })
-  signIn(
+  async signIn(
     @Body(ValidationPipe) signInDto: SignInDto,
-  ): Promise<{ accessToken: string }> {
-    return this.authService.signIn(signInDto);
+    @Res() response: Response,
+  ): Promise<any> {
+    const { accessToken } = await this.authService.signIn(signInDto);
+    response.setHeader('Authorization', `Bearer ${accessToken}`);
+    response.cookie('jwt', accessToken, {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+    });
+    return response.send({
+      message: 'login success',
+      accessToken,
+    });
   }
 
   /**
@@ -67,5 +81,11 @@ export class AuthController {
   @ApiOperation({ summary: '테스트 API : 추후 삭제 예정' })
   test(@GetUser() user: Omit<User, 'password'>) {
     console.log(user);
+  }
+
+  @Get('/cookies')
+  getCookies(@Req() request: Request, @Res() response: Response) {
+    const jwt = request.cookies['jwt'];
+    return response.send(jwt);
   }
 }
