@@ -10,7 +10,7 @@ export class Destination {
 
   @ApiProperty({ description: '카테고리 ID', example: '12' })
   @Column()
-  category_id: string;
+  category_id: number;
 
   @ApiProperty({ description: '여행지명', example: '감낭오름' })
   @Column()

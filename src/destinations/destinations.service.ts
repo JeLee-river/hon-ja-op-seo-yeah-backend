@@ -67,8 +67,8 @@ export class DestinationsService {
     const destinationsToInsert: CreateDestinationDto[] = destinations.map(
       (data) => {
         return {
-          id: data.contentid,
-          category_id: data.contenttypeid,
+          id: Number(data.contentid),
+          category_id: Number(data.contenttypeid),
           title: data.title,
           homepage: data.homepage,
           tel: data.tel,
