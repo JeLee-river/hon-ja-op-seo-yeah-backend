@@ -29,7 +29,7 @@ export const winstonLogger = WinstonModule.createLogger({
             winston.format.simple()
           : winston.format.combine(
               winston.format.timestamp(),
-              utilities.format.nestLike('프로젝트이름', {
+              utilities.format.nestLike('project-honjaobseoye', {
                 prettyPrint: true, // nest에서 제공하는 옵션. 로그 가독성을 높여줌
               }),
             ),
