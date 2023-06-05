@@ -45,7 +45,7 @@ export class DestinationsController {
   })
   @ApiOkResponse({ type: Destination })
   getDestinationsByCategory(
-    @Param('categoryId') categoryId: string,
+    @Param('categoryId', ParseIntPipe) categoryId: number,
   ): Promise<Destination[]> {
     return this.destinationsService.getDestinationsByCategory(categoryId);
   }

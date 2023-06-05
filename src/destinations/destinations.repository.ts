@@ -25,7 +25,7 @@ export class DestinationsRepository extends Repository<Destination> {
     return destinations;
   }
 
-  async getDestinationsByCategory(categoryId: string): Promise<Destination[]> {
+  async getDestinationsByCategory(categoryId: number): Promise<Destination[]> {
     const destinations = await this.find({
       where: {
         category_id: categoryId,
