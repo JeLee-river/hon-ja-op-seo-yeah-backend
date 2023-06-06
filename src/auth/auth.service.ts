@@ -28,7 +28,9 @@ export class AuthService {
       const user = await this.usersRepository.findUserById(id);
       await this.verifyPassword(password, user.password);
 
-      const payload = { id };
+      const { password: userPassword, ...result } = user;
+
+      const payload = result;
       const accessToken = this.jwtService.sign(payload);
 
       return { accessToken };

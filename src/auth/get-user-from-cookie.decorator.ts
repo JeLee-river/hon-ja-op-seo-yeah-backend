@@ -12,11 +12,12 @@ export const GetUserFromCookie = createParamDecorator((data, context) => {
       accessToken,
       config.get('jwt.JWT_ACCESS_TOKEN_SECRET'),
     );
+    console.log(decoded);
 
-    // decoded 가 객체이면서 id 라는 프로퍼티를 가지고 있는지 확인한다.
-    if (typeof decoded === 'object' && 'id' in decoded) {
+    // decoded 가 객체인지 확인한다. (string 일수도 있다고 함.)
+    if (typeof decoded === 'object') {
       const decodedPayload = decoded as JwtPayload;
-      return decodedPayload.id;
+      return decodedPayload;
     } else {
       // id 가 없을 경우 에러를 반환한다.
       throw new Error('No id present in the decoded token.');
