@@ -5,6 +5,8 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Req,
+  UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import { SchedulesService } from './schedules.service';
@@ -12,6 +14,9 @@ import { Schedule } from './entities/schedule.entity';
 import { CreateScheduleDto } from './dto/create-schedule.dto';
 import { ScheduleDetail } from './entities/schedule-detail.entity';
 import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { Request } from 'express';
+import { GetUserFromCookie } from '../auth/get-user-from-cookie.decorator';
 
 @Controller('schedules')
 @ApiTags('여행 일정 (Schedules)')
@@ -19,13 +24,16 @@ export class SchedulesController {
   constructor(private readonly schedulesService: SchedulesService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: '여행 일정을 생성한다.',
     description: '새로운 여행 일정을 생성한다.',
   })
   @ApiCreatedResponse({ description: '생성된 여행 일정' })
   createSchedule(
+    @Req() request: Request,
     @Body(ValidationPipe) createScheduleDto: CreateScheduleDto,
+    @GetUserFromCookie() userId: string,
   ): Promise<{
     schedule: Schedule;
     scheduleDetails: Omit<ScheduleDetail, 'idx'>[];
