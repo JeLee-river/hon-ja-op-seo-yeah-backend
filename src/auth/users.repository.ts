@@ -23,7 +23,12 @@ export class UsersRepository extends Repository<User> {
     // 이미 존재하는 아이디인지 체크한다.
     const foundUser: User = await this.findUserById(id);
     if (foundUser) {
-      throw new ConflictException('이미 존재하는 아이디입니다.');
+      throw new ConflictException({
+        statusCode: 409,
+        error: 'Conflict',
+        field: 'email',
+        message: '이미 존재하는 아이디입니다.',
+      });
     }
 
     const salt = await bcrypt.genSalt();
@@ -46,7 +51,12 @@ export class UsersRepository extends Repository<User> {
       };
     } catch (error) {
       if (error.code === PostgresErrorCodesEnum.UniqueViolation) {
-        throw new ConflictException('이미 존재하는 별명입니다.');
+        throw new ConflictException({
+          statusCode: 409,
+          error: 'Conflict',
+          field: 'nickname',
+          message: '이미 존재하는 별명입니다.',
+        });
       } else {
         throw new InternalServerErrorException(
           '알 수 없는 오류가 발생했습니다.',
