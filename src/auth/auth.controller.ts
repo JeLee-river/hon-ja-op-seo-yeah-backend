@@ -58,14 +58,13 @@ export class AuthController {
     @Res() response: Response,
   ): Promise<any> {
     const { accessToken } = await this.authService.signIn(signInDto);
-    response.setHeader('Authorization', `Bearer ${accessToken}`);
+    // response.setHeader('Authorization', `Bearer ${accessToken}`);
     response.cookie('jwt', accessToken, {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000, // 쿠키의 유효 기간 : 1 day
     });
     return response.send({
       message: 'login success',
-      accessToken,
     });
   }
 
