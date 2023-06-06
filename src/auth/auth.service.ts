@@ -102,14 +102,16 @@ export class AuthService {
         throw new UnauthorizedException();
       }
 
+      const { idx, password, ...newPayload } = user;
+
       // Create a new access token
-      const newAccessToken = this.jwtService.sign(payload, {
+      const newAccessToken = this.jwtService.sign(newPayload, {
         secret: jwtConfig.JWT_ACCESS_TOKEN_SECRET,
         expiresIn: jwtConfig.ACCESS_TOKEN_EXPIRATION_TIME,
       });
 
       // Optionally, create a new refresh token
-      const newRefreshToken = this.jwtService.sign(payload, {
+      const newRefreshToken = this.jwtService.sign(newPayload, {
         secret: jwtConfig.JWT_REFRESH_TOKEN_SECRET,
         expiresIn: jwtConfig.REFRESH_TOKEN_EXPIRATION_TIME,
       });
@@ -117,6 +119,7 @@ export class AuthService {
       // TODO: RefreshToken 은 DB에 update 해야 한다.
       return { accessToken: newAccessToken, refreshToken: newRefreshToken };
     } catch (error) {
+      console.log(error);
       throw new UnauthorizedException('Invalid refresh token');
     }
   }
