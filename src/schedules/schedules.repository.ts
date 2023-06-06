@@ -46,31 +46,32 @@ export class SchedulesRepository extends Repository<Schedule> {
   }
 
   async getScheduleById(scheduleId: number): Promise<Schedule> {
-    const query = this.createQueryBuilder('a')
+    const query = this.createQueryBuilder('schedule')
       .select([
-        'a.user_id',
-        'a.title',
-        'd.nickname',
-        'a.summary',
-        'a.start_date',
-        'a.end_date',
-        'a.duration',
-        'b.day',
-        'b.tour_order',
-        'c.title',
+        'schedule.schedule_id',
+        'schedule.title',
+        'schedule.summary',
+        'schedule.start_date',
+        'schedule.end_date',
+        'schedule.duration',
+        'schedule.status',
+        'schedule.image',
+        'schedule.created_at',
       ])
       // TODO: 만약 특정 컬럼들만 조회하려면 다음과 같이 leftJoin, addSelect 로 나누어서 해야한다.
-      // .leftJoin('a.schedule_details', 'b')
-      // .addSelect(['b.day', 'b.tour_order'])
-      // .leftJoin('b.destination', 'c')
-      // .addSelect(['c.title'])
-      .leftJoinAndSelect('a.schedule_details', 'b')
-      .leftJoinAndSelect('b.destination', 'c')
-      .leftJoinAndSelect('a.user', 'd')
-      .where('a.schedule_id = :scheduleId', { scheduleId })
+      .leftJoin('schedule.user', 'user')
+      .addSelect([
+        'user.id',
+        'user.nickname',
+        'user.phone_number',
+        'user.profile_image',
+      ])
+      .leftJoinAndSelect('schedule.schedule_details', 'schedule_details')
+      .leftJoinAndSelect('schedule_details.destination', 'destination')
+      .where('schedule.schedule_id = :scheduleId', { scheduleId })
       .orderBy({
-        'b.day': 'ASC',
-        'b.tour_order': 'ASC',
+        'schedule_details.day': 'ASC',
+        'schedule_details.tour_order': 'ASC',
       });
 
     const result = await query.getOne();

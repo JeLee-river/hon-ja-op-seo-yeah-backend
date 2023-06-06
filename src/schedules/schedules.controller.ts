@@ -17,6 +17,7 @@ import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { Request } from 'express';
 import { GetUserFromCookie } from '../auth/get-user-from-cookie.decorator';
+import { ResponseScheduleInterface } from '../types/ResponseSchedule.interface';
 
 @Controller('schedules')
 @ApiTags('여행 일정 (Schedules)')
@@ -51,7 +52,7 @@ export class SchedulesController {
   @ApiOperation({ summary: '특정 여행 일정을 상세 조회한다.' })
   getScheduleById(
     @Param('scheduleId', ParseIntPipe) scheduleId: number,
-  ): Promise<Schedule> {
+  ): Promise<ResponseScheduleInterface> {
     return this.schedulesService.getScheduleById(scheduleId);
   }
 }

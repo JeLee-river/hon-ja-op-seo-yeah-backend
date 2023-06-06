@@ -4,6 +4,7 @@ import { CreateScheduleDto } from './dto/create-schedule.dto';
 import { Schedule } from './entities/schedule.entity';
 import { ScheduleDetail } from './entities/schedule-detail.entity';
 import { SchedulesDetailRepository } from './schedules-detail.repository';
+import { ResponseScheduleInterface } from '../types/ResponseSchedule.interface';
 
 @Injectable()
 export class SchedulesService {
@@ -84,35 +85,39 @@ export class SchedulesService {
     return this.schedulesRepository.getAllSchedules();
   }
 
-  async getScheduleById(scheduleId: number): Promise<Schedule> {
-    // 기본 정보와 상세 정보를 모두 가져와야 한다.
+  async getScheduleById(
+    scheduleId: number,
+  ): Promise<ResponseScheduleInterface> {
     const schedule = await this.schedulesRepository.getScheduleById(scheduleId);
 
-    // const { duration, schedule_details } = schedule;
-    //
-    // const FIRST_DAY_OF_DURATION = 1;
-    //
-    // // 상세 일정을 day 별로 묶기
-    // const schedule_details_group_by_day = [];
-    // for (let i = FIRST_DAY_OF_DURATION; i <= duration; i++) {
-    //   let dayCount = 1;
-    //   const details = [];
-    //   schedule_details.forEach((detail) => {
-    //     if (detail.day === dayCount) {
-    //       details.push(detail);
-    //     }
-    //   });
-    //
-    //   schedule_details_group_by_day.push(details);
-    //   dayCount += 1;
-    // }
-    //
-    // const new_schedule = {
-    //   ...schedule,
-    //   schedule_details: schedule_details_group_by_day,
-    // };
-    //
-    // return new_schedule;
-    return schedule;
+    const { duration, schedule_details } = schedule;
+    const destinationsByDay = this.transformDestinationsByDay(
+      duration,
+      schedule_details,
+    );
+
+    return {
+      destinations: destinationsByDay,
+      ...schedule,
+    };
+  }
+
+  transformDestinationsByDay(duration, schedule_details) {
+    const destinationsByDay = [];
+    const FIRST_DAY_OF_DURATION = 1;
+
+    for (let day = FIRST_DAY_OF_DURATION; day <= duration; day++) {
+      const destinations = [];
+
+      schedule_details.forEach((detail) => {
+        if (detail.day === day) {
+          destinations.push(detail.destination.title);
+        }
+      });
+
+      destinationsByDay.push(destinations);
+    }
+
+    return destinationsByDay;
   }
 }
