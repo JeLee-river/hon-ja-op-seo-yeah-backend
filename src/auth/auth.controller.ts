@@ -62,6 +62,25 @@ export class AuthController {
     return await this.authService.signIn(signInDto);
   }
 
+  @Post('/refresh')
+  @ApiOperation({ summary: '토큰 재발급' })
+  @ApiOkResponse({
+    description: '새로운 AccessToken과 RefreshToken을 발급한다.',
+    schema: {
+      type: 'string',
+      example: {
+        accessToken: 'yourNewExampleTokenHere',
+        refreshToken: 'yourNewExampleTokenHere',
+      },
+    },
+  })
+  async refreshToken(
+    @Body('accessToken') accessToken: string,
+    @Body('refreshToken') refreshToken: string,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    return await this.authService.refreshToken(accessToken, refreshToken);
+  }
+
   /**
    * TODO : 테스트 : 추후에 삭제할 것.
    * 사용자가 로그인하여 얻은 액세스 토큰으로 /test 요청 시, Request 안에 있는 user 정보를 가져온다.

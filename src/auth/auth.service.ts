@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UsersRepository } from './users.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthCredentialDto } from './dto/auth-credential.dto';
@@ -75,5 +80,40 @@ export class AuthService {
     const user: User = await this.usersRepository.findUserById(userId);
 
     return user;
+  }
+
+  async refreshToken(
+    oldAccessToken: string,
+    refreshToken: string,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    try {
+      // Verify the refresh token
+      const payload = this.jwtService.verify(refreshToken, {
+        secret: jwtConfig.JWT_REFRESH_TOKEN_SECRET,
+      });
+
+      // Find the user associated with the refresh token
+      const user: User = await this.usersRepository.findUserById(payload.id);
+
+      if (!user) {
+        throw new UnauthorizedException();
+      }
+
+      // Create a new access token
+      const newAccessToken = this.jwtService.sign(payload, {
+        secret: jwtConfig.JWT_ACCESS_TOKEN_SECRET,
+        expiresIn: jwtConfig.ACCESS_TOKEN_EXPIRATION_TIME,
+      });
+
+      // Optionally, create a new refresh token
+      const newRefreshToken = this.jwtService.sign(payload, {
+        secret: jwtConfig.JWT_REFRESH_TOKEN_SECRET,
+        expiresIn: jwtConfig.REFRESH_TOKEN_EXPIRATION_TIME,
+      });
+
+      return { accessToken: newAccessToken, refreshToken: newRefreshToken };
+    } catch (error) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
   }
 }
