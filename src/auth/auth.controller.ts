@@ -23,6 +23,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Request, Response } from 'express';
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Controller('auth')
 @ApiTags('사용자 (Users)')
@@ -60,7 +61,7 @@ export class AuthController {
     response.setHeader('Authorization', `Bearer ${accessToken}`);
     response.cookie('jwt', accessToken, {
       httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      maxAge: 24 * 60 * 60 * 1000, // 쿠키의 유효 기간 : 1 day
     });
     return response.send({
       message: 'login success',
@@ -69,10 +70,8 @@ export class AuthController {
   }
 
   /**
-   * 테스트 : 추후에 삭제할 것.
-   *
-   * 사용자가 로그인하여 얻은 액세스 토큰으로 /test 요청 시,
-   * Request 안에 있는 user 정보를 가져온다.
+   * TODO : 테스트 : 추후에 삭제할 것.
+   * 사용자가 로그인하여 얻은 액세스 토큰으로 /test 요청 시, Request 안에 있는 user 정보를 가져온다.
    * @param user
    */
   @Post('/test')
@@ -83,7 +82,13 @@ export class AuthController {
     console.log(user);
   }
 
+  /**
+   * TODO: 쿠키에 들어있는 토큰 값 확인하기 테스트 : 추후 삭제할 것
+   * @param request
+   * @param response
+   */
   @Get('/cookies')
+  @UseGuards(JwtAuthGuard)
   getCookies(@Req() request: Request, @Res() response: Response) {
     const jwt = request.cookies['jwt'];
     return response.send(jwt);
