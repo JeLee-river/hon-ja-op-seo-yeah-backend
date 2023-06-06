@@ -1,6 +1,7 @@
-import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm';
 import { ScheduleDetail } from '../../schedules/entities/schedule-detail.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { Category } from '../../categories/entities/category.entity';
 
 @Entity()
 export class Destination {
@@ -9,7 +10,7 @@ export class Destination {
   id: number;
 
   @ApiProperty({ description: '카테고리 ID', example: '12' })
-  @Column()
+  @ManyToOne((type) => Category, (category) => category.destinations)
   category_id: number;
 
   @ApiProperty({ description: '여행지명', example: '감낭오름' })
