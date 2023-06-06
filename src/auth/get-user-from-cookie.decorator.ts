@@ -1,15 +1,26 @@
-import { createParamDecorator, Logger } from '@nestjs/common';
+import {
+  createParamDecorator,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
 import { JwtPayload } from 'jsonwebtoken';
 import * as config from 'config';
 
-export const GetUserFromCookie = createParamDecorator((data, context) => {
+export const GetUserFromToken = createParamDecorator((data, context) => {
   const request = context.switchToHttp().getRequest();
-  const accessToken = request.cookies['jwt'];
+  const authHeader = request.headers['authorization'];
+
+  if (!authHeader) {
+    throw new UnauthorizedException('Authorization header is missing');
+  }
+
+  // Bearer Token 에서 실제 Token 만 분리하기
+  const bearerToken = authHeader.split(' ')[1];
 
   try {
     const decoded = jwt.verify(
-      accessToken,
+      bearerToken,
       config.get('jwt.JWT_ACCESS_TOKEN_SECRET'),
     );
     console.log(decoded);
@@ -18,9 +29,6 @@ export const GetUserFromCookie = createParamDecorator((data, context) => {
     if (typeof decoded === 'object') {
       const decodedPayload = decoded as JwtPayload;
       return decodedPayload;
-    } else {
-      // id 가 없을 경우 에러를 반환한다.
-      throw new Error('No id present in the decoded token.');
     }
   } catch (err) {
     // 에러를 로거에 출력하고 null 을 return 한다.

@@ -12,11 +12,18 @@ export class JwtAuthGuard implements CanActivate {
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
-    const accessToken = request.cookies['jwt'];
+    const authHeader = request.headers['authorization'];
+
+    if (!authHeader) {
+      throw new UnauthorizedException('Authorization header is missing');
+    }
+
+    // Bearer Token 에서 실제 Token 만 분리하기
+    const bearerToken = authHeader.split(' ')[1];
 
     try {
       const decoded = jwt.verify(
-        accessToken,
+        bearerToken,
         config.get('jwt.JWT_ACCESS_TOKEN_SECRET'),
       );
       // TODO: jwt.verify 실행 결과로 디코딩된 유저 정보 확인용 : 추후 삭제할 것
