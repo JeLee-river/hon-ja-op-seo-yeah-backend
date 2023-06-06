@@ -6,6 +6,9 @@ import { User } from './entities/user.entity';
 import * as bcrypt from 'bcryptjs';
 import { SignInDto } from './dto/sign-in.dto';
 import { JwtService } from '@nestjs/jwt';
+import * as config from 'config';
+
+const jwtConfig = config.get('jwt');
 
 @Injectable()
 export class AuthService {
@@ -21,7 +24,9 @@ export class AuthService {
     return this.usersRepository.createUser(authCredentialDto);
   }
 
-  async signIn(signInDto: SignInDto): Promise<{ accessToken: string }> {
+  async signIn(
+    signInDto: SignInDto,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     const { id, password } = signInDto;
 
     try {
@@ -31,9 +36,16 @@ export class AuthService {
       const { password: userPassword, ...result } = user;
 
       const payload = result;
-      const accessToken = this.jwtService.sign(payload);
+      const accessToken = this.jwtService.sign(payload, {
+        secret: jwtConfig.JWT_ACCESS_TOKEN_SECRET,
+        expiresIn: jwtConfig.ACCESS_TOKEN_EXPIRATION_TIME,
+      });
+      const refreshToken = this.jwtService.sign(payload, {
+        secret: jwtConfig.JWT_REFRESH_TOKEN_SECRET,
+        expiresIn: jwtConfig.REFRESH_TOKEN_EXPIRATION_TIME,
+      });
 
-      return { accessToken };
+      return { accessToken, refreshToken };
     } catch (error) {
       throw new HttpException(
         '아이디 또는 비밀번호가 일치하지 않습니다.',

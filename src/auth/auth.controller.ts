@@ -47,25 +47,19 @@ export class AuthController {
   @Post('/signin')
   @ApiOperation({ summary: '로그인' })
   @ApiOkResponse({
-    description: '액세스 토큰을 발급한다.',
+    description: 'AccessToken과 RefreshToken을 발급한다.',
     schema: {
       type: 'string',
-      example: { accessToken: 'yourExampleTokenHere' },
+      example: {
+        accessToken: 'yourExampleTokenHere',
+        refreshToken: 'yourExampleTokenHere',
+      },
     },
   })
   async signIn(
     @Body(ValidationPipe) signInDto: SignInDto,
-    @Res() response: Response,
-  ): Promise<any> {
-    const { accessToken } = await this.authService.signIn(signInDto);
-    // response.setHeader('Authorization', `Bearer ${accessToken}`);
-    response.cookie('jwt', accessToken, {
-      httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000, // 쿠키의 유효 기간 : 1 day
-    });
-    return response.send({
-      message: 'login success',
-    });
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    return await this.authService.signIn(signInDto);
   }
 
   /**
