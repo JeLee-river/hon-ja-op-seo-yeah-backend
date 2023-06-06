@@ -33,12 +33,12 @@ export class SchedulesController {
   createSchedule(
     @Req() request: Request,
     @Body(ValidationPipe) createScheduleDto: CreateScheduleDto,
-    @GetUserFromCookie() userId: string,
+    @GetUserFromCookie() user,
   ): Promise<{
     schedule: Schedule;
     scheduleDetails: Omit<ScheduleDetail, 'idx'>[];
   }> {
-    return this.schedulesService.createSchedule(createScheduleDto);
+    return this.schedulesService.createSchedule(user.id, createScheduleDto);
   }
 
   @Get()

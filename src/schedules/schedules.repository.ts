@@ -10,9 +10,10 @@ export class SchedulesRepository extends Repository<Schedule> {
   }
 
   async createSchedule(
+    userId: string,
     createScheduleDto: CreateScheduleDto,
   ): Promise<Schedule> {
-    const schedule = this.create(createScheduleDto);
+    const schedule = this.create({ user_id: userId, ...createScheduleDto });
 
     await this.save(schedule);
 

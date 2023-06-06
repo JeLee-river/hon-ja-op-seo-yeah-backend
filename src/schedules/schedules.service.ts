@@ -12,13 +12,17 @@ export class SchedulesService {
     private scheduleDetailRepository: SchedulesDetailRepository,
   ) {}
 
-  async createSchedule(createScheduleDto: CreateScheduleDto): Promise<{
+  async createSchedule(
+    userId: string,
+    createScheduleDto: CreateScheduleDto,
+  ): Promise<{
     schedule: Schedule;
     scheduleDetails: Omit<ScheduleDetail, 'idx'>[];
   }> {
     try {
       // 여행 일정 기본 정보 insert
       const schedule = await this.schedulesRepository.createSchedule(
+        userId,
         createScheduleDto,
       );
 
