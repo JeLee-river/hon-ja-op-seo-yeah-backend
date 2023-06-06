@@ -24,7 +24,7 @@ export class DestinationsController {
   })
   @ApiNoContentResponse({ description: '여행지 정보가 DB에 등록된다.' })
   async fetchData(): Promise<void> {
-    return await this.destinationsService.fetchData();
+    return await this.destinationsService.insertDestinations();
   }
 
   @Get('/destinations')

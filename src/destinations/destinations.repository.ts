@@ -1,6 +1,6 @@
 import { DataSource, Repository } from 'typeorm';
 import { Destination } from './entities/destination.entity';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { CreateDestinationDto } from './dto/create-destination.dto';
 
 @Injectable()
@@ -17,7 +17,8 @@ export class DestinationsRepository extends Repository<Destination> {
       await this.save(data);
     });
 
-    await Promise.all(promises);
+    const result = await Promise.allSettled(promises);
+    Logger.log(result);
   }
 
   async getAllDestinations(): Promise<Destination[]> {
