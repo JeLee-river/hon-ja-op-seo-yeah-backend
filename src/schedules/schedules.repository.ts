@@ -50,6 +50,7 @@ export class SchedulesRepository extends Repository<Schedule> {
       .select([
         'a.user_id',
         'a.title',
+        'd.nickname',
         'a.summary',
         'a.start_date',
         'a.end_date',
@@ -65,6 +66,7 @@ export class SchedulesRepository extends Repository<Schedule> {
       // .addSelect(['c.title'])
       .leftJoinAndSelect('a.schedule_details', 'b')
       .leftJoinAndSelect('b.destination', 'c')
+      .leftJoinAndSelect('a.user', 'd')
       .where('a.schedule_id = :scheduleId', { scheduleId })
       .orderBy({
         'b.day': 'ASC',

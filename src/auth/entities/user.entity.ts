@@ -2,11 +2,15 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
+import { Schedule } from '../../schedules/entities/schedule.entity';
 
 @Entity()
+// @Unique(['id', 'nickname'])
+@Unique(['id'])
 @Unique(['nickname'])
 export class User {
   @PrimaryGeneratedColumn()
@@ -35,4 +39,7 @@ export class User {
 
   @Column()
   profile_image: string;
+
+  @OneToMany(() => Schedule, (schedule) => schedule.user)
+  schedules: Schedule[];
 }

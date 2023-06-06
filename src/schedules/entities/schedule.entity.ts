@@ -2,11 +2,14 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { ScheduleDetail } from './schedule-detail.entity';
+import { User } from '../../auth/entities/user.entity';
 
 @Entity()
 export class Schedule {
@@ -48,4 +51,8 @@ export class Schedule {
     (schedule_detail) => schedule_detail.schedule,
   )
   schedule_details: ScheduleDetail[];
+
+  @ManyToOne(() => User, (user) => user.schedules)
+  @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
+  user: User;
 }
