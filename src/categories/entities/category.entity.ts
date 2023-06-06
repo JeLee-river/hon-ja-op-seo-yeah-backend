@@ -9,6 +9,6 @@ export class Category {
   @Column()
   name: string;
 
-  @OneToMany((type) => Destination, (destination) => destination.category_id)
+  @OneToMany((type) => Destination, (destination) => destination.category)
   destinations: Destination[];
 }
