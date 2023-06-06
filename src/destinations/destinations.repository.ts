@@ -1,4 +1,4 @@
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, In, Repository } from 'typeorm';
 import { Destination } from './entities/destination.entity';
 import { Injectable, Logger } from '@nestjs/common';
 import { CreateDestinationDto } from './dto/create-destination.dto';
@@ -26,14 +26,20 @@ export class DestinationsRepository extends Repository<Destination> {
     return destinations;
   }
 
-  async getDestinationsByCategory(categoryId: number): Promise<Destination[]> {
+  async getDestinationsByCategoryIds(
+    categoryIds: number[],
+  ): Promise<{ totalCount: number; result: Destination[] }> {
     const destinations = await this.find({
       where: {
-        category_id: categoryId,
+        category_id: In(categoryIds),
       },
     });
+    const destinationsCount = destinations.length;
 
-    return destinations;
+    return {
+      totalCount: destinationsCount,
+      result: destinations,
+    };
   }
 
   async getDestination(destinationId: number): Promise<Destination> {

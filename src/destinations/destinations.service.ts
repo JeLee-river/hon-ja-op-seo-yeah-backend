@@ -139,8 +139,12 @@ export class DestinationsService {
     return this.destinationsRepository.getAllDestinations();
   }
 
-  getDestinationsByCategory(categoryId: number): Promise<Destination[]> {
-    return this.destinationsRepository.getDestinationsByCategory(categoryId);
+  getDestinationsByCategoryIds(
+    categoryIds: number[],
+  ): Promise<{ totalCount: number; result: Destination[] }> {
+    return this.destinationsRepository.getDestinationsByCategoryIds(
+      categoryIds,
+    );
   }
 
   getDestination(destinationId: number): Promise<Destination> {

@@ -1,4 +1,11 @@
-import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  ParseArrayPipe,
+  ParseIntPipe,
+  Query,
+} from '@nestjs/common';
 import { DestinationsService } from './destinations.service';
 import { Destination } from './entities/destination.entity';
 import {
@@ -7,6 +14,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { DestinationResponse } from '../utils/swagger/destination.response';
@@ -34,20 +42,23 @@ export class DestinationsController {
     return this.destinationsService.getAllDestinations();
   }
 
-  @Get('/categories/:categoryId/destinations')
-  @ApiOperation({ summary: '특정 카테고리의 여행지 목록을 조회한다.' })
-  @ApiParam({
-    name: 'categoryId',
-    type: 'string',
-    description:
-      '카테고리 ID (12:관광지, 14:문화시설, 15:축제공연행사, 25:여행코스, 28:레포츠, 32:숙박, 38:쇼핑, 39:음식점)',
-    example: '12',
+  @Get('/categories/destinations')
+  @ApiOperation({
+    summary: '선택한 카테고리들에 해당하는 여행지 목록을 조회한다.',
   })
-  @ApiOkResponse({ type: Destination })
+  @ApiQuery({
+    name: 'categoryIds',
+    type: 'array',
+    description:
+      '카테고리 ID를 콤마(,)로 전달하세요. (12:관광지, 14:문화시설, 15:축제공연행사, 25:여행코스, 28:레포츠, 32:숙박, 38:쇼핑, 39:음식점)',
+    example: '?categoryIds=12,14',
+  })
+  @ApiOkResponse({ type: [Destination] })
   getDestinationsByCategory(
-    @Param('categoryId', ParseIntPipe) categoryId: number,
-  ): Promise<Destination[]> {
-    return this.destinationsService.getDestinationsByCategory(categoryId);
+    @Query('categoryIds', new ParseArrayPipe({ items: Number }))
+    categoryIds: number[],
+  ): Promise<{ totalCount: number; result: Destination[] }> {
+    return this.destinationsService.getDestinationsByCategoryIds(categoryIds);
   }
 
   @Get('/destinations/:destinationId')
