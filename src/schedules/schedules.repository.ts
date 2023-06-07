@@ -78,4 +78,22 @@ export class SchedulesRepository extends Repository<Schedule> {
 
     return result;
   }
+
+  async getSchedulesRannking(): Promise<Schedule[]> {
+    const query = this.createQueryBuilder('schedule')
+      .select([
+        'schedule.user_id',
+        'schedule.schedule_id',
+        'schedule.title',
+        'schedule.summary',
+        'schedule.start_date',
+        'schedule.end_date',
+        'schedule.duration',
+        'schedule.image',
+      ])
+      .where('a.status = :status', { status: 'PUBLIC' });
+
+    const result = await query.getMany();
+    return result;
+  }
 }
