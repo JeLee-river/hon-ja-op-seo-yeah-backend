@@ -15,6 +15,7 @@ import { SignInDto } from './dto/sign-in.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from './get-user.decorator';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiCreatedResponse,
   ApiExcludeEndpoint,
@@ -65,9 +66,11 @@ export class AuthController {
   }
 
   @Post('/refresh')
-  @ApiOperation({ summary: '토큰 재발급' })
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'JWT 토큰 재발급' })
   @ApiOkResponse({
-    description: '새로운 AccessToken과 RefreshToken을 발급한다.',
+    description:
+      '유효한 Refresh Token 을 이용해 새로운 AccessToken 과 RefreshToken 을 발급한다.',
     schema: {
       type: 'string',
       example: {
