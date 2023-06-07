@@ -29,9 +29,9 @@ import { JwtAuthGuard } from './jwt-auth.guard';
 import { GetUserFromAccessToken } from './get-user-from-access-token.decorator';
 import { GetRefreshToken } from './get-refresh-token.decorator';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { VerifyPasswordDto } from '../destinations/dto/verify-password.dto';
 import { CheckDuplicateNicknameDto } from './dto/check-duplicate-nickname.dto';
 import { CheckDuplicateIdDto } from './dto/check-duplicate-id.dto';
+import { VerifyPasswordDto } from './dto/verify-password.dto';
 
 @Controller('auth')
 @ApiTags('사용자 (Users)')
