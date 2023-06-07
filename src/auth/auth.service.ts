@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -217,5 +218,18 @@ export class AuthService {
     } catch (error) {
       Logger.error(error);
     }
+  }
+
+  async checkDuplicateNickname(nickname: string): Promise<{ message: string }> {
+    const user = await this.usersRepository.findUserByNickname(nickname);
+
+    if (user) {
+      throw new HttpException(
+        '이미 사용중인 닉네임입니다.',
+        HttpStatus.CONFLICT,
+      );
+    }
+
+    return { message: '사용 가능한 닉네임입니다.' };
   }
 }

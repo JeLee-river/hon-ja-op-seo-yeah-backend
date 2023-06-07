@@ -112,4 +112,14 @@ export class UsersRepository extends Repository<User> {
       message: '사용자 정보가 성공적으로 삭제되었습니다.',
     };
   }
+
+  async findUserByNickname(nickname: string): Promise<User> {
+    const user = await this.findOne({
+      where: {
+        nickname: nickname,
+      },
+    });
+
+    return user;
+  }
 }

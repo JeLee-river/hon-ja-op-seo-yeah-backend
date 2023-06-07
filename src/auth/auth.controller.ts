@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   Logger,
   Post,
   Put,
@@ -156,5 +157,24 @@ export class AuthController {
     @GetUserFromAccessToken() user,
   ): Promise<{ message: string }> {
     return this.authService.deleteUserInformation(user.id);
+  }
+
+  @Post('/users/nickname')
+  @ApiOperation({ summary: '닉네임 중복 확인' })
+  @ApiBody({
+    description: '사용할 닉네임 입력',
+    schema: {
+      example: {
+        nickname: '사용할_닉네임',
+      },
+    },
+  })
+  @ApiOkResponse({
+    description: '요청한 닉네임이 사용 가능한지 여부를 반환합니다.',
+  })
+  checkDuplicateNickname(
+    @Body('nickname') nickname: string,
+  ): Promise<{ message: string }> {
+    return this.authService.checkDuplicateNickname(nickname);
   }
 }
