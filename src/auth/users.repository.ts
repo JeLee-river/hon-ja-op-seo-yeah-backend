@@ -83,4 +83,8 @@ export class UsersRepository extends Repository<User> {
       },
     );
   }
+
+  async findRefreshTokenByUserId(userId: string): Promise<string> {
+    return;
+  }
 }

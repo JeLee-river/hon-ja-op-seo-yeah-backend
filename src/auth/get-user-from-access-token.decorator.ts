@@ -7,7 +7,7 @@ import * as jwt from 'jsonwebtoken';
 import { JwtPayload } from 'jsonwebtoken';
 import * as config from 'config';
 
-export const GetUserFromToken = createParamDecorator((data, context) => {
+export const GetUserFromAccessToken = createParamDecorator((data, context) => {
   const request = context.switchToHttp().getRequest();
   const authHeader = request.headers['authorization'];
 

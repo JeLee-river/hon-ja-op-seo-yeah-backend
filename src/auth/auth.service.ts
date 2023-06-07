@@ -87,7 +87,6 @@ export class AuthService {
   }
 
   async refreshToken(
-    oldAccessToken: string,
     refreshToken: string,
   ): Promise<{ accessToken: string; refreshToken: string }> {
     try {

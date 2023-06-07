@@ -16,7 +16,7 @@ import { ScheduleDetail } from './entities/schedule-detail.entity';
 import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { Request } from 'express';
-import { GetUserFromToken } from '../auth/get-user-from-cookie.decorator';
+import { GetUserFromAccessToken } from '../auth/get-user-from-access-token.decorator';
 import { ResponseScheduleInterface } from '../types/ResponseSchedule.interface';
 
 @Controller('schedules')
@@ -34,7 +34,7 @@ export class SchedulesController {
   createSchedule(
     @Req() request: Request,
     @Body(ValidationPipe) createScheduleDto: CreateScheduleDto,
-    @GetUserFromToken() user,
+    @GetUserFromAccessToken() user,
   ): Promise<{
     schedule: Schedule;
     scheduleDetails: Omit<ScheduleDetail, 'idx'>[];

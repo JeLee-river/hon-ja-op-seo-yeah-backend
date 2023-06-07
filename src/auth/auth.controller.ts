@@ -24,6 +24,8 @@ import {
 } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { GetUserFromAccessToken } from './get-user-from-access-token.decorator';
+import { GetUserFromRefreshToken } from './get-user-from-refresh-token.decorator';
 
 @Controller('auth')
 @ApiTags('사용자 (Users)')
@@ -75,10 +77,9 @@ export class AuthController {
     },
   })
   async refreshToken(
-    @Body('accessToken') accessToken: string,
-    @Body('refreshToken') refreshToken: string,
+    @GetUserFromRefreshToken() user,
   ): Promise<{ accessToken: string; refreshToken: string }> {
-    return await this.authService.refreshToken(accessToken, refreshToken);
+    return await this.authService.refreshToken(user.refresh_token);
   }
 
   /**
