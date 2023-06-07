@@ -115,7 +115,8 @@ export class AuthService {
         expiresIn: jwtConfig.REFRESH_TOKEN_EXPIRATION_TIME,
       });
 
-      // TODO: RefreshToken 은 DB에 update 해야 한다.
+      await this.usersRepository.saveRefreshToken(user.id, newRefreshToken);
+
       return { accessToken: newAccessToken, refreshToken: newRefreshToken };
     } catch (error) {
       console.log(error);
