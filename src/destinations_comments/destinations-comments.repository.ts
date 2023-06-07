@@ -65,14 +65,10 @@ export class DestinationsCommentsRepository extends Repository<DestinationsComme
   }
 
   async updateDestinationComment(
-    user_id: string,
-    destination_id: number,
     comment_id: number,
     updateDestinationsCommentDto: UpdateDestinationsCommentDto,
   ) {
     const commentToBeUpdated = this.create({
-      user_id,
-      destination_id,
       comment_id,
       ...updateDestinationsCommentDto,
     });

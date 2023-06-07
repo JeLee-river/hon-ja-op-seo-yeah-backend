@@ -88,18 +88,12 @@ export class DestinationsCommentsController {
     );
   }
 
-  @Put('/destinations/:destinationId/comments/:commentId')
+  @Put('/destinations/comments/:commentId')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
   @ApiOperation({
     summary: '여행지 댓글 내용을 수정합니다.',
     description: '여행지 댓글 내용을 수정합니다.',
-  })
-  @ApiParam({
-    name: 'destinationId',
-    type: 'number',
-    description: '여행지 ID 를 전달하세요.',
-    example: 2877795,
   })
   @ApiParam({
     name: 'commentId',
@@ -114,14 +108,12 @@ export class DestinationsCommentsController {
   @ApiCreatedResponse({ description: '수정된 댓글 정보' })
   updateDestinationComment(
     @GetUserFromAccessToken() user,
-    @Param('destinationId', ParseIntPipe) destination_id: number,
     @Param('commentId', ParseIntPipe) comment_id: number,
     @Body(ValidationPipe)
     updateDestinationsCommentDto: UpdateDestinationsCommentDto,
   ): Promise<DestinationsComment> {
     return this.destinationsCommentsService.updateDestinationComment(
       user.id,
-      destination_id,
       comment_id,
       updateDestinationsCommentDto,
     );

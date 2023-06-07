@@ -44,7 +44,6 @@ export class DestinationsCommentsService {
 
   async updateDestinationComment(
     id: string,
-    destination_id: number,
     comment_id: number,
     updateDestinationsCommentDto: UpdateDestinationsCommentDto,
   ) {
@@ -60,8 +59,6 @@ export class DestinationsCommentsService {
     }
 
     return this.destinationsCommentsRepository.updateDestinationComment(
-      id,
-      destination_id,
       comment_id,
       updateDestinationsCommentDto,
     );
