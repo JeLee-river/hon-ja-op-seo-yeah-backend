@@ -19,12 +19,12 @@ import { Request } from 'express';
 import { GetUserFromAccessToken } from '../auth/get-user-from-access-token.decorator';
 import { ResponseScheduleInterface } from '../types/ResponseSchedule.interface';
 
-@Controller('schedules')
+@Controller()
 @ApiTags('여행 일정 (Schedules)')
 export class SchedulesController {
   constructor(private readonly schedulesService: SchedulesService) {}
 
-  @Post()
+  @Post('schedules')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: '여행 일정을 생성한다.',
@@ -42,17 +42,23 @@ export class SchedulesController {
     return this.schedulesService.createSchedule(user.id, createScheduleDto);
   }
 
-  @Get()
+  @Get('schedules')
   @ApiOperation({ summary: '전체 여행 일정을 조회한다.' })
   getAllSchedulesWithDetails(): Promise<Schedule[]> {
     return this.schedulesService.getAllSchedules();
   }
 
-  @Get('/:scheduleId')
+  @Get('schedules/:scheduleId')
   @ApiOperation({ summary: '특정 여행 일정을 상세 조회한다.' })
   getScheduleById(
     @Param('scheduleId', ParseIntPipe) scheduleId: number,
   ): Promise<ResponseScheduleInterface> {
     return this.schedulesService.getScheduleById(scheduleId);
+  }
+
+  @Get('/ranking/schedules')
+  @ApiOperation({ summary: '인기있는 여행 일정 TOP 10 을 조회한다.' })
+  getSchedulesRanking(): Promise<Schedule[]> {
+    return this.schedulesService.getSchedulesRanking();
   }
 }

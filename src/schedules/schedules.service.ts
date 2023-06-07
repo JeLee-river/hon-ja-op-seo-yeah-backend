@@ -120,4 +120,8 @@ export class SchedulesService {
 
     return destinationsByDay;
   }
+
+  getSchedulesRanking(): Promise<Schedule[]> {
+    return this.schedulesRepository.getSchedulesRanking();
+  }
 }
