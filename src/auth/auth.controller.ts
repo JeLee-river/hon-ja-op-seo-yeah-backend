@@ -26,6 +26,7 @@ import { Request, Response } from 'express';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { GetUserFromAccessToken } from './get-user-from-access-token.decorator';
 import { GetRefreshToken } from './get-refresh-token.decorator';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('auth')
 @ApiTags('사용자 (Users)')
@@ -112,8 +113,8 @@ export class AuthController {
   })
   updateUserInformation(
     @GetUserFromAccessToken() user,
-    @Body() authCredentialDto: AuthCredentialDto,
+    @Body() updateUserDto: UpdateUserDto,
   ): Promise<{ message: string; user: User }> {
-    return this.authService.updateUserInformation(user.id, authCredentialDto);
+    return this.authService.updateUserInformation(user.id, updateUserDto);
   }
 }

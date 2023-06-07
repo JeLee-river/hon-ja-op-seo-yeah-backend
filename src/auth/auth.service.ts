@@ -14,6 +14,7 @@ import * as bcrypt from 'bcryptjs';
 import { SignInDto } from './dto/sign-in.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as config from 'config';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 const jwtConfig = config.get('jwt');
 
@@ -142,7 +143,7 @@ export class AuthService {
 
   async updateUserInformation(
     userId: string,
-    authCredentialDto: AuthCredentialDto,
+    updateUserDto: UpdateUserDto,
   ): Promise<{ message: string; user: User }> {
     try {
       const user = await this.findUserById(userId);
@@ -151,12 +152,12 @@ export class AuthService {
         throw new NotFoundException('사용자를 찾을 수 없습니다.');
       }
 
-      const { password } = authCredentialDto;
+      const { password } = updateUserDto;
       const hashedPassword = await this.bcryptPassword(password);
 
       const userToUpdate = {
         ...user,
-        ...authCredentialDto,
+        ...updateUserDto,
         password: hashedPassword,
       };
 
