@@ -36,7 +36,10 @@ export class AuthController {
 
   @Post('/signup')
   @ApiOperation({ summary: '회원가입' })
-  @ApiCreatedResponse({ description: '유저를 생성한다.', type: User })
+  @ApiCreatedResponse({
+    description: '가입에 성공 시 유저 정보를 반환합니다.',
+    type: User,
+  })
   @ApiBody({
     type: AuthCredentialDto,
     description: '회원가입 시 입력할 정보',
@@ -51,7 +54,7 @@ export class AuthController {
   @Post('/signin')
   @ApiOperation({ summary: '로그인' })
   @ApiOkResponse({
-    description: 'AccessToken과 RefreshToken을 발급한다.',
+    description: 'AccessToken과 RefreshToken을 발급합니다.',
     schema: {
       type: 'string',
       example: {
@@ -70,8 +73,7 @@ export class AuthController {
   @ApiBearerAuth('refresh-token')
   @ApiOperation({ summary: 'JWT 토큰 재발급' })
   @ApiOkResponse({
-    description:
-      '유효한 Refresh Token 을 이용해 새로운 AccessToken 과 RefreshToken 을 발급한다.',
+    description: '새로운 AccessToken 과 RefreshToken 을 반환합니다.',
     schema: {
       type: 'string',
       example: {
@@ -99,7 +101,7 @@ export class AuthController {
   @ApiBearerAuth('access-token')
   @ApiOperation({ summary: '내 정보 조회' })
   @ApiOkResponse({
-    description: '로그인한 유저의 정보를 조회합니다.',
+    description: '로그인한 유저의 정보를 반환합니다.',
   })
   getMyInformation(@GetUserFromAccessToken() user) {
     return this.authService.getMyInformation(user.id);
@@ -110,7 +112,7 @@ export class AuthController {
   @ApiBearerAuth('access-token')
   @ApiOperation({ summary: '사용자 정보 수정' })
   @ApiOkResponse({
-    description: '사용자의 정보를 수정합니다.',
+    description: '수정된 사용자 정보를 반환합니다.',
   })
   updateUserInformation(
     @GetUserFromAccessToken() user,
@@ -132,7 +134,8 @@ export class AuthController {
     },
   })
   @ApiOkResponse({
-    description: '사용자 정보 수정, 탈퇴 전에 한 번 더 비밀번호를 확인합니다.',
+    description:
+      '입력한 비밀번호와 사용자 비밀번호 간의 일치 여부를 반환합니다.',
   })
   verifyMyPassword(
     @GetUserFromAccessToken() user,
