@@ -50,7 +50,6 @@ export class AuthService {
         expiresIn: jwtConfig.REFRESH_TOKEN_EXPIRATION_TIME,
       });
 
-      // TODO: refresh Token 은 DB 에 저장해야 한다.
       await this.usersRepository.saveRefreshToken(user.id, refreshToken);
 
       return { accessToken, refreshToken };
@@ -90,8 +89,6 @@ export class AuthService {
     refreshToken: string,
   ): Promise<{ accessToken: string; refreshToken: string }> {
     try {
-      // TODO : Parameter 로 전달받는 게 아니라 DB 에서 RefreshToken 꺼내와야 한다.
-
       // Verify the refresh token
       const payload = this.jwtService.verify(refreshToken, {
         secret: jwtConfig.JWT_REFRESH_TOKEN_SECRET,

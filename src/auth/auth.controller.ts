@@ -81,29 +81,4 @@ export class AuthController {
   ): Promise<{ accessToken: string; refreshToken: string }> {
     return await this.authService.refreshToken(user.refresh_token);
   }
-
-  /**
-   * TODO : 테스트 : 추후에 삭제할 것.
-   * 사용자가 로그인하여 얻은 액세스 토큰으로 /test 요청 시, Request 안에 있는 user 정보를 가져온다.
-   * @param user
-   */
-  @Post('/test')
-  @UseGuards(AuthGuard())
-  @ApiExcludeEndpoint() // Swagger 에서 제외하는 데코레이터
-  @ApiOperation({ summary: '테스트 API : 추후 삭제 예정' })
-  test(@GetUser() user: Omit<User, 'password'>) {
-    console.log(user);
-  }
-
-  /**
-   * TODO: 쿠키에 들어있는 토큰 값 확인하기 테스트 : 추후 삭제할 것
-   * @param request
-   * @param response
-   */
-  @Get('/cookies')
-  @UseGuards(JwtAuthGuard)
-  getCookies(@Req() request: Request, @Res() response: Response) {
-    const jwt = request.cookies['jwt'];
-    return response.send(jwt);
-  }
 }
