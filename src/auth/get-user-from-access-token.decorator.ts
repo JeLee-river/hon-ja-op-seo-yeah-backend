@@ -29,9 +29,25 @@ export const GetUserFromAccessToken = createParamDecorator((data, context) => {
       const decodedPayload = decoded as JwtPayload;
       return decodedPayload;
     }
-  } catch (err) {
+  } catch (error) {
+    // jwt.verify 에서 발생하는 에러를 처리한다.
+    if (error instanceof jwt.TokenExpiredError) {
+      // Access Token is expired.
+      throw new UnauthorizedException({
+        statusCode: 401,
+        reason: 'EXPIRED',
+        message: 'Unauthorized : Access Token is expired',
+      });
+    } else if (error instanceof jwt.JsonWebTokenError) {
+      // Access is invalid.
+      throw new UnauthorizedException({
+        statusCode: 401,
+        reason: 'INVALID',
+        message: 'Unauthorized : Invalid Access Token',
+      });
+    }
     // 에러를 로거에 출력하고 null 을 return 한다.
-    Logger.error(err);
+    Logger.error(error);
     return null;
   }
 });

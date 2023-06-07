@@ -1,6 +1,7 @@
 import {
   CanActivate,
   ExecutionContext,
+  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
@@ -29,15 +30,25 @@ export class JwtAuthGuard implements CanActivate {
 
       return true;
     } catch (error) {
+      // jwt.verify 에서 발생하는 에러를 처리한다.
       if (error instanceof jwt.TokenExpiredError) {
-        // Token is expired.
-        throw new UnauthorizedException('Token is expired');
-
-        // TODO: Refresh Token 확인 및 Access Token 재발급하는 로직 추가하기
+        // Access Token is expired.
+        throw new UnauthorizedException({
+          statusCode: 401,
+          reason: 'EXPIRED',
+          message: 'Unauthorized : Access Token is expired',
+        });
       } else if (error instanceof jwt.JsonWebTokenError) {
-        // Token is invalid.
-        throw new UnauthorizedException('Invalid Token');
+        // Access is invalid.
+        throw new UnauthorizedException({
+          statusCode: 401,
+          reason: 'INVALID',
+          message: 'Unauthorized : Invalid Access Token',
+        });
       }
+      // 에러를 로거에 출력하고 null 을 return 한다.
+      Logger.error(error);
+      return null;
     }
     return false;
   }
