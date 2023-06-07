@@ -82,4 +82,27 @@ export class DestinationsCommentsRepository extends Repository<DestinationsComme
     const result = await this.delete({ comment_id });
     return result;
   }
+
+  async getCommentsByUserId(user_id: string) {
+    const query = this.createQueryBuilder('destinationComment')
+      .select([
+        'destinationComment.comment_id',
+        'destinationComment.destination_id',
+        'destinationComment.comment',
+        'destinationComment.created_at',
+        'destinationComment.updated_at',
+      ])
+      .where('user_id = :user_id', {
+        user_id,
+      })
+      .leftJoin('destinationComment.user', 'user')
+      .addSelect(['user.id', 'user.nickname', 'user.profile_image'])
+      .leftJoinAndSelect('destinationComment.destination', 'destination')
+      .orderBy({
+        'destinationComment.created_at': 'ASC',
+      });
+
+    const result = await query.getMany();
+    return result;
+  }
 }

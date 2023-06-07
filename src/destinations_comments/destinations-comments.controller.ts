@@ -142,4 +142,22 @@ export class DestinationsCommentsController {
       comment_id,
     );
   }
+
+  // TODO : 로그인한 사용자가 작성한 댓글 전체 목록 조회하기 (여행지 포함)
+  @Get('/destinations/comments/me')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  @ApiOperation({
+    summary: '로그인한 사용자의 모든 리뷰 목록 조회',
+    description: '로그인한 사용자의 모든 리뷰 목록 조회합니다.',
+  })
+  @ApiOkResponse({
+    description: '해당 사용자의 전체 댓글 목록',
+    type: [DestinationsComment],
+  })
+  getCommentsByUserId(
+    @GetUserFromAccessToken() user,
+  ): Promise<DestinationsComment[]> {
+    return this.destinationsCommentsService.getCommentsByUserId(user.id);
+  }
 }

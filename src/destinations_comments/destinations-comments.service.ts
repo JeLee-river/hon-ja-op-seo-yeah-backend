@@ -113,4 +113,8 @@ export class DestinationsCommentsService {
       message: '댓글이 성공적으로 삭제되었습니다.',
     };
   }
+
+  getCommentsByUserId(user_id: string): Promise<DestinationsComment[]> {
+    return this.destinationsCommentsRepository.getCommentsByUserId(user_id);
+  }
 }

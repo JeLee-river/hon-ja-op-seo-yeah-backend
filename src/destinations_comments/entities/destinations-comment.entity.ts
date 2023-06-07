@@ -8,6 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../../auth/entities/user.entity';
+import { Destination } from '../../destinations/entities/destination.entity';
 
 @Entity()
 export class DestinationsComment {
@@ -32,4 +33,11 @@ export class DestinationsComment {
   @ManyToOne(() => User, (user) => user.destinations_comments)
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   user: User;
+
+  @ManyToOne(
+    () => Destination,
+    (destination) => destination.destination_comments,
+  )
+  @JoinColumn({ name: 'destination_id', referencedColumnName: 'id' })
+  destination: Destination;
 }
