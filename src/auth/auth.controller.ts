@@ -177,4 +177,21 @@ export class AuthController {
   ): Promise<{ message: string }> {
     return this.authService.checkDuplicateNickname(nickname);
   }
+
+  @Post('/users/email')
+  @ApiOperation({ summary: '아이디(이메일) 중복 확인' })
+  @ApiBody({
+    description: '사용할 아이디(이메일) 입력',
+    schema: {
+      example: {
+        id: '사용할_아이디(이메일)',
+      },
+    },
+  })
+  @ApiOkResponse({
+    description: '요청한 아이디가 사용 가능한지 여부를 반환합니다.',
+  })
+  checkDuplicateId(@Body('id') id: string): Promise<{ message: string }> {
+    return this.authService.checkDuplicateId(id);
+  }
 }

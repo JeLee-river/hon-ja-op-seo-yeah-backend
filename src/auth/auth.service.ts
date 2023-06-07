@@ -232,4 +232,17 @@ export class AuthService {
 
     return { message: '사용 가능한 닉네임입니다.' };
   }
+
+  async checkDuplicateId(id: string) {
+    const user = await this.usersRepository.findUserById(id);
+
+    if (user) {
+      throw new HttpException(
+        '이미 사용중인 이메일입니다.',
+        HttpStatus.CONFLICT,
+      );
+    }
+
+    return { message: '사용 가능한 이메일입니다.' };
+  }
 }
