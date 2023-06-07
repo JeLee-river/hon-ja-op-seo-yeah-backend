@@ -33,6 +33,7 @@ export class DestinationsCommentsRepository extends Repository<DestinationsComme
   ): Promise<DestinationsComment[]> {
     const query = this.createQueryBuilder('destinationComment')
       .select([
+        'destinationComment.comment_id',
         'destinationComment.destination_id',
         'destinationComment.comment',
         'destinationComment.created_at',

@@ -12,7 +12,7 @@ import { User } from '../../auth/entities/user.entity';
 @Entity()
 export class DestinationsComment {
   @PrimaryGeneratedColumn()
-  idx: number;
+  comment_id: number;
 
   @Column()
   destination_id: number;
