@@ -13,7 +13,12 @@ import { SchedulesService } from './schedules.service';
 import { Schedule } from './entities/schedule.entity';
 import { CreateScheduleDto } from './dto/create-schedule.dto';
 import { ScheduleDetail } from './entities/schedule-detail.entity';
-import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { Request } from 'express';
 import { GetUserFromAccessToken } from '../auth/get-user-from-access-token.decorator';
@@ -26,6 +31,7 @@ export class SchedulesController {
 
   @Post('schedules')
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({
     summary: '여행 일정을 생성한다.',
     description: '새로운 여행 일정을 생성한다.',
