@@ -51,6 +51,5 @@ export class DestinationsCommentsRepository extends Repository<DestinationsComme
 
     const result = await query.getMany();
     return result;
-    return null;
   }
 }
