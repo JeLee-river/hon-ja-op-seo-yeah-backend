@@ -151,8 +151,9 @@ export class DestinationsService {
     return this.destinationsRepository.getDestination(destinationId);
   }
 
-  getDestinationsRanking(): Promise<Destination[]> {
-    const destinations = this.destinationsRepository.getDestinationsRanking();
+  getDestinationsRanking(count: number): Promise<Destination[]> {
+    const destinations =
+      this.destinationsRepository.getDestinationsRanking(count);
 
     return destinations;
   }

@@ -86,7 +86,7 @@ export class SchedulesRepository extends Repository<Schedule> {
     return result;
   }
 
-  async getSchedulesRanking(): Promise<Schedule[]> {
+  async getSchedulesRanking(count: number): Promise<Schedule[]> {
     const query = this.createQueryBuilder('schedule')
       .select([
         'schedule.user_id',
@@ -99,7 +99,7 @@ export class SchedulesRepository extends Repository<Schedule> {
         'schedule.image',
       ])
       .where('schedule.status = :status', { status: 'PUBLIC' })
-      .take(10)
+      .take(count)
       // TODO: 현재는 생성일자 기준 최신순이지만 좋아요 기능 구현 이후에는 좋아요 순으로 정렬해야 한다.
       .orderBy('schedule.created_at', 'DESC');
 

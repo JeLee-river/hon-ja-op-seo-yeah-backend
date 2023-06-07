@@ -5,6 +5,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Query,
   Req,
   UseGuards,
   ValidationPipe,
@@ -17,6 +18,8 @@ import {
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiOperation,
+  ApiParam,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -63,8 +66,16 @@ export class SchedulesController {
   }
 
   @Get('/ranking/schedules')
-  @ApiOperation({ summary: '인기있는 여행 일정 TOP 10 을 조회한다.' })
-  getSchedulesRanking(): Promise<Schedule[]> {
-    return this.schedulesService.getSchedulesRanking();
+  @ApiQuery({
+    name: 'count',
+    type: 'number',
+    description: '조회할 여행 일정 갯수',
+    example: 10,
+  })
+  @ApiOperation({ summary: '여행 일정 랭킹을 요청한 갯수만큼 조회한다.' })
+  getSchedulesRanking(
+    @Query('count', ParseIntPipe) count: number,
+  ): Promise<Schedule[]> {
+    return this.schedulesService.getSchedulesRanking(Number(count));
   }
 }

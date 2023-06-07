@@ -153,7 +153,7 @@ export class SchedulesService {
     return { destinationsByDay, destinationMaps };
   }
 
-  getSchedulesRanking(): Promise<Schedule[]> {
-    return this.schedulesRepository.getSchedulesRanking();
+  getSchedulesRanking(count: number): Promise<Schedule[]> {
+    return this.schedulesRepository.getSchedulesRanking(count);
   }
 }

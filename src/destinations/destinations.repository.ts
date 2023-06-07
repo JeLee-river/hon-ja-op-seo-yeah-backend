@@ -52,10 +52,10 @@ export class DestinationsRepository extends Repository<Destination> {
     return destination;
   }
 
-  async getDestinationsRanking(): Promise<Destination[]> {
-    // TODO : 추후에 '좋아요' 순으로 정렬하여 10개를 뽑아야 한다.
+  async getDestinationsRanking(count: number): Promise<Destination[]> {
+    // TODO : 추후에 '좋아요' 순으로 정렬하여 조회해야 한다.
     const destinations = await this.find({
-      take: 10,
+      take: count,
     });
 
     return destinations;

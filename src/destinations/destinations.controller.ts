@@ -75,11 +75,19 @@ export class DestinationsController {
     return this.destinationsService.getDestination(destinationId);
   }
 
-  @ApiOperation({ summary: '인기있는 여행지 TOP 10 을 조회한다.' })
+  @ApiOperation({ summary: '여행지 랭킹을 요청한 갯수만큼 조회한다.' })
+  @ApiQuery({
+    name: 'count',
+    type: 'number',
+    description: '조회할 여행지 갯수',
+    example: 10,
+  })
   @ApiOkResponse({ type: DestinationResponse })
   @Get('/ranking/destinations')
-  getDestinationsRanking(): Promise<Destination[]> {
-    const result = this.destinationsService.getDestinationsRanking();
+  getDestinationsRanking(
+    @Query('count', ParseIntPipe) count: number,
+  ): Promise<Destination[]> {
+    const result = this.destinationsService.getDestinationsRanking(count);
     return result;
   }
 }
