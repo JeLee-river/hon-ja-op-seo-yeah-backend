@@ -81,7 +81,7 @@ export class SchedulesController {
   }
 
   @Get('schedules')
-  @ApiOperation({ summary: '전체 여행 일정을 조회한다.' })
+  @ApiOperation({ summary: '공개된 전체 여행 일정을 조회한다.' })
   getAllSchedulesWithDetails(): Promise<Schedule[]> {
     return this.schedulesService.getAllSchedules();
   }

@@ -33,6 +33,7 @@ export class SchedulesRepository extends Repository<Schedule> {
         'schedule.image',
         'schedule.created_at',
       ])
+      .where('status = :status', { status: 'PUBLIC' })
       // TODO: 만약 특정 컬럼들만 조회하려면 다음과 같이 leftJoin, addSelect 로 나누어서 해야한다.
       .leftJoin('schedule.user', 'user')
       .addSelect([
