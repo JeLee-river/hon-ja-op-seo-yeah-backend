@@ -16,7 +16,7 @@ import { SignInDto } from './dto/sign-in.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as config from 'config';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { VerifyPasswordDto } from '../destinations/dto/verify-password.dto';
+import { VerifyPasswordDto } from './dto/verify-password.dto';
 
 const jwtConfig = config.get('jwt');
 
