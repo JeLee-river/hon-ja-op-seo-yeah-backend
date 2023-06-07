@@ -91,12 +91,22 @@ export class SchedulesService {
     const schedule = await this.schedulesRepository.getScheduleById(scheduleId);
 
     const { duration, schedule_details } = schedule;
+
     const destinationsByDay = this.transformDestinationsByDay(
       duration,
       schedule_details,
     );
 
+    const flattedDestinations = destinationsByDay.flat();
+    const first_destination = flattedDestinations[0];
+    const last_destination =
+      flattedDestinations[flattedDestinations.length - 1];
+    const destination_count = flattedDestinations.length;
+
     return {
+      first_destination,
+      last_destination,
+      destination_count,
       destinations: destinationsByDay,
       ...schedule,
     };
@@ -117,7 +127,6 @@ export class SchedulesService {
 
       destinationsByDay.push(destinations);
     }
-
     return destinationsByDay;
   }
 

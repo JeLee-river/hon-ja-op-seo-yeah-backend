@@ -18,6 +18,9 @@ export interface ResponseScheduleInterface {
   };
   schedule_details: iSchedule_details[];
   destinations: string[][];
+  first_destination: string;
+  last_destination: string;
+  destination_count: number;
 }
 
 interface iSchedule_details {
