@@ -1,6 +1,9 @@
 import {
   Body,
   Controller,
+  Get,
+  Param,
+  ParseIntPipe,
   Post,
   UseGuards,
   ValidationPipe,
@@ -51,5 +54,18 @@ export class DestinationsCommentsController {
       createDestinationsCommentDto,
     );
     return result;
+  }
+
+  @Get('/:destinationId')
+  @ApiOperation({
+    summary: '특정 여행지의 리뷰 목록 조회',
+    description: '특정 여행지의 리뷰 목록을 조회합니다.',
+  })
+  getCommentsByDestinationId(
+    @Param('destinationId', ParseIntPipe) destinationId: number,
+  ): Promise<DestinationsComment[]> {
+    return this.destinationsCommentsService.getCommentsByDestinationId(
+      destinationId,
+    );
   }
 }

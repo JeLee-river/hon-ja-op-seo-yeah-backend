@@ -22,4 +22,12 @@ export class DestinationsCommentsService {
       Logger.error(error);
     }
   }
+
+  getCommentsByDestinationId(
+    destinationId: number,
+  ): Promise<DestinationsComment[]> {
+    return this.destinationsCommentsRepository.getCommentsByDestinationId(
+      destinationId,
+    );
+  }
 }

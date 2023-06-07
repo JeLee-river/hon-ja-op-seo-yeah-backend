@@ -27,4 +27,29 @@ export class DestinationsCommentsRepository extends Repository<DestinationsComme
 
     return comment;
   }
+
+  async getCommentsByDestinationId(
+    destinationId: number,
+  ): Promise<DestinationsComment[]> {
+    const query = this.createQueryBuilder('destinationComment')
+      .select([
+        'destinationComment.destination_id',
+        'destinationComment.comment',
+        'destinationComment.created_at',
+        'destinationComment.updated_at',
+      ])
+      .where('destination_id = :destination_id', {
+        destination_id: destinationId,
+      })
+      // TODO: 만약 특정 컬럼들만 조회하려면 다음과 같이 leftJoin, addSelect 로 나누어서 해야한다.
+      .leftJoin('destinationComment.user', 'user')
+      .addSelect(['user.id', 'user.nickname', 'user.profile_image'])
+      .orderBy({
+        'destinationComment.created_at': 'ASC',
+      });
+
+    const result = await query.getMany();
+    return result;
+    return null;
+  }
 }

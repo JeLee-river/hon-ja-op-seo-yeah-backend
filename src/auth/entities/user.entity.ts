@@ -7,6 +7,7 @@ import {
   Unique,
 } from 'typeorm';
 import { Schedule } from '../../schedules/entities/schedule.entity';
+import { DestinationsComment } from '../../destinations_comments/entities/destinations-comment.entity';
 
 @Entity()
 // @Unique(['id', 'nickname'])
@@ -45,4 +46,10 @@ export class User {
 
   @OneToMany(() => Schedule, (schedule) => schedule.user)
   schedules: Schedule[];
+
+  @OneToMany(
+    () => DestinationsComment,
+    (destinationsComment) => destinationsComment.user,
+  )
+  destinations_comments: DestinationsComment[];
 }
