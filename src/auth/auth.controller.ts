@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Logger,
   Post,
@@ -142,5 +143,18 @@ export class AuthController {
     @Body() verifyPasswordDto: VerifyPasswordDto,
   ): Promise<{ message: string }> {
     return this.authService.verifyMyPassword(user.id, verifyPasswordDto);
+  }
+
+  @Delete('/users/me')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: '사용자 정보 삭제' })
+  @ApiOkResponse({
+    description: '탈퇴 요청이 성공적으로 처리됐는지 반환합니다.',
+  })
+  deleteUserInformation(
+    @GetUserFromAccessToken() user,
+  ): Promise<{ message: string }> {
+    return this.authService.deleteUserInformation(user.id);
   }
 }

@@ -100,4 +100,16 @@ export class UsersRepository extends Repository<User> {
       user,
     };
   }
+
+  async deleteUserInformation(userId: string): Promise<{ message: string }> {
+    const query = await this.createQueryBuilder('user')
+      .delete()
+      .from(User)
+      .where('id = :id', { id: userId })
+      .execute();
+
+    return {
+      message: '사용자 정보가 성공적으로 삭제되었습니다.',
+    };
+  }
 }

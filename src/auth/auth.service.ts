@@ -201,4 +201,21 @@ export class AuthService {
       message: '비밀번호가 일치합니다.',
     };
   }
+
+  async deleteUserInformation(userId: string): Promise<{ message: string }> {
+    const user = await this.findUserById(userId);
+
+    if (!user) {
+      throw new HttpException(
+        '아이디 또는 비밀번호가 일치하지 않습니다.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    try {
+      return await this.usersRepository.deleteUserInformation(userId);
+    } catch (error) {
+      Logger.error(error);
+    }
+  }
 }
