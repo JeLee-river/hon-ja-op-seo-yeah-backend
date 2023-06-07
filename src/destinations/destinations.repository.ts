@@ -52,6 +52,21 @@ export class DestinationsRepository extends Repository<Destination> {
     return destination;
   }
 
+  async getDestinationsWithReview(skip: number, take: number): Promise<any> {
+    // 여행지 목록을 댓글과 함께 조회한다.
+    return await this.createQueryBuilder('destination')
+      .select('destination')
+      .leftJoinAndSelect(
+        'destination.destination_comments',
+        'destinations_comment',
+      )
+      .skip(skip)
+      .take(take)
+      .groupBy('destination.id')
+      .addGroupBy('destinations_comment.comment_id')
+      .getMany();
+  }
+
   async getDestinationsRanking(count: number): Promise<Destination[]> {
     // TODO : 추후에 '좋아요' 순으로 정렬하여 조회해야 한다.
     const destinations = await this.find({
