@@ -46,9 +46,7 @@ export class JwtAuthGuard implements CanActivate {
           message: 'Unauthorized : Invalid Access Token',
         });
       }
-      // 에러를 로거에 출력하고 null 을 return 한다.
       Logger.error(error);
-      return null;
     }
     return false;
   }
