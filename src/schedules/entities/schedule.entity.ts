@@ -37,7 +37,7 @@ export class Schedule {
   @Column()
   status: string;
 
-  @Column()
+  @Column({ nullable: true })
   image: string;
 
   @CreateDateColumn()

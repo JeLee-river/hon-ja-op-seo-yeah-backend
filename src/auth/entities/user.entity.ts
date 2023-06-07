@@ -37,7 +37,7 @@ export class User {
   @CreateDateColumn()
   created_at: Date;
 
-  @Column()
+  @Column({ nullable: true })
   profile_image: string;
 
   @Column({ nullable: true })
