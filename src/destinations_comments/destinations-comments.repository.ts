@@ -2,6 +2,7 @@ import { DataSource, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { DestinationsComment } from './entities/destinations-comment.entity';
 import { CreateDestinationsCommentDto } from './dto/create-destinations-comment.dto';
+import { UpdateDestinationsCommentDto } from './dto/update-destinations-comment.dto';
 
 @Injectable()
 export class DestinationsCommentsRepository extends Repository<DestinationsComment> {
@@ -55,5 +56,29 @@ export class DestinationsCommentsRepository extends Repository<DestinationsComme
 
     const result = await query.getMany();
     return result;
+  }
+
+  async getCommentByCommentId(
+    comment_id: number,
+  ): Promise<DestinationsComment> {
+    return await this.findOneBy({ comment_id });
+  }
+
+  async updateDestinationComment(
+    user_id: string,
+    destination_id: number,
+    comment_id: number,
+    updateDestinationsCommentDto: UpdateDestinationsCommentDto,
+  ) {
+    const commentToBeUpdated = this.create({
+      user_id,
+      destination_id,
+      comment_id,
+      ...updateDestinationsCommentDto,
+    });
+
+    await this.save(commentToBeUpdated);
+
+    return commentToBeUpdated;
   }
 }
