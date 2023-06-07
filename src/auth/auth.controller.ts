@@ -143,7 +143,7 @@ export class AuthController {
   })
   verifyMyPassword(
     @GetUserFromAccessToken() user,
-    @Body() verifyPasswordDto: VerifyPasswordDto,
+    @Body(ValidationPipe) verifyPasswordDto: VerifyPasswordDto,
   ): Promise<{ message: string }> {
     return this.authService.verifyMyPassword(user.id, verifyPasswordDto);
   }
