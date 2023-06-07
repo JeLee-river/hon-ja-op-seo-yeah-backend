@@ -84,4 +84,11 @@ export class AuthController {
   ): Promise<{ accessToken: string; refreshToken: string }> {
     return await this.authService.refreshToken(user.refresh_token);
   }
+
+  // TODO: 사용자 인증이 필요한 api 호출시 인증이 제대로 이루어지는지 테스트하는 api
+  @Post('/tokenTest')
+  @UseGuards(JwtAuthGuard)
+  async tokenTest(@GetUserFromAccessToken() user) {
+    console.log('user', user);
+  }
 }
