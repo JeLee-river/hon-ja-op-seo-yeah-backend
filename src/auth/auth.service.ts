@@ -51,8 +51,11 @@ export class AuthService {
       });
 
       // TODO: refresh Token 은 DB 에 저장해야 한다.
+      await this.usersRepository.saveRefreshToken(user.id, refreshToken);
+
       return { accessToken, refreshToken };
     } catch (error) {
+      console.log(error);
       throw new HttpException(
         '아이디 또는 비밀번호가 일치하지 않습니다.',
         HttpStatus.BAD_REQUEST,

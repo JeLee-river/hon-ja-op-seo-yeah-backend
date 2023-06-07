@@ -74,4 +74,13 @@ export class UsersRepository extends Repository<User> {
 
     return user;
   }
+
+  async saveRefreshToken(userId: string, refreshToken: string): Promise<void> {
+    await this.update(
+      { id: userId },
+      {
+        refresh_token: refreshToken,
+      },
+    );
+  }
 }

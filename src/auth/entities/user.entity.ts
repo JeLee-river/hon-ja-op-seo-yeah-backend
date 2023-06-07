@@ -40,6 +40,9 @@ export class User {
   @Column()
   profile_image: string;
 
+  @Column({ nullable: true })
+  refresh_token: string;
+
   @OneToMany(() => Schedule, (schedule) => schedule.user)
   schedules: Schedule[];
 }
