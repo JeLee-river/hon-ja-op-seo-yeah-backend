@@ -27,7 +27,6 @@ export class CreateScheduleDto {
   end_date: string;
 
   @ApiProperty({ description: '공개 여부', example: 'PUBLIC | PRIVATE' })
-  @IsString()
   status: ScheduleStatus;
 
   @ApiProperty({ description: '대표 이미지', example: 'base64 imagePath' })
