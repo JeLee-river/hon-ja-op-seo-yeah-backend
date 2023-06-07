@@ -24,18 +24,24 @@ import { CreateDestinationsCommentDto } from './dto/create-destinations-comment.
 import { DestinationsComment } from './entities/destinations-comment.entity';
 
 @ApiTags('여행지 리뷰 (Destinations Comments)')
-@Controller('destinations-comments')
+@Controller('')
 export class DestinationsCommentsController {
   constructor(
     private readonly destinationsCommentsService: DestinationsCommentsService,
   ) {}
 
-  @Post()
+  @Post('/destinations/:destinationId/comments')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
   @ApiOperation({
     summary: '여행지 리뷰 작성',
     description: '여행지에 대해 리뷰를 작성합니다.',
+  })
+  @ApiParam({
+    name: 'destinationId',
+    type: 'number',
+    description: '여행지 ID 를 전달하세요.',
+    example: 2877795,
   })
   @ApiBody({
     type: CreateDestinationsCommentDto,
@@ -44,17 +50,19 @@ export class DestinationsCommentsController {
   @ApiCreatedResponse({ description: '등록된 댓글 및 사용자 정보' })
   createDestinationComment(
     @GetUserFromAccessToken() user,
+    @Param('destinationId', ParseIntPipe) destinationId: number,
     @Body(ValidationPipe)
     createDestinationsCommentDto: CreateDestinationsCommentDto,
   ): Promise<DestinationsComment> {
     const result = this.destinationsCommentsService.createDestinationComment(
       user.id,
+      destinationId,
       createDestinationsCommentDto,
     );
     return result;
   }
 
-  @Get('/:destinationId')
+  @Get('/destinations/:destinationId/comments')
   @ApiOperation({
     summary: '특정 여행지의 리뷰 목록 조회',
     description: '특정 여행지의 리뷰 목록을 조회합니다.',

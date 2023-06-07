@@ -10,16 +10,20 @@ export class DestinationsCommentsRepository extends Repository<DestinationsComme
   }
 
   /**
-   * 여행지 리뷰 생성
+   * 여행지 리뷰 작성
+   *
    * @param user_id
+   * @param destination_id
    * @param createDestinationsCommentDto
    */
   async createDestinationComment(
     user_id: string,
+    destination_id: number,
     createDestinationsCommentDto: CreateDestinationsCommentDto,
   ) {
     const comment = this.create({
       user_id,
+      destination_id,
       ...createDestinationsCommentDto,
     });
 

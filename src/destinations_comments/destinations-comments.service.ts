@@ -11,11 +11,13 @@ export class DestinationsCommentsService {
 
   createDestinationComment(
     user_id: string,
+    destinationId: number,
     createDestinationsCommentDto: CreateDestinationsCommentDto,
   ): Promise<DestinationsComment> {
     try {
       return this.destinationsCommentsRepository.createDestinationComment(
         user_id,
+        destinationId,
         createDestinationsCommentDto,
       );
     } catch (error) {
