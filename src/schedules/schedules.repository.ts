@@ -21,24 +21,31 @@ export class SchedulesRepository extends Repository<Schedule> {
   }
 
   async getAllSchedules(): Promise<Schedule[]> {
-    const query = this.createQueryBuilder('a')
+    const query = this.createQueryBuilder('schedule')
       .select([
-        'a.user_id',
-        'a.title',
-        'a.summary',
-        'a.start_date',
-        'a.end_date',
-        'a.duration',
-        'b.day',
-        'b.tour_order',
-        'c.title',
+        'schedule.schedule_id',
+        'schedule.title',
+        'schedule.summary',
+        'schedule.start_date',
+        'schedule.end_date',
+        'schedule.duration',
+        'schedule.status',
+        'schedule.image',
+        'schedule.created_at',
       ])
-      .leftJoinAndSelect('a.schedule_details', 'b')
-      .leftJoinAndSelect('b.destination', 'c')
-      .where('a.status = :status', { status: 'PUBLIC' })
+      // TODO: 만약 특정 컬럼들만 조회하려면 다음과 같이 leftJoin, addSelect 로 나누어서 해야한다.
+      .leftJoin('schedule.user', 'user')
+      .addSelect([
+        'user.id',
+        'user.nickname',
+        'user.phone_number',
+        'user.profile_image',
+      ])
+      .leftJoinAndSelect('schedule.schedule_details', 'schedule_details')
+      .leftJoinAndSelect('schedule_details.destination', 'destination')
       .orderBy({
-        'b.day': 'ASC',
-        'b.tour_order': 'ASC',
+        'schedule_details.day': 'ASC',
+        'schedule_details.tour_order': 'ASC',
       });
 
     const result = await query.getMany();

@@ -6,6 +6,8 @@ import { ScheduleDetail } from './entities/schedule-detail.entity';
 import { SchedulesDetailRepository } from './schedules-detail.repository';
 import { ResponseScheduleInterface } from '../types/ResponseSchedule.interface';
 
+import { promises as fs } from 'fs';
+
 @Injectable()
 export class SchedulesService {
   constructor(
@@ -81,8 +83,14 @@ export class SchedulesService {
     }
   }
 
-  getAllSchedules(): Promise<Schedule[]> {
-    return this.schedulesRepository.getAllSchedules();
+  async getAllSchedules(): Promise<Schedule[]> {
+    const schedules = await this.schedulesRepository.getAllSchedules();
+
+    const newSchedules = schedules.map((schedule) => {
+      return this.transformSchedule(schedule);
+    });
+
+    return newSchedules;
   }
 
   async getScheduleById(
@@ -90,12 +98,14 @@ export class SchedulesService {
   ): Promise<ResponseScheduleInterface> {
     const schedule = await this.schedulesRepository.getScheduleById(scheduleId);
 
+    return this.transformSchedule(schedule);
+  }
+
+  transformSchedule(schedule) {
     const { duration, schedule_details } = schedule;
 
-    const destinationsByDay = this.transformDestinationsByDay(
-      duration,
-      schedule_details,
-    );
+    const { destinationsByDay, destinationMaps } =
+      this.transformDestinationsByDay(duration, schedule_details);
 
     const flattedDestinations = destinationsByDay.flat();
     const first_destination = flattedDestinations[0];
@@ -103,31 +113,44 @@ export class SchedulesService {
       flattedDestinations[flattedDestinations.length - 1];
     const destination_count = flattedDestinations.length;
 
+    // 상세 일정에 대한 데이터 변환이 끝났으므로 응답하지 않을 원본 데이터는 제거한다.
+    delete schedule.schedule_details;
+
     return {
+      ...schedule,
       first_destination,
       last_destination,
       destination_count,
       destinations: destinationsByDay,
-      ...schedule,
+      destinationMaps,
     };
   }
 
   transformDestinationsByDay(duration, schedule_details) {
     const destinationsByDay = [];
     const FIRST_DAY_OF_DURATION = 1;
+    const destinationMaps = [];
 
     for (let day = FIRST_DAY_OF_DURATION; day <= duration; day++) {
       const destinations = [];
+      const destinationMap = [];
 
       schedule_details.forEach((detail) => {
         if (detail.day === day) {
           destinations.push(detail.destination.title);
+          destinationMap.push({
+            title: detail.destination.title,
+            mapx: detail.destination.mapx,
+            mapy: detail.destination.mapy,
+          });
         }
       });
 
       destinationsByDay.push(destinations);
+      destinationMaps.push(destinationMap);
     }
-    return destinationsByDay;
+
+    return { destinationsByDay, destinationMaps };
   }
 
   getSchedulesRanking(): Promise<Schedule[]> {
