@@ -38,9 +38,8 @@ export class AuthService {
       const user = await this.usersRepository.findUserById(id);
       await this.verifyPassword(password, user.password);
 
-      const { password: userPassword, ...result } = user;
+      const payload = { id: user.id };
 
-      const payload = result;
       const accessToken = this.jwtService.sign(payload, {
         secret: jwtConfig.JWT_ACCESS_TOKEN_SECRET,
         expiresIn: jwtConfig.ACCESS_TOKEN_EXPIRATION_TIME,
@@ -101,7 +100,7 @@ export class AuthService {
         throw new UnauthorizedException();
       }
 
-      const { idx, password, ...newPayload } = user;
+      const newPayload = { id: user.id };
 
       // Create a new access token
       const newAccessToken = this.jwtService.sign(newPayload, {

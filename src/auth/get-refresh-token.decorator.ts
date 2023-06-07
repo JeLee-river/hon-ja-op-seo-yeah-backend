@@ -7,7 +7,7 @@ import * as jwt from 'jsonwebtoken';
 import { JwtPayload } from 'jsonwebtoken';
 import * as config from 'config';
 
-export const GetUserFromRefreshToken = createParamDecorator((data, context) => {
+export const GetRefreshToken = createParamDecorator((data, context) => {
   const request = context.switchToHttp().getRequest();
   const authHeader = request.headers['authorization'];
 
@@ -24,11 +24,7 @@ export const GetUserFromRefreshToken = createParamDecorator((data, context) => {
       config.get('jwt.JWT_REFRESH_TOKEN_SECRET'),
     );
 
-    // decoded 가 객체인지 확인한다. (string 일수도 있다고 함.)
-    if (typeof decoded === 'object') {
-      const decodedPayload = decoded as JwtPayload;
-      return decodedPayload;
-    }
+    return bearerToken;
   } catch (error) {
     // jwt.verify 에서 발생하는 에러를 처리한다.
     if (error instanceof jwt.TokenExpiredError) {

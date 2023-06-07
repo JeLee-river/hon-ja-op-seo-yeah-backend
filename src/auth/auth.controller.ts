@@ -1,10 +1,7 @@
 import {
   Body,
   Controller,
-  Get,
   Post,
-  Req,
-  Res,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
@@ -12,8 +9,7 @@ import { AuthService } from './auth.service';
 import { AuthCredentialDto } from './dto/auth-credential.dto';
 import { User } from './entities/user.entity';
 import { SignInDto } from './dto/sign-in.dto';
-import { AuthGuard } from '@nestjs/passport';
-import { GetUser } from './get-user.decorator';
+
 import {
   ApiBearerAuth,
   ApiBody,
@@ -26,7 +22,7 @@ import {
 import { Request, Response } from 'express';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { GetUserFromAccessToken } from './get-user-from-access-token.decorator';
-import { GetUserFromRefreshToken } from './get-user-from-refresh-token.decorator';
+import { GetRefreshToken } from './get-refresh-token.decorator';
 
 @Controller('auth')
 @ApiTags('사용자 (Users)')
@@ -80,9 +76,9 @@ export class AuthController {
     },
   })
   async refreshToken(
-    @GetUserFromRefreshToken() user,
+    @GetRefreshToken() refreshToken,
   ): Promise<{ accessToken: string; refreshToken: string }> {
-    return await this.authService.refreshToken(user.refresh_token);
+    return await this.authService.refreshToken(refreshToken);
   }
 
   // TODO: 사용자 인증이 필요한 api 호출시 인증이 제대로 이루어지는지 테스트하는 api
