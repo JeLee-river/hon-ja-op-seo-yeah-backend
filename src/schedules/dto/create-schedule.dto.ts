@@ -1,5 +1,6 @@
 import { IsNumber, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { ScheduleStatus } from '../../types/ScheduleStatus.enum';
 
 export class CreateScheduleDto {
   @ApiProperty({ description: '일정 제목', example: '영희의 우도 여행 #1' })
@@ -27,7 +28,7 @@ export class CreateScheduleDto {
 
   @ApiProperty({ description: '공개 여부', example: 'PUBLIC | PRIVATE' })
   @IsString()
-  status: string;
+  status: ScheduleStatus;
 
   @ApiProperty({ description: '대표 이미지', example: 'base64 imagePath' })
   @IsString()

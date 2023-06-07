@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { ScheduleDetail } from './schedule-detail.entity';
 import { User } from '../../auth/entities/user.entity';
+import { ScheduleStatus } from '../../types/ScheduleStatus.enum';
 
 @Entity()
 export class Schedule {
@@ -34,8 +35,8 @@ export class Schedule {
   @Column()
   end_date: string;
 
-  @Column()
-  status: string;
+  @Column({ default: 'PUBLIC' })
+  status: ScheduleStatus;
 
   @Column({ nullable: true })
   image: string;
