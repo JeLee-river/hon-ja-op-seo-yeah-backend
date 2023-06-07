@@ -31,7 +31,7 @@ export class AuthService {
 
   async signIn(
     signInDto: SignInDto,
-  ): Promise<{ accessToken: string; refreshToken: string }> {
+  ): Promise<{ accessToken: string; refreshToken: string; user: User }> {
     const { id, password } = signInDto;
 
     try {
@@ -51,7 +51,12 @@ export class AuthService {
 
       await this.usersRepository.saveRefreshToken(user.id, refreshToken);
 
-      return { accessToken, refreshToken };
+      // 전달할 유저 정보 중 제외할 항목들을 delete 한다.
+      delete user.password;
+      delete user.refresh_token;
+      delete user.idx;
+
+      return { accessToken, refreshToken, user };
     } catch (error) {
       console.log(error);
       throw new HttpException(

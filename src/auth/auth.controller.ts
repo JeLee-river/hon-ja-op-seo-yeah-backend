@@ -57,7 +57,7 @@ export class AuthController {
   })
   async signIn(
     @Body(ValidationPipe) signInDto: SignInDto,
-  ): Promise<{ accessToken: string; refreshToken: string }> {
+  ): Promise<{ accessToken: string; refreshToken: string; user: User }> {
     return await this.authService.signIn(signInDto);
   }
 
