@@ -1,4 +1,4 @@
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, DeleteResult, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { DestinationsComment } from './entities/destinations-comment.entity';
 import { CreateDestinationsCommentDto } from './dto/create-destinations-comment.dto';
@@ -80,5 +80,10 @@ export class DestinationsCommentsRepository extends Repository<DestinationsComme
     await this.save(commentToBeUpdated);
 
     return commentToBeUpdated;
+  }
+
+  async deleteDestinationComment(comment_id: number): Promise<DeleteResult> {
+    const result = await this.delete({ comment_id });
+    return result;
   }
 }
