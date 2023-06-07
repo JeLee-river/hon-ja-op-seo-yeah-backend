@@ -26,8 +26,7 @@ export class JwtAuthGuard implements CanActivate {
         bearerToken,
         config.get('jwt.JWT_ACCESS_TOKEN_SECRET'),
       );
-      // TODO: jwt.verify 실행 결과로 디코딩된 유저 정보 확인용 : 추후 삭제할 것
-      // console.log(decoded);
+
       return true;
     } catch (error) {
       if (error instanceof jwt.TokenExpiredError) {

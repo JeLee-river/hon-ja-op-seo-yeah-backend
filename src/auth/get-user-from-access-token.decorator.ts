@@ -23,7 +23,6 @@ export const GetUserFromAccessToken = createParamDecorator((data, context) => {
       bearerToken,
       config.get('jwt.JWT_ACCESS_TOKEN_SECRET'),
     );
-    console.log(decoded);
 
     // decoded 가 객체인지 확인한다. (string 일수도 있다고 함.)
     if (typeof decoded === 'object') {
