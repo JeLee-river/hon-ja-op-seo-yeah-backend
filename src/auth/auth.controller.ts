@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Logger,
   Post,
   UseGuards,
@@ -88,5 +89,12 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   async tokenTest(@GetUserFromAccessToken() user) {
     Logger.verbose(user);
+  }
+
+  @Get('/me')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  getMyInformation(@GetUserFromAccessToken() user) {
+    return this.authService.getMyInformation(user.id);
   }
 }

@@ -128,4 +128,14 @@ export class AuthService {
       throw new UnauthorizedException('Invalid refresh token');
     }
   }
+
+  async getMyInformation(userId: string) {
+    const myInformation: User = await this.findUserById(userId);
+
+    delete myInformation.idx;
+    delete myInformation.password;
+    delete myInformation.refresh_token;
+
+    return myInformation;
+  }
 }
