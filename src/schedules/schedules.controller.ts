@@ -5,6 +5,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Put,
   Query,
   Req,
   UseGuards,
@@ -28,32 +29,55 @@ import { Request } from 'express';
 import { GetUserFromAccessToken } from '../auth/get-user-from-access-token.decorator';
 import { ResponseScheduleInterface } from '../types/ResponseSchedule.interface';
 import { AuthCredentialDto } from '../auth/dto/auth-credential.dto';
+import { UpdateScheduleDto } from './dto/update-schedule.dto';
 
 @Controller()
 @ApiTags('여행 일정 (Schedules)')
 export class SchedulesController {
   constructor(private readonly schedulesService: SchedulesService) {}
 
-  @Post('schedules')
+  @Post('schedules/basic')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
   @ApiOperation({
-    summary: '여행 일정을 생성한다.',
-    description: '새로운 여행 일정을 생성한다.',
+    summary: '여행 일정의 기본 정보를 저장합니다.',
+    description: '새로운 여행 일정의 기본 정보를 저장합니다.',
   })
   @ApiBody({
     type: CreateScheduleDto,
-    description: '여행 일정을 등록할 때 입력할 정보',
+    description: '여행 일정의 기본 정보을 등록할 때 입력할 정보',
   })
   @ApiCreatedResponse({ description: '생성된 여행 일정' })
-  createSchedule(
+  createScheduleBasic(
     @Body(ValidationPipe) createScheduleDto: CreateScheduleDto,
+    @GetUserFromAccessToken() user,
+  ): Promise<Schedule> {
+    return this.schedulesService.createScheduleBasic(
+      user.id,
+      createScheduleDto,
+    );
+  }
+
+  @Put('schedules')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  @ApiOperation({
+    summary: '여행 일정을 업데이트 합니다.',
+    description: '여행 기본 일정을 업데이트하고 상세 일정을 등록합니다..',
+  })
+  @ApiBody({
+    type: UpdateScheduleDto,
+    description: '여행 일정 기본 정보 및 상세 일정',
+  })
+  @ApiCreatedResponse({ description: '업데이트된 여행 일정' })
+  updateSchedule(
+    @Body(ValidationPipe) updateScheduleDto: UpdateScheduleDto,
     @GetUserFromAccessToken() user,
   ): Promise<{
     schedule: Schedule;
     scheduleDetails: Omit<ScheduleDetail, 'idx'>[];
   }> {
-    return this.schedulesService.createSchedule(user.id, createScheduleDto);
+    return this.schedulesService.updateSchedule(user.id, updateScheduleDto);
   }
 
   @Get('schedules')
