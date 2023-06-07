@@ -51,4 +51,13 @@ export class DestinationsRepository extends Repository<Destination> {
 
     return destination;
   }
+
+  async getDestinationsRanking(): Promise<Destination[]> {
+    // TODO : 추후에 '좋아요' 순으로 정렬하여 10개를 뽑아야 한다.
+    const destinations = await this.find({
+      take: 10,
+    });
+
+    return destinations;
+  }
 }

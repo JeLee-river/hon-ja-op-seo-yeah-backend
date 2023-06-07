@@ -150,4 +150,10 @@ export class DestinationsService {
   getDestination(destinationId: number): Promise<Destination> {
     return this.destinationsRepository.getDestination(destinationId);
   }
+
+  getDestinationsRanking(): Promise<Destination[]> {
+    const destinations = this.destinationsRepository.getDestinationsRanking();
+
+    return destinations;
+  }
 }

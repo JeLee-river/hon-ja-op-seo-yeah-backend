@@ -74,4 +74,12 @@ export class DestinationsController {
   ): Promise<Destination> {
     return this.destinationsService.getDestination(destinationId);
   }
+
+  @ApiOperation({ summary: '인기있는 여행지 TOP 10 을 조회한다.' })
+  @ApiOkResponse({ type: DestinationResponse })
+  @Get('/ranking/destinations')
+  getDestinationsRanking(): Promise<Destination[]> {
+    const result = this.destinationsService.getDestinationsRanking();
+    return result;
+  }
 }
