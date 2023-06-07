@@ -65,7 +65,7 @@ export class AuthService {
       Logger.error(error);
       throw new HttpException(
         '아이디 또는 비밀번호가 일치하지 않습니다.',
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.UNAUTHORIZED,
       );
     }
   }
@@ -82,7 +82,7 @@ export class AuthService {
     if (!isPasswordMatching) {
       throw new HttpException(
         '아이디 또는 비밀번호가 일치하지 않습니다.',
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.UNAUTHORIZED,
       );
     }
 
@@ -193,7 +193,7 @@ export class AuthService {
     if (!isPasswordMatching) {
       throw new HttpException(
         '비밀번호가 일치하지 않습니다.',
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.UNAUTHORIZED,
       );
     }
 
@@ -208,7 +208,7 @@ export class AuthService {
     if (!user) {
       throw new HttpException(
         '아이디 또는 비밀번호가 일치하지 않습니다.',
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.UNAUTHORIZED,
       );
     }
 

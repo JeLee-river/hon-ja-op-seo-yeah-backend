@@ -130,7 +130,7 @@ export class AuthController {
     description: '비밀번호 입력',
     schema: {
       example: {
-        password: '변경할_비밀번호',
+        password: '확인할_비밀번호',
       },
     },
   })
