@@ -16,6 +16,7 @@ import { CreateScheduleDto } from './dto/create-schedule.dto';
 import { ScheduleDetail } from './entities/schedule-detail.entity';
 import {
   ApiBearerAuth,
+  ApiBody,
   ApiCreatedResponse,
   ApiOperation,
   ApiParam,
@@ -26,6 +27,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { Request } from 'express';
 import { GetUserFromAccessToken } from '../auth/get-user-from-access-token.decorator';
 import { ResponseScheduleInterface } from '../types/ResponseSchedule.interface';
+import { AuthCredentialDto } from '../auth/dto/auth-credential.dto';
 
 @Controller()
 @ApiTags('여행 일정 (Schedules)')
@@ -39,9 +41,12 @@ export class SchedulesController {
     summary: '여행 일정을 생성한다.',
     description: '새로운 여행 일정을 생성한다.',
   })
+  @ApiBody({
+    type: CreateScheduleDto,
+    description: '여행 일정을 등록할 때 입력할 정보',
+  })
   @ApiCreatedResponse({ description: '생성된 여행 일정' })
   createSchedule(
-    @Req() request: Request,
     @Body(ValidationPipe) createScheduleDto: CreateScheduleDto,
     @GetUserFromAccessToken() user,
   ): Promise<{
