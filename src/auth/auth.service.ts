@@ -2,6 +2,7 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
@@ -58,7 +59,7 @@ export class AuthService {
 
       return { accessToken, refreshToken, user };
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
       throw new HttpException(
         '아이디 또는 비밀번호가 일치하지 않습니다.',
         HttpStatus.BAD_REQUEST,
@@ -123,7 +124,7 @@ export class AuthService {
 
       return { accessToken: newAccessToken, refreshToken: newRefreshToken };
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
       throw new UnauthorizedException('Invalid refresh token');
     }
   }

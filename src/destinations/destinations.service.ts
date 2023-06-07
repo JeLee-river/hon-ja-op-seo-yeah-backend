@@ -33,8 +33,8 @@ export class DestinationsService {
       // API 응답 결과를 별도의 JSON 파일로 생성하기
       const jsonData = JSON.stringify(data, null, 2);
       await fs.writeFile('./data/destinations.json', jsonData);
-    } catch (e) {
-      console.log(e);
+    } catch (error) {
+      Logger.error(error);
     }
   }
 
@@ -114,8 +114,8 @@ export class DestinationsService {
 
     try {
       await fs.writeFile('./data/destinations-to-insert-1-300.json', jsonData);
-    } catch (e) {
-      console.log(e);
+    } catch (error) {
+      Logger.error(error);
     }
   }
 

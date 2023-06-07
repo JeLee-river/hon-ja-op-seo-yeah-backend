@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { SchedulesRepository } from './schedules.repository';
 import { CreateScheduleDto } from './dto/create-schedule.dto';
 import { Schedule } from './entities/schedule.entity';
@@ -44,7 +48,7 @@ export class SchedulesService {
         scheduleDetails,
       };
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
       throw new InternalServerErrorException('일정 등록에 실패하였습니다.');
     }
   }
@@ -78,7 +82,7 @@ export class SchedulesService {
       const result = await Promise.all(promises);
       return result;
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
       throw new InternalServerErrorException('상세 일정 등록에 실패했습니다.');
     }
   }
