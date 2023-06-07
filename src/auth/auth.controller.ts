@@ -113,8 +113,30 @@ export class AuthController {
   })
   updateUserInformation(
     @GetUserFromAccessToken() user,
-    @Body() updateUserDto: UpdateUserDto,
+    @Body(ValidationPipe) updateUserDto: UpdateUserDto,
   ): Promise<{ message: string; user: User }> {
     return this.authService.updateUserInformation(user.id, updateUserDto);
+  }
+
+  @Post('/users/password')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: '비밀번호 확인' })
+  @ApiBody({
+    description: '비밀번호 입력',
+    schema: {
+      example: {
+        password: '변경할_비밀번호',
+      },
+    },
+  })
+  @ApiOkResponse({
+    description: '사용자 정보 수정, 탈퇴 전에 한 번 더 비밀번호를 확인합니다.',
+  })
+  verifyMyPassword(
+    @GetUserFromAccessToken() user,
+    @Body(ValidationPipe) password: string,
+  ): Promise<{ message: string }> {
+    return this.authService.verifyMyPassword(user.id, password);
   }
 }

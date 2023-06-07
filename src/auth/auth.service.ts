@@ -72,7 +72,7 @@ export class AuthService {
   async verifyPassword(
     plainTextPassword: string,
     hashedPassword: string,
-  ): Promise<void> {
+  ): Promise<boolean> {
     const isPasswordMatching = await bcrypt.compare(
       plainTextPassword,
       hashedPassword,
@@ -84,6 +84,8 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
     }
+
+    return isPasswordMatching;
   }
 
   async findUserById(userId: string): Promise<User> {
@@ -176,5 +178,25 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     return hashedPassword;
+  }
+
+  async verifyMyPassword(
+    id: string,
+    password: string,
+  ): Promise<{ message: string }> {
+    const user = await this.usersRepository.findUserById(id);
+
+    const isPasswordMatching = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordMatching) {
+      throw new HttpException(
+        '비밀번호가 일치하지 않습니다.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    return {
+      message: '비밀번호가 일치합니다.',
+    };
   }
 }
