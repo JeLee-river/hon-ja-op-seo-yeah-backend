@@ -30,6 +30,8 @@ import { GetUserFromAccessToken } from './get-user-from-access-token.decorator';
 import { GetRefreshToken } from './get-refresh-token.decorator';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { VerifyPasswordDto } from '../destinations/dto/verify-password.dto';
+import { CheckDuplicateNicknameDto } from './dto/check-duplicate-nickname.dto';
+import { CheckDuplicateIdDto } from './dto/check-duplicate-id.dto';
 
 @Controller('auth')
 @ApiTags('사용자 (Users)')
@@ -173,9 +175,9 @@ export class AuthController {
     description: '요청한 닉네임이 사용 가능한지 여부를 반환합니다.',
   })
   checkDuplicateNickname(
-    @Body('nickname') nickname: string,
+    @Body(ValidationPipe) checkNicknameDto: CheckDuplicateNicknameDto,
   ): Promise<{ message: string }> {
-    return this.authService.checkDuplicateNickname(nickname);
+    return this.authService.checkDuplicateNickname(checkNicknameDto.nickname);
   }
 
   @Post('/users/email')
@@ -191,7 +193,9 @@ export class AuthController {
   @ApiOkResponse({
     description: '요청한 아이디가 사용 가능한지 여부를 반환합니다.',
   })
-  checkDuplicateId(@Body('id') id: string): Promise<{ message: string }> {
-    return this.authService.checkDuplicateId(id);
+  checkDuplicateId(
+    @Body(ValidationPipe) checkDuplicateIdDto: CheckDuplicateIdDto,
+  ): Promise<{ message: string }> {
+    return this.authService.checkDuplicateId(checkDuplicateIdDto.id);
   }
 }
