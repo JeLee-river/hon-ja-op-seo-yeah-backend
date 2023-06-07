@@ -27,6 +27,7 @@ import { JwtAuthGuard } from './jwt-auth.guard';
 import { GetUserFromAccessToken } from './get-user-from-access-token.decorator';
 import { GetRefreshToken } from './get-refresh-token.decorator';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { VerifyPasswordDto } from '../destinations/dto/verify-password.dto';
 
 @Controller('auth')
 @ApiTags('사용자 (Users)')
@@ -135,8 +136,8 @@ export class AuthController {
   })
   verifyMyPassword(
     @GetUserFromAccessToken() user,
-    @Body(ValidationPipe) password: string,
+    @Body() verifyPasswordDto: VerifyPasswordDto,
   ): Promise<{ message: string }> {
-    return this.authService.verifyMyPassword(user.id, password);
+    return this.authService.verifyMyPassword(user.id, verifyPasswordDto);
   }
 }

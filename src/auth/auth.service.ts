@@ -15,6 +15,7 @@ import { SignInDto } from './dto/sign-in.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as config from 'config';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { VerifyPasswordDto } from '../destinations/dto/verify-password.dto';
 
 const jwtConfig = config.get('jwt');
 
@@ -182,9 +183,10 @@ export class AuthService {
 
   async verifyMyPassword(
     id: string,
-    password: string,
+    verifyPasswordDto: VerifyPasswordDto,
   ): Promise<{ message: string }> {
     const user = await this.usersRepository.findUserById(id);
+    const { password } = verifyPasswordDto;
 
     const isPasswordMatching = await bcrypt.compare(password, user.password);
 
