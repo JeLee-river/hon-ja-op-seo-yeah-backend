@@ -12,12 +12,13 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiCreatedResponse,
+  ApiOkResponse,
   ApiOperation,
+  ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
 import { DestinationsCommentsService } from './destinations-comments.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { CreateScheduleDto } from '../schedules/dto/create-schedule.dto';
 import { GetUserFromAccessToken } from '../auth/get-user-from-access-token.decorator';
 import { CreateDestinationsCommentDto } from './dto/create-destinations-comment.dto';
 import { DestinationsComment } from './entities/destinations-comment.entity';
@@ -37,18 +38,15 @@ export class DestinationsCommentsController {
     description: '여행지에 대해 리뷰를 작성합니다.',
   })
   @ApiBody({
-    type: CreateScheduleDto,
-    description: '여행지 리뷰를 등록할 때 입력할 정보',
+    type: CreateDestinationsCommentDto,
+    description: '댓글 내용을 입력하세요.',
   })
-  @ApiCreatedResponse({ description: '등록된 댓글 정보' })
+  @ApiCreatedResponse({ description: '등록된 댓글 및 사용자 정보' })
   createDestinationComment(
     @GetUserFromAccessToken() user,
     @Body(ValidationPipe)
     createDestinationsCommentDto: CreateDestinationsCommentDto,
   ): Promise<DestinationsComment> {
-    // console.log('@@@@ Post Dest Comment @@@@');
-    // console.log(user);
-    // console.log(createDestinationsCommentDto);
     const result = this.destinationsCommentsService.createDestinationComment(
       user.id,
       createDestinationsCommentDto,
@@ -60,6 +58,16 @@ export class DestinationsCommentsController {
   @ApiOperation({
     summary: '특정 여행지의 리뷰 목록 조회',
     description: '특정 여행지의 리뷰 목록을 조회합니다.',
+  })
+  @ApiParam({
+    name: 'destinationId',
+    type: 'number',
+    description: '여행지 ID 를 전달하세요.',
+    example: 2877795,
+  })
+  @ApiOkResponse({
+    description: '해당 여행지의 전체 댓글 목록',
+    type: [DestinationsComment],
   })
   getCommentsByDestinationId(
     @Param('destinationId', ParseIntPipe) destinationId: number,
