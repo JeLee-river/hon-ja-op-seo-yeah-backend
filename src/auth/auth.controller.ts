@@ -4,6 +4,7 @@ import {
   Get,
   Logger,
   Post,
+  Put,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
@@ -91,10 +92,28 @@ export class AuthController {
     Logger.verbose(user);
   }
 
-  @Get('/me')
+  @Get('/users/me')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: '내 정보 조회' })
+  @ApiOkResponse({
+    description: '로그인한 유저의 정보를 조회합니다.',
+  })
   getMyInformation(@GetUserFromAccessToken() user) {
     return this.authService.getMyInformation(user.id);
+  }
+
+  @Put('/users/me')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: '사용자 정보 수정' })
+  @ApiOkResponse({
+    description: '사용자의 정보를 수정합니다.',
+  })
+  updateUserInformation(
+    @GetUserFromAccessToken() user,
+    @Body() authCredentialDto: AuthCredentialDto,
+  ): Promise<{ message: string; user: User }> {
+    return this.authService.updateUserInformation(user.id, authCredentialDto);
   }
 }

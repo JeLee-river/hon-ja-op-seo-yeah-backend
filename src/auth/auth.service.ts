@@ -3,6 +3,7 @@ import {
   HttpStatus,
   Injectable,
   Logger,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
@@ -137,5 +138,42 @@ export class AuthService {
     delete myInformation.refresh_token;
 
     return myInformation;
+  }
+
+  async updateUserInformation(
+    userId: string,
+    authCredentialDto: AuthCredentialDto,
+  ): Promise<{ message: string; user: User }> {
+    try {
+      const user = await this.findUserById(userId);
+
+      if (!user) {
+        throw new NotFoundException('사용자를 찾을 수 없습니다.');
+      }
+
+      const { password } = authCredentialDto;
+      const hashedPassword = await this.bcryptPassword(password);
+
+      const userToUpdate = {
+        ...user,
+        ...authCredentialDto,
+        password: hashedPassword,
+      };
+
+      const result = await this.usersRepository.updateUserInformation(
+        userToUpdate,
+      );
+      return result;
+    } catch (error) {
+      Logger.error(error);
+    }
+    return;
+  }
+
+  async bcryptPassword(password) {
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    return hashedPassword;
   }
 }

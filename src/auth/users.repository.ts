@@ -83,4 +83,21 @@ export class UsersRepository extends Repository<User> {
       },
     );
   }
+
+  async updateUserInformation(
+    userToUpdate: AuthCredentialDto,
+  ): Promise<{ message: string; user: User }> {
+    const user = await this.create(userToUpdate);
+    await this.save(user);
+
+    // TODO: 이런 정보를 제외한 유저 정보를 조회하는 메서드를 추가하자.
+    delete user.idx;
+    delete user.password;
+    delete user.refresh_token;
+
+    return {
+      message: '사용자 정보가 성공적으로 수정되었습니다.',
+      user,
+    };
+  }
 }
