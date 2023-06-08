@@ -10,6 +10,7 @@ import { ScheduleDetail } from '../../schedules/entities/schedule-detail.entity'
 import { ApiProperty } from '@nestjs/swagger';
 import { Category } from '../../categories/entities/category.entity';
 import { DestinationsComment } from '../../destinations-comments/entities/destinations-comment.entity';
+import { DestinationsLike } from '../../destinations-likes/entities/destinations-like.entity';
 
 @Entity()
 export class Destination {
@@ -98,4 +99,10 @@ export class Destination {
     (destination_comments) => destination_comments.destination,
   )
   destination_comments: DestinationsComment[];
+
+  @OneToMany(
+    () => DestinationsLike,
+    (destinationsLike) => destinationsLike.destination,
+  )
+  destination_likes: DestinationsLike[];
 }

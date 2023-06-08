@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { SchedulesModule } from './schedules/schedules.module';
 import { LoggerMiddleware } from './utils/logger/logger.middleware';
 import { DestinationsCommentsModule } from './destinations-comments/destinations-comments.module';
+import { DestinationsLikesModule } from './destinations-likes/destinations-likes.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { DestinationsCommentsModule } from './destinations-comments/destinations
     AuthModule,
     SchedulesModule,
     DestinationsCommentsModule,
+    DestinationsLikesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
