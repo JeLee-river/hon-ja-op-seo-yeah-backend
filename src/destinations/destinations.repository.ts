@@ -56,11 +56,15 @@ export class DestinationsRepository extends Repository<Destination> {
     // 여행지 정보를 댓글과 함께 조회한다.
     return await this.createQueryBuilder('destination')
       .select('destination')
-      .leftJoinAndSelect(
-        'destination.destination_comments',
-        'destinations_comment',
-      )
-      .leftJoinAndSelect('destinations_comment.user', 'user')
+      .leftJoin('destination.destination_comments', 'destinations_comment')
+      .addSelect([
+        'destinations_comment.comment_id',
+        'destinations_comment.comment',
+        'destinations_comment.created_at',
+        'destinations_comment.updated_at',
+      ])
+      .leftJoin('destinations_comment.user', 'user')
+      .addSelect(['user.id', 'user.nickname', 'user.profile_image'])
       .where('destination.id = :destinationId', { destinationId })
       .getOne();
   }
@@ -69,11 +73,15 @@ export class DestinationsRepository extends Repository<Destination> {
     // 여행지 목록을 댓글과 함께 조회한다.
     return await this.createQueryBuilder('destination')
       .select('destination')
-      .leftJoinAndSelect(
-        'destination.destination_comments',
-        'destinations_comment',
-      )
-      .leftJoinAndSelect('destinations_comment.user', 'user')
+      .leftJoin('destination.destination_comments', 'destinations_comment')
+      .addSelect([
+        'destinations_comment.comment_id',
+        'destinations_comment.comment',
+        'destinations_comment.created_at',
+        'destinations_comment.updated_at',
+      ])
+      .leftJoin('destinations_comment.user', 'user')
+      .addSelect(['user.id', 'user.nickname', 'user.profile_image'])
       .skip(skip)
       .take(take)
       .getMany();
