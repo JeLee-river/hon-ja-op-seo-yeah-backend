@@ -153,7 +153,7 @@ export class SchedulesService {
     );
 
     if (!foundSchedule) {
-      throw new NotFoundException('여행 일정이 존재하지 않습니다.');
+      throw new NotFoundException('삭제하려는 여행 일정이 존재하지 않습니다.');
     }
 
     const writer = foundSchedule.user.id;
@@ -165,31 +165,17 @@ export class SchedulesService {
       );
     }
 
-    // 여행 상세 일정 삭제 : 왜래 키 제약 조건 때문에 상세 일정을 먼저 지워야 한다.
+    // 여행 일정에 좋아요한 데이터들을 제거 : 외래키 제약 조건 때문에 먼저 지워야 함.
+
+    // 여행 상세 일정 삭제 : 역시 외래키 제약 조건 때문에 먼저 지워야 함.
     const resultFromDeleteScheduleDetails =
       await this.scheduleDetailRepository.deleteScheduleDetailsById(
         schedule_id,
       );
 
-    const deletedDetailCount = resultFromDeleteScheduleDetails.affected;
-    if (deletedDetailCount <= 0) {
-      throw new InternalServerErrorException(
-        `알 수 없는 오류로 인해 상세 일정 삭제에 실패했습니다. 
-        관리자에게 문의하세요. (schedule_id : ${schedule_id})`,
-      );
-    }
-
     // 여행 일정 기본 내용 삭제
     const resultFromDeleteSchedule =
       await this.schedulesRepository.deleteScheduleById(schedule_id);
-
-    const deleteScheduleCount = resultFromDeleteSchedule.affected;
-    if (deleteScheduleCount <= 0) {
-      throw new InternalServerErrorException(
-        `알 수 없는 오류로 인해 일정 삭제에 실패했습니다. 
-        관리자에게 문의하세요. (schedule_id : ${schedule_id})`,
-      );
-    }
 
     // TODO: 여행 일정에 달린 댓글들도 삭제해야 한다.
     return {
