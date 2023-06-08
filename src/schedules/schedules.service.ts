@@ -207,14 +207,14 @@ export class SchedulesService {
   }
 
   transformSchedule(schedule) {
-    const { duration, schedule_details, schedules_likes } = schedule;
+    const { duration, schedule_details } = schedule;
 
-    // 이 일정의 좋아요 개수를 카운트하고, 좋아요 한 유저 목록을 확인한다.
-    const likes = schedules_likes.map(({ is_liked, user }) => {
-      if (is_liked) {
-        return user;
-      }
-    });
+    // // TODO : 이 일정의 좋아요 개수를 카운트하고, 좋아요 한 유저 목록을 확인한다.
+    // const likes = schedules_likes.map(({ is_liked, user }) => {
+    //   if (is_liked) {
+    //     return user;
+    //   }
+    // });
 
     // 일자(day)별 목적지 목록 및 지도 좌표를 담도록 데이터를 가공한다.
     const { destinationsByDay, destinationMaps } =
@@ -229,12 +229,10 @@ export class SchedulesService {
 
     // 상세 일정에 대한 데이터 변환이 끝났으므로 응답하지 않을 원본 데이터는 제거한다.;
     delete schedule.schedule_details;
-    delete schedule.schedules_likes;
+    // delete schedule.schedules_likes;
 
     return {
       ...schedule,
-      likes_count: likes.length,
-      likes,
       first_destination,
       last_destination,
       destination_count,
