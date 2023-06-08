@@ -2,6 +2,7 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { SchedulesRepository } from './schedules.repository';
@@ -10,8 +11,6 @@ import { Schedule } from './entities/schedule.entity';
 import { ScheduleDetail } from './entities/schedule-detail.entity';
 import { SchedulesDetailRepository } from './schedules-detail.repository';
 import { ResponseScheduleInterface } from '../types/ResponseSchedule.interface';
-
-import { promises as fs } from 'fs';
 import { UpdateScheduleDto } from './dto/update-schedule.dto';
 
 @Injectable()
@@ -134,6 +133,60 @@ export class SchedulesService {
     const schedule = await this.schedulesRepository.getScheduleById(scheduleId);
 
     return this.transformSchedule(schedule);
+  }
+
+  async deleteScheduleById(
+    user_id: string,
+    schedule_id: number,
+  ): Promise<{ message: string }> {
+    // TODO: 삭제하려는 일정이 존재하는지 확인한다.
+    const foundSchedule = await this.schedulesRepository.getScheduleById(
+      schedule_id,
+    );
+
+    if (!foundSchedule) {
+      throw new NotFoundException('여행 일정이 존재하지 않습니다.');
+    }
+
+    const writer = foundSchedule.user.id;
+    const isMatchingUser = user_id === writer;
+
+    if (!isMatchingUser) {
+      throw new UnauthorizedException(
+        '작성자가 아니시군요? 당신은 해당 일정을 삭제할 권한이 없습니다.',
+      );
+    }
+
+    // 여행 상세 일정 삭제 : 왜래 키 제약 조건 때문에 상세 일정을 먼저 지워야 한다.
+    const resultFromDeleteScheduleDetails =
+      await this.scheduleDetailRepository.deleteScheduleDetailsById(
+        schedule_id,
+      );
+
+    const deletedDetailCount = resultFromDeleteScheduleDetails.affected;
+    if (deletedDetailCount <= 0) {
+      throw new InternalServerErrorException(
+        `알 수 없는 오류로 인해 상세 일정 삭제에 실패했습니다. 
+        관리자에게 문의하세요. (schedule_id : ${schedule_id})`,
+      );
+    }
+
+    // 여행 일정 기본 내용 삭제
+    const resultFromDeleteSchedule =
+      await this.schedulesRepository.deleteScheduleById(schedule_id);
+
+    const deleteScheduleCount = resultFromDeleteSchedule.affected;
+    if (deleteScheduleCount <= 0) {
+      throw new InternalServerErrorException(
+        `알 수 없는 오류로 인해 일정 삭제에 실패했습니다. 
+        관리자에게 문의하세요. (schedule_id : ${schedule_id})`,
+      );
+    }
+
+    // TODO: 여행 일정에 달린 댓글들도 삭제해야 한다.
+    return {
+      message: '일정이 성공적으로 삭제되었습니다.',
+    };
   }
 
   transformSchedule(schedule) {

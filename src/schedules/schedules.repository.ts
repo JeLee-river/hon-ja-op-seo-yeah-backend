@@ -1,4 +1,4 @@
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, DeleteResult, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { Schedule } from './entities/schedule.entity';
 import { CreateScheduleDto } from './dto/create-schedule.dto';
@@ -84,6 +84,11 @@ export class SchedulesRepository extends Repository<Schedule> {
 
     const result = await query.getOne();
 
+    return result;
+  }
+
+  async deleteScheduleById(schedule_id: number): Promise<DeleteResult> {
+    const result = await this.delete({ schedule_id });
     return result;
   }
 

@@ -1,14 +1,15 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
   Post,
   Put,
   Query,
-  Req,
   UseGuards,
+  UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { SchedulesService } from './schedules.service';
@@ -25,11 +26,10 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { Request } from 'express';
 import { GetUserFromAccessToken } from '../auth/get-user-from-access-token.decorator';
 import { ResponseScheduleInterface } from '../types/ResponseSchedule.interface';
-import { AuthCredentialDto } from '../auth/dto/auth-credential.dto';
 import { UpdateScheduleDto } from './dto/update-schedule.dto';
+import { DeleteScheduleDto } from './dto/delete-schedule.dto';
 
 @Controller()
 @ApiTags('여행 일정 (Schedules)')
@@ -92,6 +92,24 @@ export class SchedulesController {
     @Param('scheduleId', ParseIntPipe) scheduleId: number,
   ): Promise<ResponseScheduleInterface> {
     return this.schedulesService.getScheduleById(scheduleId);
+  }
+
+  @Delete('schedules/:scheduleId')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  @ApiParam({
+    name: 'scheduleId',
+    type: DeleteScheduleDto,
+    description: '여행 일정 ID 를 전달하세요.',
+    example: 24,
+  })
+  @ApiOperation({ summary: '특정 여행 일정을 삭제한다.' })
+  @UsePipes(new ValidationPipe())
+  deleteScheduleById(
+    @Param('scheduleId', ParseIntPipe) schedule_id: number,
+    @GetUserFromAccessToken() user,
+  ): Promise<{ message: string }> {
+    return this.schedulesService.deleteScheduleById(user.id, schedule_id);
   }
 
   @Get('/ranking/schedules')
