@@ -86,6 +86,21 @@ export class DestinationsController {
     return this.destinationsService.getDestination(destinationId);
   }
 
+  // TODO: 리뷰를 포함한 여행지 목록 조회 API
+  @Get('/destinations-with-reviews/:destinationId')
+  @ApiOperation({ summary: '특정 여행지의 상세 정보를 조회한다. (리뷰 포함)' })
+  @ApiParam({
+    name: 'destinationId',
+    type: 'number',
+    description: '여행지 ID',
+    example: 1887493,
+  })
+  getDestinationWithReview(
+    @Param('destinationId', ParseIntPipe) destinationId,
+  ): Promise<any> {
+    return this.destinationsService.getDestinationWithReview(destinationId);
+  }
+
   @ApiOperation({ summary: '여행지 랭킹을 요청한 갯수만큼 조회한다.' })
   @ApiQuery({
     name: 'count',

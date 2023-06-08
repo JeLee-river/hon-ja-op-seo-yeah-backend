@@ -52,6 +52,20 @@ export class DestinationsRepository extends Repository<Destination> {
     return destination;
   }
 
+  async getDestinationWithReview(destinationId: number): Promise<any> {
+    // 여행지 정보를 댓글과 함께 조회한다.
+    return await this.createQueryBuilder('destination')
+      .select('destination')
+      .leftJoinAndSelect(
+        'destination.destination_comments',
+        'destinations_comment',
+      )
+      .where('destination.id = :destinationId', { destinationId })
+      .groupBy('destination.id')
+      .addGroupBy('destinations_comment.comment_id')
+      .getOne();
+  }
+
   async getDestinationsWithReview(skip: number, take: number): Promise<any> {
     // 여행지 목록을 댓글과 함께 조회한다.
     return await this.createQueryBuilder('destination')

@@ -151,6 +151,16 @@ export class DestinationsService {
     return this.destinationsRepository.getDestination(destinationId);
   }
 
+  async getDestinationWithReview(destinationId: number): Promise<any> {
+    const destination =
+      await this.destinationsRepository.getDestinationWithReview(destinationId);
+
+    return {
+      ...destination,
+      comment_count: destination.destination_comments.length,
+    };
+  }
+
   async getDestinationsWithReview(page: number, take: number): Promise<any> {
     const skip: number = (page - 1) * take; // how many records to skip
 
