@@ -9,6 +9,7 @@ import {
 import { Schedule } from '../../schedules/entities/schedule.entity';
 import { DestinationsComment } from '../../destinations-comments/entities/destinations-comment.entity';
 import { DestinationsLike } from '../../destinations-likes/entities/destinations-like.entity';
+import { SchedulesLike } from '../../schedules-likes/entities/schedules-like.entity';
 
 @Entity()
 // @Unique(['id', 'nickname'])
@@ -60,4 +61,8 @@ export class User {
     (destinationsLike) => destinationsLike.user,
   )
   destination_likes: DestinationsLike[];
+
+  // 하나의 유저는 여러 일정에 좋아요 할 수 있다.
+  @OneToMany(() => SchedulesLike, (schedulesLike) => schedulesLike.user)
+  schedules_likes: SchedulesLike[];
 }

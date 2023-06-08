@@ -4,8 +4,6 @@ import { SchedulesController } from './schedules.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SchedulesRepository } from './schedules.repository';
 import { SchedulesDetailRepository } from './schedules-detail.repository';
-import { AuthModule } from '../auth/auth.module';
-import { UsersRepository } from '../auth/users.repository';
 
 @Module({
   imports: [
@@ -13,5 +11,6 @@ import { UsersRepository } from '../auth/users.repository';
   ],
   controllers: [SchedulesController],
   providers: [SchedulesService, SchedulesRepository, SchedulesDetailRepository],
+  exports: [SchedulesModule],
 })
 export class SchedulesModule {}
