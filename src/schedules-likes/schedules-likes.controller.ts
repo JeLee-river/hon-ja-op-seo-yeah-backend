@@ -42,7 +42,7 @@ export class SchedulesLikesController {
   async toggleLikesForSchedules(
     @GetUserFromAccessToken() user,
     @Param('scheduleId', ParseIntPipe) schedule_id: number,
-  ) {
+  ): Promise<Omit<SchedulesLike, 'idx'>> {
     return this.schedulesLikesService.toggleLikeForSchedule(
       user.id,
       schedule_id,

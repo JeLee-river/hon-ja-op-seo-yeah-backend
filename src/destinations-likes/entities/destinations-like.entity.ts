@@ -13,7 +13,6 @@ import { ApiProperty } from '@nestjs/swagger';
 
 @Entity()
 export class DestinationsLike {
-  @ApiProperty({ description: '순번', example: 20 })
   @PrimaryGeneratedColumn()
   idx: number;
 

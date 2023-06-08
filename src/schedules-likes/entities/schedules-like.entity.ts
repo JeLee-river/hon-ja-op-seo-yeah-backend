@@ -13,7 +13,6 @@ import { Schedule } from '../../schedules/entities/schedule.entity';
 
 @Entity()
 export class SchedulesLike {
-  @ApiProperty({ description: '순번', example: 20 })
   @PrimaryGeneratedColumn()
   idx: number;
 
