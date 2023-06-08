@@ -28,7 +28,7 @@ export class SchedulesRepository extends Repository<Schedule> {
     });
   }
 
-  async getAllSchedules(): Promise<Schedule[]> {
+  async getAllPublicSchedules(): Promise<Schedule[]> {
     const query = this.createQueryBuilder('schedule')
       .select([
         'schedule.schedule_id',
@@ -52,6 +52,14 @@ export class SchedulesRepository extends Repository<Schedule> {
       ])
       .leftJoinAndSelect('schedule.schedule_details', 'schedule_details')
       .leftJoinAndSelect('schedule_details.destination', 'destination')
+      .leftJoin('schedule.schedules_likes', 'schedules_likes')
+      .addSelect(['schedules_likes.is_liked'])
+      .leftJoin('schedules_likes.user', 'schedule_likes_user')
+      .addSelect([
+        'schedule_likes_user.id',
+        'schedule_likes_user.nickname',
+        'schedule_likes_user.profile_image',
+      ])
       .orderBy({
         'schedule_details.day': 'ASC',
         'schedule_details.tour_order': 'ASC',
