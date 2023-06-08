@@ -26,7 +26,7 @@ import { CreateDestinationsCommentDto } from './dto/create-destinations-comment.
 import { DestinationsComment } from './entities/destinations-comment.entity';
 import { UpdateDestinationsCommentDto } from './dto/update-destinations-comment.dto';
 
-@ApiTags('여행지 리뷰 (Destinations Comments)')
+@ApiTags('여행지 댓글 (Destinations Comments)')
 @Controller('')
 export class DestinationsCommentsController {
   constructor(
@@ -37,8 +37,8 @@ export class DestinationsCommentsController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
   @ApiOperation({
-    summary: '여행지 리뷰 작성',
-    description: '여행지에 대해 리뷰를 작성합니다.',
+    summary: '여행지 댓글 작성',
+    description: '여행지에 대해 댓글을 작성합니다.',
   })
   @ApiParam({
     name: 'destinationId',
@@ -67,8 +67,8 @@ export class DestinationsCommentsController {
 
   @Get('/destinations/:destinationId/comments')
   @ApiOperation({
-    summary: '특정 여행지의 리뷰 목록 조회',
-    description: '특정 여행지의 리뷰 목록을 조회합니다.',
+    summary: '특정 여행지의 댓글 목록 조회',
+    description: '특정 여행지의 댓글 목록을 조회합니다.',
   })
   @ApiParam({
     name: 'destinationId',
@@ -148,8 +148,9 @@ export class DestinationsCommentsController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
   @ApiOperation({
-    summary: '로그인한 사용자의 모든 리뷰 목록 조회',
-    description: '로그인한 사용자의 모든 리뷰 목록 조회합니다.',
+    summary: '로그인한 사용자가 작성한 댓글 목록 및 여행지 정보를',
+    description:
+      '로그인한 사용자가 작성한 댓글 목록 및 여행지 정보를 조회합니다.',
   })
   @ApiOkResponse({
     description: '해당 사용자의 전체 댓글 목록',

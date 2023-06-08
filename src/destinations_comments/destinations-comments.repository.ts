@@ -11,7 +11,7 @@ export class DestinationsCommentsRepository extends Repository<DestinationsComme
   }
 
   /**
-   * 여행지 리뷰 작성
+   * 여행지 댓글 작성
    *
    * @param user_id
    * @param destination_id

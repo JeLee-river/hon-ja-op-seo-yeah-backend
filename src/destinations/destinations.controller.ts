@@ -44,7 +44,7 @@ export class DestinationsController {
 
   // TODO: 페이지네이션이 적용된 여행지 목록 조회 API
   @Get('/destinations-with-reviews')
-  @ApiOperation({ summary: '전체 여행지 목록을 조회한다. (리뷰 포함)' })
+  @ApiOperation({ summary: '전체 여행지 목록을 조회한다. (댓글 포함)' })
   @ApiOkResponse({ type: DestinationResponse })
   getAllDestinationsWithReview(
     @Query('page', ParseIntPipe) page: number,
@@ -86,9 +86,9 @@ export class DestinationsController {
     return this.destinationsService.getDestination(destinationId);
   }
 
-  // TODO: 리뷰를 포함한 여행지 목록 조회 API
+  // TODO: 댓글을 포함한 여행지 목록 조회 API
   @Get('/destinations-with-reviews/:destinationId')
-  @ApiOperation({ summary: '특정 여행지의 상세 정보를 조회한다. (리뷰 포함)' })
+  @ApiOperation({ summary: '특정 여행지의 상세 정보를 조회한다. (댓글 포함)' })
   @ApiParam({
     name: 'destinationId',
     type: 'number',
