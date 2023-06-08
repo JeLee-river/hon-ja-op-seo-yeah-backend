@@ -7,7 +7,7 @@ import {
   Unique,
 } from 'typeorm';
 import { Schedule } from '../../schedules/entities/schedule.entity';
-import { DestinationsComment } from '../../destinations_comments/entities/destinations-comment.entity';
+import { DestinationsComment } from '../../destinations-comments/entities/destinations-comment.entity';
 
 @Entity()
 // @Unique(['id', 'nickname'])

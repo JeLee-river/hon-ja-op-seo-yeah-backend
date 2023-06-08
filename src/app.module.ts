@@ -8,7 +8,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { AuthModule } from './auth/auth.module';
 import { SchedulesModule } from './schedules/schedules.module';
 import { LoggerMiddleware } from './utils/logger/logger.middleware';
-import { DestinationsCommentsModule } from './destinations_comments/destinations-comments.module';
+import { DestinationsCommentsModule } from './destinations-comments/destinations-comments.module';
 
 @Module({
   imports: [
