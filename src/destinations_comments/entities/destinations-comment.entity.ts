@@ -30,10 +30,12 @@ export class DestinationsComment {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @ManyToOne(() => User, (user) => user.destinations_comments)
+  // 한 유저는 여러 여행지 댓글을 남길 수 있다.
+  @ManyToOne(() => User, (user) => user.destination_comments)
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   user: User;
 
+  // 한 여행지에는 여러 댓글이 남을 수 있다.
   @ManyToOne(
     () => Destination,
     (destination) => destination.destination_comments,

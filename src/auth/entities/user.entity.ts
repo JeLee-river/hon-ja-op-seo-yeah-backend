@@ -51,5 +51,5 @@ export class User {
     () => DestinationsComment,
     (destinationsComment) => destinationsComment.user,
   )
-  destinations_comments: DestinationsComment[];
+  destination_comments: DestinationsComment[];
 }

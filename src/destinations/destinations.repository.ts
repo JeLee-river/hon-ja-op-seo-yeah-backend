@@ -60,9 +60,8 @@ export class DestinationsRepository extends Repository<Destination> {
         'destination.destination_comments',
         'destinations_comment',
       )
+      .leftJoinAndSelect('destinations_comment.user', 'user')
       .where('destination.id = :destinationId', { destinationId })
-      .groupBy('destination.id')
-      .addGroupBy('destinations_comment.comment_id')
       .getOne();
   }
 
@@ -74,10 +73,9 @@ export class DestinationsRepository extends Repository<Destination> {
         'destination.destination_comments',
         'destinations_comment',
       )
+      .leftJoinAndSelect('destinations_comment.user', 'user')
       .skip(skip)
       .take(take)
-      .groupBy('destination.id')
-      .addGroupBy('destinations_comment.comment_id')
       .getMany();
   }
 
