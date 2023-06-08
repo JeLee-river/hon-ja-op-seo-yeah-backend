@@ -249,4 +249,8 @@ export class SchedulesService {
   getSchedulesRanking(count: number): Promise<Schedule[]> {
     return this.schedulesRepository.getSchedulesRanking(count);
   }
+
+  getMySchedules(user_id: string): Promise<Schedule[]> {
+    return this.schedulesRepository.getSchedulesByUserId(user_id);
+  }
 }

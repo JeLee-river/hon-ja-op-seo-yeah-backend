@@ -112,4 +112,38 @@ export class SchedulesRepository extends Repository<Schedule> {
     const result = await query.getMany();
     return result;
   }
+
+  async getSchedulesByUserId(user_id: string): Promise<Schedule[]> {
+    const query = this.createQueryBuilder('schedule')
+      .select([
+        'schedule.schedule_id',
+        'schedule.title',
+        'schedule.summary',
+        'schedule.start_date',
+        'schedule.end_date',
+        'schedule.duration',
+        'schedule.status',
+        'schedule.image',
+        'schedule.created_at',
+      ])
+      // TODO: 만약 특정 컬럼들만 조회하려면 다음과 같이 leftJoin, addSelect 로 나누어서 해야한다.
+      .leftJoin('schedule.user', 'user')
+      .addSelect([
+        'user.id',
+        'user.nickname',
+        'user.phone_number',
+        'user.profile_image',
+      ])
+      .leftJoinAndSelect('schedule.schedule_details', 'schedule_details')
+      .leftJoinAndSelect('schedule_details.destination', 'destination')
+      .where('schedule.user_id = :user_id', { user_id })
+      .orderBy({
+        'schedule_details.day': 'ASC',
+        'schedule_details.tour_order': 'ASC',
+      });
+
+    const result = await query.getMany();
+
+    return result;
+  }
 }

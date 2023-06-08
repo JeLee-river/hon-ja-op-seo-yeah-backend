@@ -125,4 +125,11 @@ export class SchedulesController {
   ): Promise<Schedule[]> {
     return this.schedulesService.getSchedulesRanking(Number(count));
   }
+
+  @Get('/users/me/schedules')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  getMySchedules(@GetUserFromAccessToken() user) {
+    return this.schedulesService.getMySchedules(user.id);
+  }
 }
