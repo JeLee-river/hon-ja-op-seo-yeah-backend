@@ -57,17 +57,7 @@ export class SchedulesService {
     schedule: Schedule;
     scheduleDetails: Omit<ScheduleDetail, 'idx'>[];
   }> {
-    const { schedule_id: id } = updateScheduleDto;
-    // 현재 로그인된 사용자와, 기존에 작성된 여행 일정의 작성자의 ID 를 비교한다.
-    const foundSchedule = await this.schedulesRepository.getScheduleById(id);
-    const writer = foundSchedule.user.id;
-    const isMatchingUser = userId === writer;
-
-    if (!isMatchingUser) {
-      throw new UnauthorizedException(
-        '작성자가 아니시군요? 당신은 해당 일정을 수정할 권한이 없습니다.',
-      );
-    }
+    const { schedule_id, destinations } = updateScheduleDto;
 
     try {
       // 여행 일정 기본 정보 update
@@ -76,9 +66,10 @@ export class SchedulesService {
         updateScheduleDto,
       );
 
-      // schedule_id 에 해당하는 여행 상세 일정을 생성된다.
-      const { schedule_id } = schedule;
-      const { destinations } = updateScheduleDto;
+      // 기존의 상세 일정을 delete 한다.
+      await this.scheduleDetailRepository.deleteScheduleDetailsById(
+        schedule_id,
+      );
 
       // 여행 일자별 상세 일정 insert
       const scheduleDetails = await this.createScheduleDetails(
