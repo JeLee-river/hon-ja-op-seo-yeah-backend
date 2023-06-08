@@ -158,6 +158,7 @@ export class SchedulesRepository extends Repository<Schedule> {
         'schedule.image',
         'schedule.created_at',
       ])
+      .where('schedule.user_id = :user_id', { user_id })
       // TODO: 만약 특정 컬럼들만 조회하려면 다음과 같이 leftJoin, addSelect 로 나누어서 해야한다.
       .leftJoin('schedule.user', 'user')
       .addSelect([
@@ -168,11 +169,25 @@ export class SchedulesRepository extends Repository<Schedule> {
       ])
       .leftJoinAndSelect('schedule.schedule_details', 'schedule_details')
       .leftJoinAndSelect('schedule_details.destination', 'destination')
-      .where('schedule.user_id = :user_id', { user_id })
+      .leftJoin('schedule.schedules_likes', 'schedules_likes')
+      .addSelect(['schedules_likes.is_liked'])
+      .leftJoin('schedules_likes.user', 'schedule_likes_user')
+      .addSelect([
+        'schedule_likes_user.id',
+        'schedule_likes_user.nickname',
+        'schedule_likes_user.profile_image',
+      ])
       .orderBy({
         'schedule_details.day': 'ASC',
         'schedule_details.tour_order': 'ASC',
       });
+
+    // .leftJoinAndSelect('schedule.schedule_details', 'schedule_details')
+    // .leftJoinAndSelect('schedule_details.destination', 'destination')
+    // .orderBy({
+    //   'schedule_details.day': 'ASC',
+    //   'schedule_details.tour_order': 'ASC',
+    // });
 
     const result = await query.getMany();
 

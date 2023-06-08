@@ -275,8 +275,16 @@ export class SchedulesService {
     return this.schedulesRepository.getSchedulesRanking(count);
   }
 
-  getMySchedules(user_id: string): Promise<Schedule[]> {
-    return this.schedulesRepository.getSchedulesByUserId(user_id);
+  async getMySchedules(user_id: string): Promise<Schedule[]> {
+    const schedules = await this.schedulesRepository.getSchedulesByUserId(
+      user_id,
+    );
+
+    const newSchedules = schedules.map((schedule) => {
+      return this.transformSchedule(schedule);
+    });
+
+    return newSchedules;
   }
 
   async saveDestinationsForScheduleDetails(
