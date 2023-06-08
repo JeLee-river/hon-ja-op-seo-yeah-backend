@@ -31,6 +31,7 @@ import { GetUserFromAccessToken } from '../auth/get-user-from-access-token.decor
 import { ResponseScheduleInterface } from '../types/ResponseSchedule.interface';
 import { UpdateScheduleDto } from './dto/update-schedule.dto';
 import { DeleteScheduleDto } from './dto/delete-schedule.dto';
+import { DestinationsByDayDto } from './dto/destinations-by-day.dto';
 
 @Controller()
 @ApiTags('여행 일정 (Schedules)')
@@ -134,5 +135,33 @@ export class SchedulesController {
   @ApiOkResponse({ description: '조회된 일정 목록', type: [Schedule] })
   getMySchedules(@GetUserFromAccessToken() user) {
     return this.schedulesService.getMySchedules(user.id);
+  }
+
+  @Post('schedules/:scheduleId')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: '여행 상세 일정을 업데이트한다.' })
+  @ApiParam({
+    name: 'scheduleId',
+    type: 'string',
+    description: '여행 일정 ID 를 전달하세요.',
+    example: 24,
+  })
+  @ApiBody({
+    type: DestinationsByDayDto,
+    description: '일자별 목적지 목록',
+  })
+  @ApiCreatedResponse({
+    description: '업데이트된 여행 일정 정보',
+    type: [Schedule],
+  })
+  saveDestinationsForScheduleDetails(
+    @Param('scheduleId', ParseIntPipe) schedule_id: number,
+    @Body('destinations') destinations: number[][],
+  ): Promise<Omit<ScheduleDetail, 'idx'>[]> {
+    return this.schedulesService.saveDestinationsForScheduleDetails(
+      schedule_id,
+      destinations,
+    );
   }
 }

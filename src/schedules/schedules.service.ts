@@ -37,6 +37,19 @@ export class SchedulesService {
     }
   }
 
+  async getScheduleBasic(schedule_id: number): Promise<Schedule> {
+    try {
+      // 여행 기본 정보 get
+      const schedule = await this.schedulesRepository.getScheduleBasic(
+        schedule_id,
+      );
+
+      return schedule;
+    } catch (error) {
+      Logger.error(error);
+    }
+  }
+
   async updateSchedule(
     userId: string,
     updateScheduleDto: UpdateScheduleDto,
@@ -252,5 +265,26 @@ export class SchedulesService {
 
   getMySchedules(user_id: string): Promise<Schedule[]> {
     return this.schedulesRepository.getSchedulesByUserId(user_id);
+  }
+
+  async saveDestinationsForScheduleDetails(
+    schedule_id: number,
+    destinations: number[][],
+  ): Promise<Omit<ScheduleDetail, 'idx'>[]> {
+    // schedule_id 의 기존 상세 일정을 제거한다.
+    const result =
+      await this.scheduleDetailRepository.deleteScheduleDetailsById(
+        schedule_id,
+      );
+
+    const deletedDetailCount = result.affected;
+    if (deletedDetailCount <= 0) {
+      throw new InternalServerErrorException(
+        `알 수 없는 오류로 인해 상세 일정 삭제에 실패했습니다. 
+        관리자에게 문의하세요. (schedule_id : ${schedule_id})`,
+      );
+    }
+
+    return await this.createScheduleDetails(schedule_id, destinations);
   }
 }

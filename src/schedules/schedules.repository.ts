@@ -20,6 +20,14 @@ export class SchedulesRepository extends Repository<Schedule> {
     return schedule;
   }
 
+  async getScheduleBasic(schedule_id: number): Promise<Schedule> {
+    return await this.findOne({
+      where: {
+        schedule_id,
+      },
+    });
+  }
+
   async getAllSchedules(): Promise<Schedule[]> {
     const query = this.createQueryBuilder('schedule')
       .select([
