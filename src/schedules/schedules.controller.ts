@@ -20,6 +20,7 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiCreatedResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiQuery,
@@ -127,8 +128,10 @@ export class SchedulesController {
   }
 
   @Get('/users/me/schedules')
+  @ApiOperation({ summary: '로그인한 사용자가 작성한 일정들만 조회한다.' })
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
+  @ApiOkResponse({ description: '조회된 일정 목록', type: [Schedule] })
   getMySchedules(@GetUserFromAccessToken() user) {
     return this.schedulesService.getMySchedules(user.id);
   }
