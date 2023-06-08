@@ -132,6 +132,10 @@ export class SchedulesService {
   ): Promise<ResponseScheduleInterface> {
     const schedule = await this.schedulesRepository.getScheduleById(scheduleId);
 
+    if (!schedule) {
+      throw new NotFoundException('요청한 여행 일정은 존재하지 않습니다.');
+    }
+
     return this.transformSchedule(schedule);
   }
 
