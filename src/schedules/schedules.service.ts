@@ -227,6 +227,7 @@ export class SchedulesService {
         if (detail.day === day) {
           destinations.push(detail.destination.title);
           destinationMap.push({
+            id: detail.destination.id,
             title: detail.destination.title,
             mapx: detail.destination.mapx,
             mapy: detail.destination.mapy,
