@@ -148,7 +148,7 @@ export class DestinationsCommentsController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
   @ApiOperation({
-    summary: '로그인한 사용자가 작성한 댓글 목록 및 여행지 정보를',
+    summary: '로그인한 사용자가 작성한 댓글 목록 및 여행지 정보를 조회한다.',
     description:
       '로그인한 사용자가 작성한 댓글 목록 및 여행지 정보를 조회합니다.',
   })
