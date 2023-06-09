@@ -298,4 +298,16 @@ export class SchedulesService {
 
     return await this.createScheduleDetails(schedule_id, destinations);
   }
+
+  // todo : test :: 전체 여행 일정을 좋아요와 댓글 모두 포함하여 조회한다.
+  async getAllSchedulesWithLikesAndComments() {
+    const schedules =
+      await this.schedulesRepository.getAllSchedulesWithLikesAndComments();
+
+    const newSchedules = schedules.map((schedule) => {
+      return this.transformSchedule(schedule);
+    });
+
+    return newSchedules;
+  }
 }

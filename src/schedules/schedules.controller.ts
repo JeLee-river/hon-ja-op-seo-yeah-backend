@@ -88,6 +88,12 @@ export class SchedulesController {
     return this.schedulesService.getAllPublicSchedules();
   }
 
+  @Get('schedules-with-likes-and-comments')
+  @ApiOperation({ summary: '공개된 전체 여행 일정을 조회한다.' })
+  getAllSchedulesWithLikesAndComments(): Promise<Schedule[]> {
+    return this.schedulesService.getAllSchedulesWithLikesAndComments();
+  }
+
   @Get('schedules/:scheduleId')
   @ApiOperation({ summary: '특정 여행 일정을 상세 조회한다.' })
   getScheduleById(
