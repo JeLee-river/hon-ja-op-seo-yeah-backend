@@ -46,4 +46,26 @@ export class SchedulesCommentsRepository extends Repository<SchedulesComment> {
 
     return await query.getMany();
   }
+
+  async getCommentsByUserId(user_id: string): Promise<SchedulesComment[]> {
+    const query = this.createQueryBuilder('schedules_comment')
+      .select([
+        'schedules_comment.comment_id',
+        'schedules_comment.schedule_id',
+        'schedules_comment.comment',
+        'schedules_comment.created_at',
+        'schedules_comment.updated_at',
+      ])
+      .where('user_id = :user_id', {
+        user_id,
+      })
+      // TODO: 만약 특정 컬럼들만 조회하려면 다음과 같이 leftJoin, addSelect 로 나누어서 해야한다.
+      .leftJoin('schedules_comment.user', 'user')
+      .addSelect(['user.id', 'user.nickname', 'user.profile_image'])
+      .orderBy({
+        'schedules_comment.created_at': 'DESC',
+      });
+
+    return await query.getMany();
+  }
 }

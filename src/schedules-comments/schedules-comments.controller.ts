@@ -82,4 +82,22 @@ export class SchedulesCommentsController {
   ): Promise<SchedulesComment[]> {
     return this.schedulesCommentsService.getCommentsByScheduleId(schedule_id);
   }
+
+  @Get('/schedules/comments/me')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  @ApiOperation({
+    summary: '로그인한 사용자가 여행 일정에 작성한 댓글 정보를 조회한다.',
+    description:
+      '로그인한 사용자가 여행 일정에 작성한 댓글 목록 및 여행 일정 정보를 조회합니다.',
+  })
+  @ApiOkResponse({
+    description: '해당 사용자의 전체 댓글 목록',
+    type: [SchedulesComment],
+  })
+  getCommentsByUserId(
+    @GetUserFromAccessToken() user,
+  ): Promise<SchedulesComment[]> {
+    return this.schedulesCommentsService.getCommentsByUserId(user.id);
+  }
 }
