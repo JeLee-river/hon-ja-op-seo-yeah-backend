@@ -61,6 +61,36 @@ export class DestinationsController {
     return this.destinationsService.getDestinationsWithLikesAndComments();
   }
 
+  // TODO: 여행지 검색 : 카테고리와 여행지명
+  @Get('/destinations/search')
+  @ApiOperation({ summary: '여행지 검색 (카테고리, 여행지 타이틀)' })
+  @ApiQuery({
+    name: 'categoryIds',
+    type: 'array',
+    description:
+      '카테고리 ID를 콤마(,)로 전달하세요. (12:관광지, 14:문화시설, 15:축제공연행사, 25:여행코스, 28:레포츠, 32:숙박, 38:쇼핑, 39:음식점)',
+    example: '?categoryIds=12,14',
+  })
+  @ApiQuery({
+    name: 'title',
+    type: 'string',
+    description: '검색할 목적지 이름을 입력하세요.',
+    example: '?title=제주',
+  })
+  @ApiOkResponse({ type: DestinationResponse })
+  searchDestinationsWithLikesAndComments(
+    @Query('categoryIds') categoryIds,
+    @Query('title') title,
+  ): Promise<Destination[]> {
+    console.log('#####');
+    console.log('categoryIds', categoryIds);
+    console.log('title', title);
+    return this.destinationsService.searchDestinationsWithLikesAndComments(
+      categoryIds,
+      title,
+    );
+  }
+
   // TODO: test 용 api : 여행지 조회 시 댓글, 좋아요 정보를 모두 조회한다.
   @Get('/destinations-with-likes-and-comments/:destinationId')
   @ApiOperation({ summary: '특정 여행지를 조회한다. (좋아요, 댓글 포함)' })
