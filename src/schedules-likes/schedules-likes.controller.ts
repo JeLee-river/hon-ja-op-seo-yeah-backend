@@ -19,6 +19,7 @@ import { SchedulesLike } from './entities/schedules-like.entity';
 import { GetUserFromAccessToken } from '../auth/get-user-from-access-token.decorator';
 import { SelfLikeExceptionFilter } from '../utils/filters/self-like.exception.filter';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ResponseScheduleLikesInterface } from '../types/ResponseScheduleLikes.interface';
 
 @ApiTags(`여행 일정 '좋아요' (Schedules Likes)`)
 @Controller()
@@ -46,7 +47,7 @@ export class SchedulesLikesController {
   async toggleLikesForSchedules(
     @GetUserFromAccessToken() user,
     @Param('scheduleId', ParseIntPipe) schedule_id: number,
-  ): Promise<Omit<SchedulesLike, 'idx'>> {
+  ): Promise<ResponseScheduleLikesInterface> {
     return this.schedulesLikesService.toggleLikeForSchedule(
       user.id,
       schedule_id,
@@ -72,7 +73,7 @@ export class SchedulesLikesController {
   async hasUserLikedSchedule(
     @GetUserFromAccessToken() user,
     @Param('scheduleId', ParseIntPipe) schedule_id: number,
-  ): Promise<any> {
+  ): Promise<ResponseScheduleLikesInterface> {
     return await this.schedulesLikesService.hasUserLikedSchedule(
       user.id,
       schedule_id,

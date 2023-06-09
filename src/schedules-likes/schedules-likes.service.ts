@@ -3,6 +3,7 @@ import { SchedulesLikesRepository } from './schedules-likes.repository';
 import { SchedulesLike } from './entities/schedules-like.entity';
 import { SelfLikeException } from '../utils/filters/self-like.exception';
 import { SchedulesRepository } from '../schedules/schedules.repository';
+import { ResponseScheduleLikesInterface } from '../types/ResponseScheduleLikes.interface';
 
 @Injectable()
 export class SchedulesLikesService {
@@ -14,7 +15,7 @@ export class SchedulesLikesService {
   async toggleLikeForSchedule(
     user_id: string,
     schedule_id: number,
-  ): Promise<Omit<SchedulesLike, 'idx'>> {
+  ): Promise<ResponseScheduleLikesInterface> {
     // TODO: 좋아요 요청한 일정이 자신이 작성한 일정이라면 좋아요를 못하게 막아야 한다.
     const targetSchedule = await this.schedulesRepository.getScheduleById(
       schedule_id,
@@ -24,7 +25,7 @@ export class SchedulesLikesService {
       throw new NotFoundException('요청한 여행 일정은 존재하지 않습니다.');
     }
 
-    if (targetSchedule && user_id === targetSchedule.user_id) {
+    if (user_id === targetSchedule.user.id) {
       throw new SelfLikeException();
     }
 
@@ -37,23 +38,29 @@ export class SchedulesLikesService {
 
     // 이미 좋아요한 일정이었다면 -> 업데이트 한다.
     if (likedForSchedule) {
-      if (user_id === likedForSchedule.user_id) {
-        throw new SelfLikeException();
-      }
-
       const { is_liked } = likedForSchedule;
+      const newLiked = !is_liked;
 
       const newLike: SchedulesLike = {
         ...likedForSchedule,
-        is_liked: !is_liked,
+        is_liked: newLiked,
       };
 
-      const updatedSchedueLike =
+      const updatedScheduleLike =
         await this.schedulesLikesRepository.updateLikedSchedule(newLike);
 
-      const { idx, ...result } = updatedSchedueLike;
+      // 좋아요가 업데이트 됐으니까 해당 일정의 좋아요 카운트를 다시 확인한다.
+      const likes_count_of_schedule =
+        await this.schedulesLikesRepository.getLikesCountOfSchedule(
+          schedule_id,
+        );
 
-      return result;
+      return {
+        schedule_id,
+        user_id,
+        is_liked: newLiked,
+        likes_count_of_schedule,
+      };
     }
 
     // 이미 좋아요한 일정이 아니라면 -> 좋아요 데이터를 생성한다.
@@ -63,11 +70,24 @@ export class SchedulesLikesService {
         schedule_id,
       );
 
-    const { idx, ...result } = createdScheduleLike;
-    return result;
+    // 좋아요를 추가했으니까 해당 일정의 좋아요 카운트를 다시 확인한다.
+    const likes_count_of_schedule =
+      await this.schedulesLikesRepository.getLikesCountOfSchedule(schedule_id);
+
+    const { is_liked } = createdScheduleLike;
+
+    return {
+      schedule_id,
+      user_id,
+      is_liked,
+      likes_count_of_schedule,
+    };
   }
 
-  async hasUserLikedSchedule(user_id: string, schedule_id: number) {
+  async hasUserLikedSchedule(
+    user_id: string,
+    schedule_id: number,
+  ): Promise<ResponseScheduleLikesInterface> {
     const targetSchedule = await this.schedulesRepository.getScheduleById(
       schedule_id,
     );

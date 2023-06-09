@@ -34,6 +34,7 @@ export class SchedulesLikesRepository extends Repository<SchedulesLike> {
   async getLikesCountOfSchedule(schedule_id: number): Promise<number> {
     return await this.createQueryBuilder('schedules_like')
       .where('schedules_like.schedule_id = :schedule_id', { schedule_id })
+      .andWhere('schedules_like.is_liked = :isLiked', { isLiked: true })
       .getCount();
   }
 }
