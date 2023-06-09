@@ -213,8 +213,6 @@ export class DestinationsService {
         .filter((number) => !isNaN(number));
     }
 
-    console.log('parsedCategoryIds', parsedCategoryIds);
-
     const destinations =
       await this.destinationsRepository.searchDestinationsWithLikesAndComments(
         parsedCategoryIds,

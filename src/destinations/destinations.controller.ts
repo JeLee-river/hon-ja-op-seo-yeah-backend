@@ -82,9 +82,6 @@ export class DestinationsController {
     @Query('categoryIds') categoryIds: string,
     @Query('title') title: string,
   ): Promise<Destination[]> {
-    console.log('#####');
-    console.log('categoryIds', categoryIds);
-    console.log('title', title);
     return this.destinationsService.searchDestinationsWithLikesAndComments(
       categoryIds,
       title,
