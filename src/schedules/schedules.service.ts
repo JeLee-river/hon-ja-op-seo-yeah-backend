@@ -274,14 +274,6 @@ export class SchedulesService {
         schedule_id,
       );
 
-    const deletedDetailCount = result.affected;
-    if (deletedDetailCount <= 0) {
-      throw new InternalServerErrorException(
-        `알 수 없는 오류로 인해 상세 일정 삭제에 실패했습니다. 
-        관리자에게 문의하세요. (schedule_id : ${schedule_id})`,
-      );
-    }
-
     return await this.createScheduleDetails(schedule_id, destinations);
   }
 }
