@@ -5,6 +5,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Put,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
@@ -22,6 +23,8 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { GetUserFromAccessToken } from '../auth/get-user-from-access-token.decorator';
 import { CreateSchedulesCommentDto } from './dto/create-schedules-comment.dto';
 import { SchedulesComment } from './entities/schedules-comment.entity';
+import { UpdateDestinationsCommentDto } from '../destinations-comments/dto/update-destinations-comment.dto';
+import { UpdateSchedulesCommentDto } from './dto/update-schedules-comment.dto';
 
 @ApiTags('여행 일정 댓글 (Schedules Comments)')
 @Controller()
@@ -99,5 +102,36 @@ export class SchedulesCommentsController {
     @GetUserFromAccessToken() user,
   ): Promise<SchedulesComment[]> {
     return this.schedulesCommentsService.getCommentsByUserId(user.id);
+  }
+
+  @Put('/schedules/comments/:commentId')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  @ApiOperation({
+    summary: '여행 일정에 작성된 댓글을 수정합니다.',
+    description: '여행 일정에 작성된 댓글을 수정합니다.',
+  })
+  @ApiParam({
+    name: 'commentId',
+    type: 'number',
+    description: '댓글 ID 를 전달하세요.',
+    example: 4,
+  })
+  @ApiBody({
+    type: UpdateDestinationsCommentDto,
+    description: '수정할 댓글 내용',
+  })
+  @ApiCreatedResponse({ description: '수정된 댓글 정보' })
+  updateScheduleComment(
+    @GetUserFromAccessToken() user,
+    @Param('commentId', ParseIntPipe) comment_id: number,
+    @Body(ValidationPipe)
+    updateSchedulesCommentDto: UpdateSchedulesCommentDto,
+  ): Promise<SchedulesComment> {
+    return this.schedulesCommentsService.updateScheduleComment(
+      user.id,
+      comment_id,
+      updateSchedulesCommentDto,
+    );
   }
 }
