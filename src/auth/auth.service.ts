@@ -1,5 +1,4 @@
 import {
-  ConflictException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -149,20 +148,27 @@ export class AuthService {
     userId: string,
     updateUserDto: UpdateUserDto,
   ): Promise<{ message: string; user: User }> {
+    const user = await this.findUserById(userId);
+
+    if (!user) {
+      throw new NotFoundException('사용자를 찾을 수 없습니다.');
+    }
+
     try {
-      const user = await this.findUserById(userId);
-
-      if (!user) {
-        throw new NotFoundException('사용자를 찾을 수 없습니다.');
+      const { password: passwordToUpdate } = updateUserDto;
+      // 사용자가 비밀번호를 수정하지 않을 경우 빈 문자열("")로 전달된다.
+      // 이 경우에는 기존의 비밀번호를 그대로 저장해야 한다.
+      let newPassword = '';
+      if (passwordToUpdate === '') {
+        newPassword = user.password;
+      } else {
+        newPassword = await this.bcryptPassword(passwordToUpdate);
       }
-
-      const { password } = updateUserDto;
-      const hashedPassword = await this.bcryptPassword(password);
 
       const userToUpdate = {
         ...user,
         ...updateUserDto,
-        password: hashedPassword,
+        password: newPassword,
       };
 
       const result = await this.usersRepository.updateUserInformation(
