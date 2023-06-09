@@ -11,6 +11,7 @@ import { LoggerMiddleware } from './utils/logger/logger.middleware';
 import { DestinationsCommentsModule } from './destinations-comments/destinations-comments.module';
 import { DestinationsLikesModule } from './destinations-likes/destinations-likes.module';
 import { SchedulesLikesModule } from './schedules-likes/schedules-likes.module';
+import { SchedulesCommentsModule } from './schedules-comments/schedules-comments.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { SchedulesLikesModule } from './schedules-likes/schedules-likes.module';
     DestinationsCommentsModule,
     DestinationsLikesModule,
     SchedulesLikesModule,
+    SchedulesCommentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

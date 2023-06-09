@@ -12,6 +12,7 @@ import { ScheduleDetail } from './schedule-detail.entity';
 import { User } from '../../auth/entities/user.entity';
 import { ScheduleStatus } from '../../types/ScheduleStatus.enum';
 import { SchedulesLike } from '../../schedules-likes/entities/schedules-like.entity';
+import { SchedulesComment } from '../../schedules-comments/entities/schedules-comment.entity';
 
 @Entity()
 export class Schedule {
@@ -65,4 +66,13 @@ export class Schedule {
   @OneToMany(() => SchedulesLike, (schedulesLike) => schedulesLike.schedule)
   @JoinColumn({ name: 'schedule_id', referencedColumnName: 'schedule_id' })
   schedules_likes: SchedulesLike[];
+
+  // 하나의 일정(One)에 여러 댓글(Many)이 작성될 수 수 있다.
+  // 현재 엔티티가 일정이므로 One, 댓글과 연결하면 To Many
+  @OneToMany(
+    () => SchedulesComment,
+    (schedulesComment) => schedulesComment.schedule,
+  )
+  @JoinColumn({ name: 'schedule_id', referencedColumnName: 'schedule_id' })
+  schedules_comments: SchedulesComment[];
 }
