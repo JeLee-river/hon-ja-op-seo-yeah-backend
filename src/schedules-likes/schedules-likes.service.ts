@@ -66,4 +66,41 @@ export class SchedulesLikesService {
     const { idx, ...result } = createdScheduleLike;
     return result;
   }
+
+  async hasUserLikedSchedule(user_id: string, schedule_id: number) {
+    const targetSchedule = await this.schedulesRepository.getScheduleById(
+      schedule_id,
+    );
+
+    if (!targetSchedule) {
+      throw new NotFoundException('요청한 여행 일정은 존재하지 않습니다.');
+    }
+
+    const likedForSchedule =
+      await this.schedulesLikesRepository.findLikedSchedule(
+        user_id,
+        schedule_id,
+      );
+
+    const likes_count_of_schedule =
+      await this.schedulesLikesRepository.getLikesCountOfSchedule(schedule_id);
+
+    if (!likedForSchedule) {
+      return {
+        schedule_id,
+        user_id,
+        is_liked: false,
+        likes_count_of_schedule,
+      };
+    }
+
+    const { is_liked } = likedForSchedule;
+
+    return {
+      schedule_id,
+      user_id,
+      is_liked,
+      likes_count_of_schedule,
+    };
+  }
 }

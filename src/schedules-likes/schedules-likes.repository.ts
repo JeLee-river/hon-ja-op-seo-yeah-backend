@@ -30,4 +30,10 @@ export class SchedulesLikesRepository extends Repository<SchedulesLike> {
 
     return await this.save(like);
   }
+
+  async getLikesCountOfSchedule(schedule_id: number): Promise<number> {
+    return await this.createQueryBuilder('schedules_like')
+      .where('schedules_like.schedule_id = :schedule_id', { schedule_id })
+      .getCount();
+  }
 }
