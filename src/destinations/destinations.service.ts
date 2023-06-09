@@ -181,9 +181,18 @@ export class DestinationsService {
       await this.destinationsRepository.getDestinationsWithLikesAndComments();
 
     return destinations.map((destination) => {
+      const { destination_likes } = destination;
+      // is_liked 가 false 인 항목들을 제외한다.
+      const new_destination_likes = destination_likes.filter(
+        ({ is_liked }) => is_liked === true,
+      );
+      const destination_likes_count = new_destination_likes.length;
+
       return {
         ...destination,
         comment_count: destination.destination_comments.length,
+        destination_likes: new_destination_likes,
+        destination_likes_count,
       };
     });
   }
