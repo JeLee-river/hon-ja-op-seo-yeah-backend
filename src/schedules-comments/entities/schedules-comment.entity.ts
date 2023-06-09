@@ -37,6 +37,6 @@ export class SchedulesComment {
 
   // 하나의 여행 일정는 여러 댓글이 남을 수 있다.
   @ManyToOne(() => Schedule, (schedule) => schedule.schedules_comments)
-  @JoinColumn({ name: 'schedule_id', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'schedule_id', referencedColumnName: 'schedule_id' })
   schedule: Schedule;
 }
