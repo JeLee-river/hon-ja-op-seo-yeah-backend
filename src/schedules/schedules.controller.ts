@@ -158,8 +158,10 @@ export class SchedulesController {
   saveDestinationsForScheduleDetails(
     @Param('scheduleId', ParseIntPipe) schedule_id: number,
     @Body('destinations') destinations: number[][],
+    @GetUserFromAccessToken() user,
   ): Promise<Omit<ScheduleDetail, 'idx'>[]> {
     return this.schedulesService.saveDestinationsForScheduleDetails(
+      user.id,
       schedule_id,
       destinations,
     );

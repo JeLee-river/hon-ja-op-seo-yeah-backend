@@ -267,6 +267,7 @@ export class SchedulesService {
   }
 
   async saveDestinationsForScheduleDetails(
+    user_id: string,
     schedule_id: number,
     destinations: number[][],
   ): Promise<Omit<ScheduleDetail, 'idx'>[]> {
@@ -277,6 +278,12 @@ export class SchedulesService {
 
     if (!schedule) {
       throw new NotFoundException('해당 여행 일정이 존재하지 않습니다.');
+    }
+
+    if (user_id === schedule.user_id) {
+      throw new UnauthorizedException(
+        `여행 일정을 작성한 작성자가 아닌 사용자는 수정할 권한이 없습니다.`,
+      );
     }
 
     // 기존 duration 과 전달받은 destinations.length 를 비교한다.
