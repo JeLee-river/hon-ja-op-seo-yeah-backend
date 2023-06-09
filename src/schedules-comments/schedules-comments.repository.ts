@@ -89,4 +89,8 @@ export class SchedulesCommentsRepository extends Repository<SchedulesComment> {
   async deleteScheduleComment(comment_id: number): Promise<DeleteResult> {
     return await this.delete({ comment_id });
   }
+
+  async deleteCommentsByScheduleId(schedule_id): Promise<DeleteResult> {
+    return await this.delete({ schedule_id });
+  }
 }

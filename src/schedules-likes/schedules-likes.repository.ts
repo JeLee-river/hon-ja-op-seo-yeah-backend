@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { SchedulesLike } from './entities/schedules-like.entity';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, DeleteResult, Repository } from 'typeorm';
 
 @Injectable()
 export class SchedulesLikesRepository extends Repository<SchedulesLike> {
@@ -36,5 +36,9 @@ export class SchedulesLikesRepository extends Repository<SchedulesLike> {
       .where('schedules_like.schedule_id = :schedule_id', { schedule_id })
       .andWhere('schedules_like.is_liked = :isLiked', { isLiked: true })
       .getCount();
+  }
+
+  async deleteLikesByScheduleId(schedule_id: number): Promise<DeleteResult> {
+    return await this.delete({ schedule_id });
   }
 }

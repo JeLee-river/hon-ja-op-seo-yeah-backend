@@ -14,12 +14,16 @@ import { ScheduleDetail } from './entities/schedule-detail.entity';
 import { SchedulesDetailRepository } from './schedules-detail.repository';
 import { ResponseScheduleInterface } from '../types/ResponseSchedule.interface';
 import { UpdateScheduleDto } from './dto/update-schedule.dto';
+import { SchedulesLikesRepository } from '../schedules-likes/schedules-likes.repository';
+import { SchedulesCommentsRepository } from '../schedules-comments/schedules-comments.repository';
 
 @Injectable()
 export class SchedulesService {
   constructor(
     private schedulesRepository: SchedulesRepository,
     private scheduleDetailRepository: SchedulesDetailRepository,
+    private schedulesLikesRepository: SchedulesLikesRepository,
+    private schedulesCommentsRepository: SchedulesCommentsRepository,
   ) {}
 
   async createScheduleBasic(
@@ -167,19 +171,27 @@ export class SchedulesService {
       );
     }
 
-    // 여행 일정에 좋아요한 데이터들을 제거 : 외래키 제약 조건 때문에 먼저 지워야 함.
+    // 여행 일정의 좋아요 데이터들을 제거 : 외래키 제약 조건 때문에 먼저 지워야 함.
+    const deleteScheduleLikes =
+      await this.schedulesLikesRepository.deleteLikesByScheduleId(schedule_id);
+
+    // 여행 일정의 달린 댓글 데이터들을 제거 : 외래키 제약 조건 때문에 먼저 지워야 함.
+    const deleteScheduleComments =
+      await this.schedulesCommentsRepository.deleteCommentsByScheduleId(
+        schedule_id,
+      );
 
     // 여행 상세 일정 삭제 : 역시 외래키 제약 조건 때문에 먼저 지워야 함.
-    const resultFromDeleteScheduleDetails =
+    const deleteScheduleDetails =
       await this.scheduleDetailRepository.deleteScheduleDetailsById(
         schedule_id,
       );
 
     // 여행 일정 기본 내용 삭제
-    const resultFromDeleteSchedule =
-      await this.schedulesRepository.deleteScheduleById(schedule_id);
+    const deleteSchedule = await this.schedulesRepository.deleteScheduleById(
+      schedule_id,
+    );
 
-    // TODO: 여행 일정에 달린 댓글들도 삭제해야 한다.
     return {
       message: '일정이 성공적으로 삭제되었습니다.',
     };
