@@ -66,21 +66,21 @@ export class DestinationsController {
   @ApiOperation({ summary: '여행지 검색 (카테고리, 여행지 타이틀)' })
   @ApiQuery({
     name: 'categoryIds',
-    type: 'array',
+    type: 'string',
     description:
       '카테고리 ID를 콤마(,)로 전달하세요. (12:관광지, 14:문화시설, 15:축제공연행사, 25:여행코스, 28:레포츠, 32:숙박, 38:쇼핑, 39:음식점)',
-    example: '?categoryIds=12,14',
+    example: '12,14',
   })
   @ApiQuery({
     name: 'title',
     type: 'string',
     description: '검색할 목적지 이름을 입력하세요.',
-    example: '?title=제주',
+    example: '제주',
   })
   @ApiOkResponse({ type: DestinationResponse })
   searchDestinationsWithLikesAndComments(
-    @Query('categoryIds') categoryIds,
-    @Query('title') title,
+    @Query('categoryIds') categoryIds: string,
+    @Query('title') title: string,
   ): Promise<Destination[]> {
     console.log('#####');
     console.log('categoryIds', categoryIds);
