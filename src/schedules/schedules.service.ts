@@ -1,4 +1,6 @@
 import {
+  HttpException,
+  HttpStatus,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -268,11 +270,27 @@ export class SchedulesService {
     schedule_id: number,
     destinations: number[][],
   ): Promise<Omit<ScheduleDetail, 'idx'>[]> {
-    // schedule_id 의 기존 상세 일정을 제거한다.
-    const result =
-      await this.scheduleDetailRepository.deleteScheduleDetailsById(
-        schedule_id,
+    // 기존 여행 일정을 조회해서 존재하는 여행 일정인지 확인한다.
+    const schedule = await this.schedulesRepository.getScheduleById(
+      schedule_id,
+    );
+
+    if (!schedule) {
+      throw new NotFoundException('해당 여행 일정이 존재하지 않습니다.');
+    }
+
+    // 기존 duration 과 전달받은 destinations.length 를 비교한다.
+    const { duration } = schedule;
+    const requestedDuration = destinations.length;
+    if (duration !== requestedDuration) {
+      throw new HttpException(
+        `기존 여행 기간과 요청한 일정 기간이 일치하지 않습니다. (기존 여행 기간: ${duration}, 요청한 기간: ${requestedDuration})`,
+        HttpStatus.BAD_REQUEST,
       );
+    }
+
+    // schedule_id 의 기존 상세 일정을 제거한다.
+    await this.scheduleDetailRepository.deleteScheduleDetailsById(schedule_id);
 
     return await this.createScheduleDetails(schedule_id, destinations);
   }
