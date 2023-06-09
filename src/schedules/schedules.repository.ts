@@ -54,7 +54,6 @@ export class SchedulesRepository extends Repository<Schedule> {
       .leftJoinAndSelect('schedule_details.destination', 'destination')
       .leftJoin('schedule.schedules_likes', 'schedules_likes')
       .addSelect(['schedules_likes.is_liked'])
-      .where('schedules_likes.is_liked = :isLiked', { isLiked: true })
       .leftJoin('schedules_likes.user', 'schedule_likes_user')
       .addSelect([
         'schedule_likes_user.id',
