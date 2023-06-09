@@ -197,6 +197,31 @@ export class DestinationsService {
     });
   }
 
+  // todo : 테스트 후 지울 것
+  async getDestinationWithLikesAndComments(
+    destination_id: number,
+  ): Promise<any> {
+    const destination =
+      await this.destinationsRepository.getDestinationWithLikesAndComments(
+        destination_id,
+      );
+
+    const { destination_likes } = destination;
+
+    // is_liked 가 false 인 항목들을 제외한다.
+    const new_destination_likes = destination_likes.filter(
+      ({ is_liked }) => is_liked === true,
+    );
+    const destination_likes_count = new_destination_likes.length;
+
+    return {
+      ...destination,
+      comment_count: destination.destination_comments.length,
+      destination_likes: new_destination_likes,
+      destination_likes_count,
+    };
+  }
+
   getDestinationsRanking(count: number): Promise<Destination[]> {
     const destinations =
       this.destinationsRepository.getDestinationsRanking(count);
