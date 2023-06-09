@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Param,
   ParseIntPipe,
   Post,
@@ -12,6 +13,7 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiCreatedResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiTags,
@@ -58,5 +60,26 @@ export class SchedulesCommentsController {
       createSchedulesCommentDto,
     );
     return result;
+  }
+
+  @Get('/schedules/:scheduleId/comments')
+  @ApiOperation({
+    summary: '특정 여행 일정의 댓글 목록 조회',
+    description: '특정 여행 일정의 댓글 목록을 조회합니다.',
+  })
+  @ApiParam({
+    name: 'scheduleId',
+    type: 'number',
+    description: '여행 ID 를 전달하세요.',
+    example: 1,
+  })
+  @ApiOkResponse({
+    description: '해당 여행 일의 전체 댓글 목록',
+    type: [SchedulesComment],
+  })
+  getCommentsByScheduleId(
+    @Param('scheduleId', ParseIntPipe) schedule_id: number,
+  ): Promise<SchedulesComment[]> {
+    return this.schedulesCommentsService.getCommentsByScheduleId(schedule_id);
   }
 }
