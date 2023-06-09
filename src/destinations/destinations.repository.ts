@@ -87,6 +87,40 @@ export class DestinationsRepository extends Repository<Destination> {
       .getMany();
   }
 
+  async getDestinationsWithLikesAndComments(): Promise<any> {
+    // 여행지 목록을 좋아요, 댓글과 함께 조회한다.
+    return await this.createQueryBuilder('destination')
+      .select('destination')
+      .leftJoin('destination.destination_comments', 'destinations_comment')
+      .addSelect([
+        'destinations_comment.comment_id',
+        'destinations_comment.comment',
+        'destinations_comment.created_at',
+        'destinations_comment.updated_at',
+      ])
+      .leftJoin('destinations_comment.user', 'comments_user')
+      .addSelect([
+        'comments_user.id',
+        'comments_user.nickname',
+        'comments_user.profile_image',
+      ])
+      .leftJoin('destination.destination_likes', 'destination_likes')
+      .addSelect([
+        'destination_likes.destination_id',
+        'destination_likes.user_id',
+        'destination_likes.is_liked',
+        'destination_likes.created_at',
+        'destination_likes.updated_at',
+      ])
+      .leftJoin('destination_likes.user', 'likes_user')
+      .addSelect([
+        'likes_user.id',
+        'likes_user.nickname',
+        'likes_user.profile_image',
+      ])
+      .getMany();
+  }
+
   async getDestinationsRanking(count: number): Promise<Destination[]> {
     // TODO : 추후에 '좋아요' 순으로 정렬하여 조회해야 한다.
     const destinations = await this.find({
