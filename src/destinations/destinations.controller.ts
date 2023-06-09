@@ -53,6 +53,14 @@ export class DestinationsController {
     return this.destinationsService.getDestinationsWithReview(page, take);
   }
 
+  // TODO: test 용 api : 여행지 조회 시 댓글, 좋아요 정보를 모두 조회한다.
+  @Get('/destinations-with-likes-and-comments')
+  @ApiOperation({ summary: '전체 여행지 목록을 조회한다. (좋아요, 댓글 포함)' })
+  @ApiOkResponse({ type: DestinationResponse })
+  getAllDestinationsWithLikesAndComments(): Promise<Destination[]> {
+    return this.destinationsService.getDestinationsWithLikesAndComments();
+  }
+
   @Get('/categories/destinations')
   @ApiOperation({
     summary: '선택한 카테고리들에 해당하는 여행지 목록을 조회한다.',

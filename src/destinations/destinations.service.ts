@@ -175,6 +175,19 @@ export class DestinationsService {
     });
   }
 
+  // todo : 테스트 후 지울 것
+  async getDestinationsWithLikesAndComments(): Promise<any> {
+    const destinations =
+      await this.destinationsRepository.getDestinationsWithLikesAndComments();
+
+    return destinations.map((destination) => {
+      return {
+        ...destination,
+        comment_count: destination.destination_comments.length,
+      };
+    });
+  }
+
   getDestinationsRanking(count: number): Promise<Destination[]> {
     const destinations =
       this.destinationsRepository.getDestinationsRanking(count);
