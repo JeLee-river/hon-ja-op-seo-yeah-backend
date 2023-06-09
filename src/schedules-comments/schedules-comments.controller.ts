@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -132,6 +133,30 @@ export class SchedulesCommentsController {
       user.id,
       comment_id,
       updateSchedulesCommentDto,
+    );
+  }
+
+  @Delete('/schedules/comments/:commentId')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  @ApiOperation({
+    summary: '여행 일정 댓글을 삭제합니다.',
+    description: '여행 일정 댓글을 삭제합니다.',
+  })
+  @ApiParam({
+    name: 'commentId',
+    type: 'number',
+    description: '삭제할 댓글 ID 를 전달하세요.',
+    example: 4,
+  })
+  @ApiCreatedResponse({ description: '댓글 삭제 요청 성공 여부' })
+  deleteScheduleComment(
+    @GetUserFromAccessToken() user,
+    @Param('commentId', ParseIntPipe) comment_id: number,
+  ): Promise<{ message: string }> {
+    return this.schedulesCommentsService.deleteScheduleComment(
+      user.id,
+      comment_id,
     );
   }
 }

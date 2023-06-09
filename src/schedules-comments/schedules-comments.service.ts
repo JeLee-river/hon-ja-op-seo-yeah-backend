@@ -1,5 +1,7 @@
 import {
   Injectable,
+  InternalServerErrorException,
+  Logger,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -94,5 +96,42 @@ export class SchedulesCommentsService {
       comment_id,
       updateSchedulesCommentDto,
     );
+  }
+
+  async deleteScheduleComment(
+    user_id: string,
+    comment_id: number,
+  ): Promise<{ message: string }> {
+    // 본인이 작성자인지 확인한다.
+
+    try {
+      const isUserCommentWriter = await this.checkUserIsCommentWriter(
+        comment_id,
+        user_id,
+      );
+
+      if (!isUserCommentWriter) {
+        throw new UnauthorizedException(
+          '작성자 본인만 댓글을 삭제할 수 있습니다.',
+        );
+      }
+
+      const deleteResult =
+        await this.scheduleCommentsRepository.deleteScheduleComment(comment_id);
+      const deletedCount = deleteResult.affected;
+
+      if (deletedCount <= 0) {
+        throw new InternalServerErrorException(
+          `댓글 삭제에 실패했습니다. (comment_id : ${comment_id})`,
+        );
+      }
+
+      return {
+        message: '댓글이 성공적으로 삭제되었습니다.',
+      };
+    } catch (error) {
+      Logger.error(error);
+      throw error;
+    }
   }
 }

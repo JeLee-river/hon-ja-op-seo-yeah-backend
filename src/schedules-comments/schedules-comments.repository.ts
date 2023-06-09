@@ -1,4 +1,4 @@
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, DeleteResult, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { SchedulesComment } from './entities/schedules-comment.entity';
 import { CreateSchedulesCommentDto } from './dto/create-schedules-comment.dto';
@@ -84,5 +84,9 @@ export class SchedulesCommentsRepository extends Repository<SchedulesComment> {
     });
 
     return await this.save(commentToBeUpdated);
+  }
+
+  async deleteScheduleComment(comment_id: number): Promise<DeleteResult> {
+    return await this.delete({ comment_id });
   }
 }
