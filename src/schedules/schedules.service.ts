@@ -127,6 +127,40 @@ export class SchedulesService {
     }
   }
 
+  /**
+   * 전체 일정 조회 (좋아요, 댓글 포함)
+   */
+  async getAllSchedulesWithLikesAndComments(): Promise<Schedule[]> {
+    const schedules =
+      await this.schedulesRepository.getAllSchedulesWithLikesAndComments();
+
+    const newSchedules = schedules.map((schedule) => {
+      return this.transformSchedule(schedule);
+    });
+
+    return newSchedules;
+  }
+
+  /**
+   * 로그인 한 유저가 작성한 모든 일정 조회 (좋아요, 댓글 포함)
+   * @param user_id
+   */
+  async getMySchedules(user_id: string): Promise<Schedule[]> {
+    const schedules = await this.schedulesRepository.getSchedulesByUserId(
+      user_id,
+    );
+
+    const newSchedules = schedules.map((schedule) => {
+      return this.transformSchedule(schedule);
+    });
+
+    return newSchedules;
+  }
+
+  /**
+   * 특정 여행 일정 조회 (좋아요, 댓글 포함)
+   * @param scheduleId
+   */
   async getScheduleById(
     scheduleId: number,
   ): Promise<ResponseScheduleInterface> {
@@ -139,6 +173,12 @@ export class SchedulesService {
     return this.transformSchedule(schedule);
   }
 
+  /**
+   * 특정 일정 삭제
+   * - 해당 일정의 좋아요, 댓글, 상세 정보까지 모두 삭제한다. (외래 키 참조 때문)
+   * @param user_id
+   * @param schedule_id
+   */
   async deleteScheduleById(
     user_id: string,
     schedule_id: number,
@@ -187,6 +227,10 @@ export class SchedulesService {
     };
   }
 
+  /**
+   * DB 에서 조회한 여행 일정 데이터를 클라이언트에 실제 응답할 형식으로 변환한다.
+   * @param schedule
+   */
   transformSchedule(schedule) {
     const { duration, schedule_details, schedules_likes } = schedule;
 
@@ -222,6 +266,11 @@ export class SchedulesService {
     };
   }
 
+  /**
+   * 여행기간에 따라 일자별 destination 정보를 변환한다.
+   * @param duration
+   * @param schedule_details
+   */
   transformDestinationsByDay(duration, schedule_details) {
     const FIRST_DAY_OF_DURATION = 1;
     const destinationIds = [];
@@ -258,18 +307,12 @@ export class SchedulesService {
     return this.schedulesRepository.getSchedulesRanking(count);
   }
 
-  async getMySchedules(user_id: string): Promise<Schedule[]> {
-    const schedules = await this.schedulesRepository.getSchedulesByUserId(
-      user_id,
-    );
-
-    const newSchedules = schedules.map((schedule) => {
-      return this.transformSchedule(schedule);
-    });
-
-    return newSchedules;
-  }
-
+  /**
+   * 여행 일정 작성 중 여행지를 추가할 경우, 상세 일정을 업데이트한다.
+   * @param user_id
+   * @param schedule_id
+   * @param destinations
+   */
   async saveDestinationsForScheduleDetails(
     user_id: string,
     schedule_id: number,
@@ -324,17 +367,5 @@ export class SchedulesService {
       destinationIds: destinations,
       destinationTitles,
     };
-  }
-
-  // todo : test :: 전체 여행 일정을 좋아요와 댓글 모두 포함하여 조회한다.
-  async getAllSchedulesWithLikesAndComments() {
-    const schedules =
-      await this.schedulesRepository.getAllSchedulesWithLikesAndComments();
-
-    const newSchedules = schedules.map((schedule) => {
-      return this.transformSchedule(schedule);
-    });
-
-    return newSchedules;
   }
 }
