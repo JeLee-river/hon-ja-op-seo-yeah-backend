@@ -137,13 +137,21 @@ export class DestinationsService {
 
   // TODO: 여행지 검색 (카테고리와 여행지 타이틀)
   async searchDestinationsWithLikesAndComments(
-    categoryIds,
-    title,
+    categoryIds: string,
+    title: string,
   ): Promise<any> {
-    // categoryIds 를 배열로 변경
+    console.log('categoryIds', categoryIds);
+    console.log('title', title);
+
     let parsedCategoryIds;
     if (categoryIds === '') {
-      parsedCategoryIds = [];
+      // ! 선택한 카테고리가 아예 없는 경우
+      // ? 선택된 카테고리가 아예 없다면 데이터를 전달하지 않는다.
+      // ? -> [전체] 카테고리를 선택한 것과 다르다고 한다...
+      return {
+        total_count: 0,
+        destinations: [],
+      };
     } else {
       parsedCategoryIds = categoryIds
         .split(',')
@@ -226,10 +234,15 @@ export class DestinationsService {
       take = 10;
     }
 
-    // categoryIds 를 배열로 변경
     let parsedCategoryIds;
     if (categoryIds === '') {
-      parsedCategoryIds = [];
+      // ! 선택한 카테고리가 아예 없는 경우
+      // ? 선택된 카테고리가 아예 없다면 데이터를 전달하지 않는다.
+      // ? -> [전체] 카테고리를 선택한 것과 다르다고 한다...
+      return {
+        total_count: 0,
+        destinations: [],
+      };
     } else {
       parsedCategoryIds = categoryIds
         .split(',')

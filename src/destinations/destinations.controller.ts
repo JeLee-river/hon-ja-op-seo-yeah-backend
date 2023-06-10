@@ -97,7 +97,10 @@ export class DestinationsController {
 
   /**
    * TEST : 검색 + 페이지네이션
-   * @param count
+   * @param categoryIds
+   * @param title
+   * @param page
+   * @param take
    */
   @Get('/test/destinations')
   @ApiOperation({

@@ -30,8 +30,8 @@ export class DestinationsRepository extends Repository<Destination> {
    * @param title
    */
   async searchDestinationsWithLikesAndComments(
-    categoryIds,
-    title,
+    categoryIds: string | string[],
+    title: string,
   ): Promise<any> {
     // 여행지 목록을 좋아요, 댓글과 함께 조회한다.
     const query = this.createQueryBuilder('destination')
@@ -231,12 +231,5 @@ export class DestinationsRepository extends Repository<Destination> {
     query.groupBy('category.id, category.name');
 
     return await query.getRawMany();
-    /*
-     'COUNT(CASE WHEN destination_likes.is_liked = TRUE THEN 1 END) as likes_count',
-      ])
-      .groupBy('destination.id')
-      .orderBy('likes_count', 'DESC')
-      .limit(count);
-     */
   }
 }
