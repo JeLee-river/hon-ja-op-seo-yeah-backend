@@ -127,16 +127,6 @@ export class SchedulesService {
     }
   }
 
-  async getAllPublicSchedules(): Promise<Schedule[]> {
-    const schedules = await this.schedulesRepository.getAllPublicSchedules();
-
-    const newSchedules = schedules.map((schedule) => {
-      return this.transformSchedule(schedule);
-    });
-
-    return newSchedules;
-  }
-
   async getScheduleById(
     scheduleId: number,
   ): Promise<ResponseScheduleInterface> {

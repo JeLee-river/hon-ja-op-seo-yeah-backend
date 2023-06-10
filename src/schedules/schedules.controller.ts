@@ -84,18 +84,24 @@ export class SchedulesController {
 
   @Get('schedules')
   @ApiOperation({ summary: '공개된 전체 여행 일정을 조회한다.' })
-  getAllSchedulesWithDetails(): Promise<Schedule[]> {
-    return this.schedulesService.getAllPublicSchedules();
-  }
-
-  @Get('schedules-with-likes-and-comments')
-  @ApiOperation({ summary: '공개된 전체 여행 일정을 조회한다.' })
+  @ApiOkResponse({
+    description: '공개된 전체 여행 일정을 좋아요, 댓글 정보와 함께 조회한 목록',
+  })
   getAllSchedulesWithLikesAndComments(): Promise<Schedule[]> {
     return this.schedulesService.getAllSchedulesWithLikesAndComments();
   }
 
   @Get('schedules/:scheduleId')
   @ApiOperation({ summary: '특정 여행 일정을 상세 조회한다.' })
+  @ApiParam({
+    name: 'scheduleId',
+    type: 'number',
+    description: '여행 일정 ID 를 전달하세요.',
+    example: 45,
+  })
+  @ApiOkResponse({
+    description: '선택한 여행 일정 정보 (좋아요, 댓글 정보 포함)',
+  })
   getScheduleById(
     @Param('scheduleId', ParseIntPipe) scheduleId: number,
   ): Promise<ResponseScheduleInterface> {
