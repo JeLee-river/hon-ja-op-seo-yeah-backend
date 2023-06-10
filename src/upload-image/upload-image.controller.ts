@@ -1,5 +1,7 @@
 import {
   Controller,
+  Param,
+  ParseIntPipe,
   Post,
   UploadedFile,
   UseGuards,
@@ -53,5 +55,42 @@ export class UploadImageController {
     const { path } = file;
 
     return this.uploadImageService.updateUserProfileImage(user.id, path);
+  }
+
+  @Post('/schedules/:scheduleId')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiBearerAuth('access-token')
+  @ApiOperation({
+    summary: '여행 일정 배경 이미지를 업로드합니다.',
+    description: '여행 일정 배경 이미지를 업로드합니다.',
+  })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: '업로드할 여행 일정 배경 이미지를 선택합니다.',
+    type: 'multipart/form-data',
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @ApiCreatedResponse({ description: '여행 일정 배경 이미지 경로' })
+  updateScheduleBackgroundImage(
+    @UploadedFile() file: Express.Multer.File,
+    @GetUserFromAccessToken() user,
+    @Param('scheduleId', ParseIntPipe) schedule_id: number,
+  ): Promise<{ message: string; imagePath: string }> {
+    const { path } = file;
+
+    return this.uploadImageService.updateScheduleBackgroundImage(
+      schedule_id,
+      user.id,
+      path,
+    );
   }
 }

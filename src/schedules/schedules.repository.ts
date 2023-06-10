@@ -1,4 +1,4 @@
-import { DataSource, DeleteResult, Repository } from 'typeorm';
+import { DataSource, DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { Schedule } from './entities/schedule.entity';
 import { CreateScheduleDto } from './dto/create-schedule.dto';
@@ -218,5 +218,16 @@ export class SchedulesRepository extends Repository<Schedule> {
       .limit(count);
 
     return await query.getRawMany();
+  }
+
+  async updateScheduleBackgroundImage(
+    schedule_id: number,
+    imagePath: string,
+  ): Promise<UpdateResult> {
+    return await this.createQueryBuilder('schedule')
+      .update(Schedule)
+      .set({ image: imagePath })
+      .where('schedule_id = :schedule_id', { schedule_id })
+      .execute();
   }
 }
