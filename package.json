@@ -20,8 +20,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@nestjs/common": "^9.0.0",
-    "@nestjs/core": "^9.0.0",
+    "@nestjs/common": "^9.4.2",
+    "@nestjs/core": "^9.4.2",
     "@nestjs/jwt": "^10.0.3",
     "@nestjs/mapped-types": "*",
     "@nestjs/passport": "^9.0.3",
@@ -36,12 +36,15 @@
     "class-validator": "^0.14.0",
     "config": "^3.3.9",
     "cookie-parser": "^1.4.6",
+    "nest-winston": "^1.9.2",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
     "pg": "^8.11.0",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.2.0",
-    "typeorm": "^0.3.16"
+    "rxjs": "^7.8.1",
+    "typeorm": "^0.3.16",
+    "winston": "^3.9.0",
+    "winston-daily-rotate-file": "^4.7.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",
@@ -51,6 +54,7 @@
     "@types/jest": "29.5.0",
     "@types/node": "18.15.11",
     "@types/supertest": "^2.0.11",
+    "@types/winston": "^2.4.4",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
     "eslint": "^8.0.1",
