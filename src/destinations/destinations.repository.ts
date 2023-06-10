@@ -146,4 +146,67 @@ export class DestinationsRepository extends Repository<Destination> {
 
     return await query.getRawMany();
   }
+
+  /**
+   * TEST : 여행지 목록을 카테고리, 타이틀로 검색한 결과를 전달한다. + 페이지네이션
+   * TODO : pagination 추가하기
+   *
+   * @param categoryIds
+   * @param title
+   * @param paginationOptions
+   */
+  async searchDestinationsAndPagination(
+    categoryIds: string,
+    title: string,
+    paginationOptions: {
+      take: number;
+      skip: number;
+    },
+  ): Promise<any> {
+    const { take, skip } = paginationOptions;
+
+    // 여행지 목록을 좋아요, 댓글과 함께 조회한다.
+    const query = this.createQueryBuilder('destination')
+      .select('destination')
+      .leftJoin('destination.destination_comments', 'destinations_comment')
+      .addSelect([
+        'destinations_comment.comment_id',
+        'destinations_comment.comment',
+        'destinations_comment.created_at',
+        'destinations_comment.updated_at',
+      ])
+      .where('destination.title LIKE :title', {
+        title: `%${title}%`,
+      })
+      .leftJoin('destinations_comment.user', 'comments_user')
+      .addSelect([
+        'comments_user.id',
+        'comments_user.nickname',
+        'comments_user.profile_image',
+      ])
+      .leftJoin('destination.destination_likes', 'destination_likes')
+      .addSelect([
+        'destination_likes.destination_id',
+        'destination_likes.user_id',
+        'destination_likes.is_liked',
+        'destination_likes.created_at',
+        'destination_likes.updated_at',
+      ])
+      .leftJoin('destination_likes.user', 'likes_user')
+      .addSelect([
+        'likes_user.id',
+        'likes_user.nickname',
+        'likes_user.profile_image',
+      ]);
+
+    query.skip(skip).take(take);
+
+    if (categoryIds.length > 0) {
+      query.andWhere('destination.category_id IN (:...categoryIds)', {
+        categoryIds,
+      });
+    }
+
+    return await query.getMany();
+  }
 }
