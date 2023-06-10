@@ -195,45 +195,5 @@ export class SchedulesRepository extends Repository<Schedule> {
       });
 
     return await query.getMany();
-
-    //
-    //   const query = this.createQueryBuilder('schedule')
-    //     .select([
-    //       'schedule.schedule_id',
-    //       'schedule.title',
-    //       'schedule.summary',
-    //       'schedule.start_date',
-    //       'schedule.end_date',
-    //       'schedule.duration',
-    //       'schedule.status',
-    //       'schedule.image',
-    //       'schedule.created_at',
-    //     ])
-    //     .where('schedule.user_id = :user_id', { user_id })
-    //     // TODO: 만약 특정 컬럼들만 조회하려면 다음과 같이 leftJoin, addSelect 로 나누어서 해야한다.
-    //     .leftJoin('schedule.user', 'user')
-    //     .addSelect([
-    //       'user.id',
-    //       'user.nickname',
-    //       'user.phone_number',
-    //       'user.profile_image',
-    //     ])
-    //     .leftJoinAndSelect('schedule.schedule_details', 'schedule_details')
-    //     .leftJoinAndSelect('schedule_details.destination', 'destination')
-    //     .leftJoin('schedule.schedules_likes', 'schedules_likes')
-    //     .addSelect(['schedules_likes.is_liked'])
-    //     .leftJoin('schedules_likes.user', 'schedule_likes_user')
-    //     .addSelect([
-    //       'schedule_likes_user.id',
-    //       'schedule_likes_user.nickname',
-    //       'schedule_likes_user.profile_image',
-    //     ])
-    //     .orderBy({
-    //       'schedule_details.day': 'ASC',
-    //       'schedule_details.tour_order': 'ASC',
-    //     });
-    //
-    //   return await query.getMany();
-    // }
   }
 }
