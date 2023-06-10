@@ -135,68 +135,6 @@ export class DestinationsService {
     }
   }
 
-  getAllDestinations(): Promise<Destination[]> {
-    return this.destinationsRepository.getAllDestinations();
-  }
-
-  getDestinationsByCategoryIds(
-    categoryIds: number[],
-  ): Promise<{ totalCount: number; result: Destination[] }> {
-    return this.destinationsRepository.getDestinationsByCategoryIds(
-      categoryIds,
-    );
-  }
-
-  getDestination(destinationId: number): Promise<Destination> {
-    return this.destinationsRepository.getDestination(destinationId);
-  }
-
-  async getDestinationWithReview(destinationId: number): Promise<any> {
-    const destination =
-      await this.destinationsRepository.getDestinationWithReview(destinationId);
-
-    return {
-      ...destination,
-      comment_count: destination.destination_comments.length,
-    };
-  }
-
-  async getDestinationsWithReview(page: number, take: number): Promise<any> {
-    const skip: number = (page - 1) * take; // how many records to skip
-
-    const destinations =
-      await this.destinationsRepository.getDestinationsWithReview(skip, take);
-
-    return destinations.map((destination) => {
-      return {
-        ...destination,
-        comment_count: destination.destination_comments.length,
-      };
-    });
-  }
-
-  // todo : 테스트 후 지울 것
-  async getDestinationsWithLikesAndComments(): Promise<any> {
-    const destinations =
-      await this.destinationsRepository.getDestinationsWithLikesAndComments();
-
-    return destinations.map((destination) => {
-      const { destination_likes } = destination;
-      // is_liked 가 false 인 항목들을 제외한다.
-      const new_destination_likes = destination_likes.filter(
-        ({ is_liked }) => is_liked === true,
-      );
-      const destination_likes_count = new_destination_likes.length;
-
-      return {
-        ...destination,
-        comment_count: destination.destination_comments.length,
-        destination_likes: new_destination_likes,
-        destination_likes_count,
-      };
-    });
-  }
-
   // TODO: 여행지 검색 (카테고리와 여행지 타이틀)
   async searchDestinationsWithLikesAndComments(
     categoryIds,
@@ -241,7 +179,6 @@ export class DestinationsService {
     };
   }
 
-  // todo : 테스트 후 지울 것
   async getDestinationWithLikesAndComments(
     destination_id: number,
   ): Promise<any> {
