@@ -79,8 +79,8 @@ export class DestinationsController {
   })
   @ApiOkResponse({ type: DestinationResponse })
   searchDestinationsWithLikesAndComments(
-    @Query('categoryIds') categoryIds: string,
-    @Query('title') title: string,
+    @Query('categoryIds') categoryIds = '',
+    @Query('title') title = '',
   ): Promise<Destination[]> {
     return this.destinationsService.searchDestinationsWithLikesAndComments(
       categoryIds,
