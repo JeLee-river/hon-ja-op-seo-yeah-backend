@@ -126,20 +126,6 @@ export class SchedulesController {
     return this.schedulesService.deleteScheduleById(user.id, schedule_id);
   }
 
-  @Get('/ranking/schedules')
-  @ApiQuery({
-    name: 'count',
-    type: 'number',
-    description: '조회할 여행 일정 갯수',
-    example: 10,
-  })
-  @ApiOperation({ summary: '여행 일정 랭킹을 요청한 갯수만큼 조회한다.' })
-  getSchedulesRanking(
-    @Query('count', ParseIntPipe) count: number,
-  ): Promise<Schedule[]> {
-    return this.schedulesService.getSchedulesRanking(Number(count));
-  }
-
   @Get('/users/me/schedules')
   @ApiOperation({ summary: '로그인한 사용자가 작성한 일정들만 조회한다.' })
   @UseGuards(JwtAuthGuard)
@@ -180,5 +166,21 @@ export class SchedulesController {
       schedule_id,
       destinations,
     );
+  }
+
+  @Get('/ranking/schedules')
+  @ApiQuery({
+    name: 'count',
+    type: 'number',
+    description: '좋아요가 많은 순으로 여행 일정 랭킹을 조회합니다.',
+    example: 10,
+  })
+  @ApiOperation({
+    summary: '좋아요가 많은 순으로 여행 일정 랭킹을 조회합니다.',
+  })
+  getSchedulesRanking(
+    @Query('count', ParseIntPipe) count: number,
+  ): Promise<Schedule[]> {
+    return this.schedulesService.getSchedulesRanking(Number(count));
   }
 }

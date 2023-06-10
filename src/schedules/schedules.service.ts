@@ -308,10 +308,6 @@ export class SchedulesService {
     return { destinationIds, destinationTitles, destinationMaps };
   }
 
-  getSchedulesRanking(count: number): Promise<Schedule[]> {
-    return this.schedulesRepository.getSchedulesRanking(count);
-  }
-
   /**
    * 여행 일정 작성 중 여행지를 추가할 경우, 상세 일정을 업데이트한다.
    * @param user_id
@@ -372,5 +368,13 @@ export class SchedulesService {
       destinationIds: destinations,
       destinationTitles,
     };
+  }
+
+  /**
+   * 메인 화면에서 사용할 여행 일정 좋아요 순 랭킹
+   * @param count
+   */
+  getSchedulesRanking(count: number): Promise<Schedule[]> {
+    return this.schedulesRepository.getSchedulesRanking(count);
   }
 }

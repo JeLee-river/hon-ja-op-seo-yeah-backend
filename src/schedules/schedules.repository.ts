@@ -84,26 +84,6 @@ export class SchedulesRepository extends Repository<Schedule> {
     return await this.delete({ schedule_id });
   }
 
-  async getSchedulesRanking(count: number): Promise<Schedule[]> {
-    const query = this.createQueryBuilder('schedule')
-      .select([
-        'schedule.user_id',
-        'schedule.schedule_id',
-        'schedule.title',
-        'schedule.summary',
-        'schedule.start_date',
-        'schedule.end_date',
-        'schedule.duration',
-        'schedule.image',
-      ])
-      .where('schedule.status = :status', { status: 'PUBLIC' })
-      .take(count)
-      // TODO: 현재는 생성일자 기준 최신순이지만 좋아요 기능 구현 이후에는 좋아요 순으로 정렬해야 한다.
-      .orderBy('schedule.created_at', 'DESC');
-
-    return await query.getMany();
-  }
-
   // 전체 여행 일정을 좋아요와 댓글 모두 포함하여 조회한다.
   async getAllSchedulesWithLikesAndComments(): Promise<Schedule[]> {
     const query = this.createQueryBuilder('schedule')
@@ -207,5 +187,33 @@ export class SchedulesRepository extends Repository<Schedule> {
       });
 
     return await query.getMany();
+  }
+
+  /**
+   * 메인 화면에서 사용할 [여행 일정 좋아요 순 랭킹]
+   * @param count
+   */
+  async getSchedulesRanking(count: number): Promise<Schedule[]> {
+    const query = this.createQueryBuilder('schedule')
+      .leftJoinAndSelect('schedule.schedules_likes', 'schedules_likes')
+      .select([
+        'schedule.schedule_id',
+        'schedule.user_id',
+        'schedule.title',
+        'schedule.summary',
+        'schedule.duration',
+        'schedule.start_date',
+        'schedule.end_date',
+        'schedule.status',
+        'schedule.image',
+        'schedule.created_at',
+        'schedule.updated_at',
+        'COUNT(CASE WHEN schedules_likes.is_liked = TRUE THEN 1 END) as likes_count',
+      ])
+      .groupBy('schedule.schedule_id')
+      .orderBy('likes_count', 'DESC')
+      .limit(count);
+
+    return await query.getRawMany();
   }
 }
