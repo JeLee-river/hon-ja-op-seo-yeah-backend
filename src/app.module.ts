@@ -12,9 +12,14 @@ import { DestinationsCommentsModule } from './destinations-comments/destinations
 import { DestinationsLikesModule } from './destinations-likes/destinations-likes.module';
 import { SchedulesLikesModule } from './schedules-likes/schedules-likes.module';
 import { SchedulesCommentsModule } from './schedules-comments/schedules-comments.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+    }),
     TypeOrmModule.forRoot(typeORMConfig),
     DestinationsModule,
     CategoriesModule,
