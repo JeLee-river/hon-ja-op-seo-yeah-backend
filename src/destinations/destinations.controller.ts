@@ -6,6 +6,7 @@ import {
   ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiParam,
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
@@ -27,9 +28,10 @@ export class DestinationsController {
     return await this.destinationsService.insertDestinations();
   }
 
-  // TODO: 여행지 검색 : 카테고리와 여행지명
   @Get('/destinations')
-  @ApiOperation({ summary: '여행지 검색 (카테고리, 여행지 타이틀)' })
+  @ApiOperation({
+    summary: '여행지 목록에서 검색하기 (카테고리, 여행지 타이틀)',
+  })
   @ApiQuery({
     name: 'categoryIds',
     type: 'string',
@@ -43,7 +45,11 @@ export class DestinationsController {
     description: '검색할 목적지 이름을 입력하세요.',
     example: '제주',
   })
-  @ApiOkResponse({ type: DestinationResponse })
+  @ApiOkResponse({
+    description:
+      '조건에 맞는 여행지 목록을 댓글, 좋아요 정보와 함께 반환합니다.',
+    type: DestinationResponse,
+  })
   searchDestinationsWithLikesAndComments(
     @Query('categoryIds') categoryIds = '',
     @Query('title') title = '',
@@ -54,13 +60,21 @@ export class DestinationsController {
     );
   }
 
-  // TODO: test 용 api : 여행지 조회 시 댓글, 좋아요 정보를 모두 조회한다.
   @Get('/destinations/:destinationId')
-  @ApiOperation({ summary: '특정 여행지를 조회한다. (좋아요, 댓글 포함)' })
-  @ApiOkResponse({ type: DestinationResponse })
+  @ApiOperation({ summary: '특정 여행지 정보 조회' })
+  @ApiParam({
+    name: 'destinationId',
+    type: 'number',
+    description: '여행지 ID 를 전달하세요.',
+    example: 126456,
+  })
+  @ApiOkResponse({
+    description: '해당 여행지 정보를 댓글, 좋아요 정보와 함께 반환합니다.',
+    type: DestinationResponse,
+  })
   getAllDestinationWithLikesAndComments(
     @Param('destinationId', ParseIntPipe) destination_id: number,
-  ): Promise<Destination[]> {
+  ): Promise<Destination> {
     return this.destinationsService.getDestinationWithLikesAndComments(
       destination_id,
     );
