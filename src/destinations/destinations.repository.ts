@@ -118,15 +118,32 @@ export class DestinationsRepository extends Repository<Destination> {
   }
 
   /**
-   * 메인 화면에서 사용할 여행지 인기순 조회
-     TODO : '좋아요' 순으로 정렬하여 전달해야 한다.
+   * 메인 화면에서 사용할 좋아요 순 여행지 목록 조회
    * @param count
    */
   async getDestinationsRanking(count: number): Promise<Destination[]> {
-    const destinations = await this.find({
-      take: count,
-    });
+    const query = this.createQueryBuilder('destination')
+      .leftJoinAndSelect('destination.destination_likes', 'destination_likes')
+      .select([
+        'destination.id',
+        'destination.title',
+        'destination.homepage',
+        'destination.tel',
+        'destination.image1',
+        'destination.image2',
+        'destination.addr1',
+        'destination.addr2',
+        'destination.zipcode',
+        'destination.mapx',
+        'destination.mapy',
+        'destination.overview',
+        'destination.category_id',
+        'COUNT(CASE WHEN destination_likes.is_liked = TRUE THEN 1 END) as likes_count',
+      ])
+      .groupBy('destination.id')
+      .orderBy('likes_count', 'DESC')
+      .limit(count);
 
-    return destinations;
+    return await query.getRawMany();
   }
 }
