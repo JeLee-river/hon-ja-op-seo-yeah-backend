@@ -10,8 +10,12 @@ import * as mime from 'mime-types';
     MulterModule.register({
       storage: diskStorage({
         destination(req, file, callback) {
-          // callback 함수의 두번째 인자로 파일 저장 경로를 지정할 수 있다.
-          callback(null, './public/img');
+          try {
+            // callback 함수의 두번째 인자로 파일 저장 경로를 지정할 수 있다.
+            callback(null, './public/img');
+          } catch (error) {
+            callback(error, null);
+          }
         },
         filename(req, file, callback) {
           // callback 함수의 두번째 인자로 파일명을 지정할 수 있다.
