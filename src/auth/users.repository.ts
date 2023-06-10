@@ -1,5 +1,5 @@
 import { User } from './entities/user.entity';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Repository, UpdateResult } from 'typeorm';
 import {
   ConflictException,
   Injectable,
@@ -121,5 +121,16 @@ export class UsersRepository extends Repository<User> {
     });
 
     return user;
+  }
+
+  async saveUserProfileImagePath(
+    userId: string,
+    imagePath: string,
+  ): Promise<UpdateResult> {
+    return await this.createQueryBuilder('user')
+      .update(User)
+      .set({ profile_image: imagePath })
+      .where('id = :id', { id: userId })
+      .execute();
   }
 }

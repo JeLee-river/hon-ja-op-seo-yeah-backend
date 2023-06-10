@@ -4,9 +4,15 @@ import { UploadImageController } from './upload-image.controller';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import * as mime from 'mime-types';
+import { AuthModule } from '../auth/auth.module';
+import { SchedulesModule } from '../schedules/schedules.module';
+import { UsersRepository } from '../auth/users.repository';
+import { SchedulesRepository } from '../schedules/schedules.repository';
 
 @Module({
   imports: [
+    AuthModule,
+    SchedulesModule,
     MulterModule.register({
       storage: diskStorage({
         destination(req, file, callback) {
@@ -16,7 +22,7 @@ import * as mime from 'mime-types';
             callback(null, 'public/img');
           } catch (error) {
             callback(error, null);
-            Logger.log(error);
+            Logger.error(error);
           }
         },
         filename(req, file, callback) {
@@ -39,6 +45,6 @@ import * as mime from 'mime-types';
     }),
   ],
   controllers: [UploadImageController],
-  providers: [UploadImageService],
+  providers: [UploadImageService, UsersRepository, SchedulesRepository],
 })
 export class UploadImageModule {}
