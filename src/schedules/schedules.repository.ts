@@ -40,6 +40,7 @@ export class SchedulesRepository extends Repository<Schedule> {
         'schedule.status',
         'schedule.image',
         'schedule.created_at',
+        'schedule.updated_at',
       ])
       .where('schedule.schedule_id = :scheduleId', { scheduleId })
       .leftJoin('schedule.user', 'user')
@@ -97,6 +98,7 @@ export class SchedulesRepository extends Repository<Schedule> {
         'schedule.status',
         'schedule.image',
         'schedule.created_at',
+        'schedule.updated_at',
       ])
       .where('status = :status', { status: 'PUBLIC' })
       .leftJoin('schedule.user', 'user')
@@ -149,6 +151,7 @@ export class SchedulesRepository extends Repository<Schedule> {
         'schedule.status',
         'schedule.image',
         'schedule.created_at',
+        'schedule.updated_at',
       ])
       .where('schedule.user_id = :user_id', { user_id })
       .leftJoin('schedule.user', 'user')
