@@ -21,10 +21,28 @@ export class UploadImageService {
     return domain + img;
   }
 
-  updateUserProfileImage(userId: string, path: string) {
+  async updateUserProfileImage(
+    userId: string,
+    path: string,
+  ): Promise<{ message: string; imagePath: string }> {
     const imagePath = this.createImagePath(path);
 
-    return this.usersRepository.saveUserProfileImagePath(userId, imagePath);
+    const result = await this.usersRepository.saveUserProfileImagePath(
+      userId,
+      imagePath,
+    );
+
+    const COUNT_TO_BE_UPDATED = 1;
+    if (result.affected < COUNT_TO_BE_UPDATED) {
+      throw new InternalServerErrorException(
+        '프로필 이미지 업로드에 실패했습니다. 관리자에게 문의하세요.',
+      );
+    }
+
+    return {
+      message: '프로필 이미지가 성공적으로 업로드 되었습니다.',
+      imagePath,
+    };
   }
 
   async updateScheduleBackgroundImage(

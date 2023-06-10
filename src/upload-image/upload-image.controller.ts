@@ -51,7 +51,7 @@ export class UploadImageController {
   updateProfileImage(
     @UploadedFile() file: Express.Multer.File,
     @GetUserFromAccessToken() user,
-  ) {
+  ): Promise<{ message: string; imagePath: string }> {
     const { path } = file;
 
     return this.uploadImageService.updateUserProfileImage(user.id, path);
