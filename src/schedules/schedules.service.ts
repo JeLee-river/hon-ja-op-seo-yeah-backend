@@ -231,12 +231,16 @@ export class SchedulesService {
    * DB 에서 조회한 여행 일정 데이터를 클라이언트에 실제 응답할 형식으로 변환한다.
    * @param schedule
    */
-  transformSchedule(schedule) {
-    const { duration, schedule_details, schedules_likes } = schedule;
+  transformSchedule(schedule: Schedule) {
+    const { duration, schedule_details, schedules_likes, schedules_comments } =
+      schedule;
 
     // TODO : 이 일정의 좋아요 개수를 카운트하고, 좋아요 한 유저 목록을 확인한다.
     const likes = schedules_likes.filter(({ is_liked }) => is_liked === true);
     const newLikes = likes.map(({ is_liked, user }) => user);
+
+    // 이 일정의 댓글 갯수를 카운트한다
+    const comments_count = schedules_comments.length;
 
     // 일자(day)별 목적지 목록 및 지도 좌표를 담도록 데이터를 가공한다.
     const { destinationIds, destinationTitles, destinationMaps } =
@@ -255,6 +259,7 @@ export class SchedulesService {
 
     return {
       ...schedule,
+      comments_count,
       likes_count: likes.length,
       likes: newLikes,
       first_destination,
