@@ -195,11 +195,11 @@ export class SchedulesService {
     const newLikes = likes.map(({ is_liked, user }) => user);
 
     // 일자(day)별 목적지 목록 및 지도 좌표를 담도록 데이터를 가공한다.
-    const { destinationsByDay, destinationMaps } =
+    const { destinationIds, destinationTitles, destinationMaps } =
       this.transformDestinationsByDay(duration, schedule_details);
 
     // 여행지 목록을 담은 배열을 만들고, 첫번째와 마지막 목적지를 찾는다.
-    const flattedDestinations = destinationsByDay.flat();
+    const flattedDestinations = destinationTitles.flat();
     const first_destination = flattedDestinations[0];
     const last_destination =
       flattedDestinations[flattedDestinations.length - 1];
@@ -216,24 +216,28 @@ export class SchedulesService {
       first_destination,
       last_destination,
       destination_count,
-      destinations: destinationsByDay,
+      destinationIds,
+      destinations: destinationTitles,
       destinationMaps,
     };
   }
 
   transformDestinationsByDay(duration, schedule_details) {
-    const destinationsByDay = [];
     const FIRST_DAY_OF_DURATION = 1;
+    const destinationIds = [];
+    const destinationTitles = [];
     const destinationMaps = [];
 
     for (let day = FIRST_DAY_OF_DURATION; day <= duration; day++) {
-      const destinations = [];
-      const destinationMap = [];
+      const ids: number[] = [];
+      const titles: string[] = [];
+      const maps = [];
 
       schedule_details.forEach((detail) => {
         if (detail.day === day) {
-          destinations.push(detail.destination.title);
-          destinationMap.push({
+          ids.push(detail.destination_id);
+          titles.push(detail.destination.title);
+          maps.push({
             id: detail.destination.id,
             title: detail.destination.title,
             mapx: detail.destination.mapx,
@@ -242,11 +246,12 @@ export class SchedulesService {
         }
       });
 
-      destinationsByDay.push(destinations);
-      destinationMaps.push(destinationMap);
+      destinationIds.push(ids);
+      destinationTitles.push(titles);
+      destinationMaps.push(maps);
     }
 
-    return { destinationsByDay, destinationMaps };
+    return { destinationIds, destinationTitles, destinationMaps };
   }
 
   getSchedulesRanking(count: number): Promise<Schedule[]> {
@@ -312,7 +317,7 @@ export class SchedulesService {
     const destinationTitles = this.transformDestinationsByDay(
       requestedDuration,
       updatedSchedule.schedule_details,
-    ).destinationsByDay;
+    ).destinationTitles;
 
     // 일자별 여행지 id 와 title 을 각 배열에 담아 전달한다.
     return {
