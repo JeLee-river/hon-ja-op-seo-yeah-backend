@@ -2,6 +2,7 @@ import { DataSource, Repository } from 'typeorm';
 import { Destination } from './entities/destination.entity';
 import { Injectable, Logger } from '@nestjs/common';
 import { CreateDestinationDto } from './dto/create-destination.dto';
+import { ResponseCountByCategoryInterface } from '../types/ResponseCountsByCategory.interface';
 
 @Injectable()
 export class DestinationsRepository extends Repository<Destination> {
@@ -208,5 +209,34 @@ export class DestinationsRepository extends Repository<Destination> {
     }
 
     return await query.getMany();
+  }
+
+  async getCountsFromSearchByCategory(
+    categoryIds: string,
+    title: string,
+  ): Promise<ResponseCountByCategoryInterface[]> {
+    const query = this.createQueryBuilder('destination')
+      .select(['category.id', 'category.name'])
+      .leftJoin('destination.category', 'category')
+      .addSelect(['COUNT(destination.category_id) as count'])
+      .where('destination.title LIKE :title', {
+        title: `%${title}%`,
+      });
+
+    if (categoryIds.length > 0) {
+      query.andWhere('destination.category_id IN (:...categoryIds)', {
+        categoryIds,
+      });
+    }
+    query.groupBy('category.id, category.name');
+
+    return await query.getRawMany();
+    /*
+     'COUNT(CASE WHEN destination_likes.is_liked = TRUE THEN 1 END) as likes_count',
+      ])
+      .groupBy('destination.id')
+      .orderBy('likes_count', 'DESC')
+      .limit(count);
+     */
   }
 }

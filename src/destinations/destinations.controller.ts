@@ -80,10 +80,6 @@ export class DestinationsController {
     );
   }
 
-  /**
-   * TEST : 검색 + 페이지네이션
-   * @param count
-   */
   @ApiOperation({ summary: '인기순 여행지 목록을 요청한 갯수만큼 조회한다.' })
   @ApiQuery({
     name: 'count',
@@ -99,6 +95,10 @@ export class DestinationsController {
     return this.destinationsService.getDestinationsRanking(count);
   }
 
+  /**
+   * TEST : 검색 + 페이지네이션
+   * @param count
+   */
   @Get('/test/destinations')
   @ApiOperation({
     summary: '여행지 목록에서 검색하기 (카테고리, 여행지 타이틀)',
