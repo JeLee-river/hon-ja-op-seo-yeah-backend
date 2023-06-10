@@ -21,7 +21,13 @@ export class DestinationsRepository extends Repository<Destination> {
     Logger.log(result);
   }
 
-  // TODO: 여행지 검색 (카테고리와 여행지 타이틀)
+  /**
+   * 여행지 목록을 카테고리, 타이틀로 검색한 결과를 전달한다.
+   * TODO : pagination 추가하기
+   *
+   * @param categoryIds
+   * @param title
+   */
   async searchDestinationsWithLikesAndComments(
     categoryIds,
     title,
@@ -69,11 +75,15 @@ export class DestinationsRepository extends Repository<Destination> {
     return await query.getMany();
   }
 
-  // TODO :test 후 지울 것
+  /**
+   * 특정 여행지 정보를 좋아요, 댓글과 함께 전달한다.
+   * TODO: 좋아요, 댓글을 조회하는 API 는 분리할 것.
+   *
+   * @param destination_id
+   */
   async getDestinationWithLikesAndComments(
     destination_id: number,
   ): Promise<any> {
-    // 여행지 목록을 좋아요, 댓글과 함께 조회한다.
     return await this.createQueryBuilder('destination')
       .select('destination')
       .leftJoin('destination.destination_comments', 'destinations_comment')
@@ -107,8 +117,12 @@ export class DestinationsRepository extends Repository<Destination> {
       .getOne();
   }
 
+  /**
+   * 메인 화면에서 사용할 여행지 인기순 조회
+     TODO : '좋아요' 순으로 정렬하여 전달해야 한다.
+   * @param count
+   */
   async getDestinationsRanking(count: number): Promise<Destination[]> {
-    // TODO : 추후에 '좋아요' 순으로 정렬하여 조회해야 한다.
     const destinations = await this.find({
       take: count,
     });

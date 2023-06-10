@@ -28,7 +28,7 @@ export class DestinationsController {
   }
 
   // TODO: 여행지 검색 : 카테고리와 여행지명
-  @Get('/destinations/search')
+  @Get('/destinations')
   @ApiOperation({ summary: '여행지 검색 (카테고리, 여행지 타이틀)' })
   @ApiQuery({
     name: 'categoryIds',
@@ -55,7 +55,7 @@ export class DestinationsController {
   }
 
   // TODO: test 용 api : 여행지 조회 시 댓글, 좋아요 정보를 모두 조회한다.
-  @Get('/destinations-with-likes-and-comments/:destinationId')
+  @Get('/destinations/:destinationId')
   @ApiOperation({ summary: '특정 여행지를 조회한다. (좋아요, 댓글 포함)' })
   @ApiOkResponse({ type: DestinationResponse })
   getAllDestinationWithLikesAndComments(
@@ -66,7 +66,7 @@ export class DestinationsController {
     );
   }
 
-  @ApiOperation({ summary: '여행지 랭킹을 요청한 갯수만큼 조회한다.' })
+  @ApiOperation({ summary: '인기순 여행지 목록을 요청한 갯수만큼 조회한다.' })
   @ApiQuery({
     name: 'count',
     type: 'number',
@@ -78,7 +78,6 @@ export class DestinationsController {
   getDestinationsRanking(
     @Query('count', ParseIntPipe) count: number,
   ): Promise<Destination[]> {
-    const result = this.destinationsService.getDestinationsRanking(count);
-    return result;
+    return this.destinationsService.getDestinationsRanking(count);
   }
 }
