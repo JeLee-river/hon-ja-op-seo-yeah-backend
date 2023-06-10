@@ -14,6 +14,7 @@ import { SchedulesLikesModule } from './schedules-likes/schedules-likes.module';
 import { SchedulesCommentsModule } from './schedules-comments/schedules-comments.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { UploadImageModule } from './upload-image/upload-image.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { join } from 'path';
     DestinationsLikesModule,
     SchedulesLikesModule,
     SchedulesCommentsModule,
+    UploadImageModule,
   ],
   controllers: [AppController],
   providers: [AppService],
