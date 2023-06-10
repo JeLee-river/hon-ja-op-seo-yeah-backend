@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { UploadImageService } from './upload-image.service';
 import { UploadImageController } from './upload-image.controller';
 import { MulterModule } from '@nestjs/platform-express';
@@ -12,9 +12,11 @@ import * as mime from 'mime-types';
         destination(req, file, callback) {
           try {
             // callback 함수의 두번째 인자로 파일 저장 경로를 지정할 수 있다.
-            callback(null, './public/img');
+            Logger.log(file);
+            callback(null, 'public/img');
           } catch (error) {
             callback(error, null);
+            Logger.log(error);
           }
         },
         filename(req, file, callback) {
