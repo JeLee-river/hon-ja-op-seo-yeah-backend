@@ -10,7 +10,7 @@ export class UploadImageService {
     private schedulesRepository: SchedulesRepository,
   ) {}
 
-  saveUserProfileImagePath(userId: string, path: string) {
+  updateUserProfileImage(userId: string, path: string) {
     const domain = config.get('server').domain;
     const img = path.split('public')[1];
     const imagePath = domain + img;

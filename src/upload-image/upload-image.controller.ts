@@ -46,12 +46,12 @@ export class UploadImageController {
     },
   })
   @ApiCreatedResponse({ description: '프로필 이미지 경로' })
-  uploadProfileFile(
+  updateProfileImage(
     @UploadedFile() file: Express.Multer.File,
     @GetUserFromAccessToken() user,
   ) {
     const { path } = file;
 
-    return this.uploadImageService.saveUserProfileImagePath(user.id, path);
+    return this.uploadImageService.updateUserProfileImage(user.id, path);
   }
 }
