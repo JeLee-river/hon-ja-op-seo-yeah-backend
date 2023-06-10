@@ -279,7 +279,10 @@ export class SchedulesService {
     user_id: string,
     schedule_id: number,
     destinations: number[][],
-  ): Promise<Omit<ScheduleDetail, 'idx'>[]> {
+  ): Promise<{
+    destinationIds: number[][];
+    destinationTitles: string[][];
+  }> {
     // 기존 여행 일정을 조회해서 존재하는 여행 일정인지 확인한다.
     const schedule = await this.schedulesRepository.getScheduleById(
       schedule_id,
@@ -308,7 +311,24 @@ export class SchedulesService {
     // schedule_id 의 기존 상세 일정을 제거한다.
     await this.scheduleDetailRepository.deleteScheduleDetailsById(schedule_id);
 
-    return await this.createScheduleDetails(schedule_id, destinations);
+    // 요청 받은 내용대로 상세 일정을 저장한다.
+    await this.createScheduleDetails(schedule_id, destinations);
+
+    // 새로 업데이트 된 일자별 schedule_details 정보를 확인한다.
+    const updatedSchedule = await this.schedulesRepository.getScheduleById(
+      schedule_id,
+    );
+
+    const destinationTitles = this.transformDestinationsByDay(
+      requestedDuration,
+      updatedSchedule.schedule_details,
+    ).destinationsByDay;
+
+    // 일자별 여행지 id 와 title 을 각 배열에 담아 전달한다.
+    return {
+      destinationIds: destinations,
+      destinationTitles,
+    };
   }
 
   // todo : test :: 전체 여행 일정을 좋아요와 댓글 모두 포함하여 조회한다.

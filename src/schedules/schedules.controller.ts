@@ -146,7 +146,7 @@ export class SchedulesController {
   @Post('schedules/:scheduleId')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
-  @ApiOperation({ summary: '여행 상세 일정을 업데이트한다.' })
+  @ApiOperation({ summary: '기존 여행 일정에 목적지를 추가한다.' })
   @ApiParam({
     name: 'scheduleId',
     type: 'string',
@@ -155,17 +155,20 @@ export class SchedulesController {
   })
   @ApiBody({
     type: DestinationsByDayDto,
-    description: '일자별 목적지 목록',
+    description: '일자별 목적지 ID 목록을 전달하세요.',
   })
   @ApiCreatedResponse({
-    description: '업데이트된 여행 일정 정보',
+    description: '업데이트된 여행 일자별 목적지 정보',
     type: [Schedule],
   })
   saveDestinationsForScheduleDetails(
     @Param('scheduleId', ParseIntPipe) schedule_id: number,
     @Body('destinations') destinations: number[][],
     @GetUserFromAccessToken() user,
-  ): Promise<Omit<ScheduleDetail, 'idx'>[]> {
+  ): Promise<{
+    destinationIds: number[][];
+    destinationTitles: string[][];
+  }> {
     return this.schedulesService.saveDestinationsForScheduleDetails(
       user.id,
       schedule_id,
