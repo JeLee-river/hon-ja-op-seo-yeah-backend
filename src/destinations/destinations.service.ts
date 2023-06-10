@@ -1,19 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { DestinationsRepository } from './destinations.repository';
 import { Destination } from './entities/destination.entity';
 import { CreateDestinationDto } from './dto/create-destination.dto';
+
+import { promises as fs } from 'fs';
 
 @Injectable()
 export class DestinationsService {
   constructor(private destinationsRepository: DestinationsRepository) {}
 
   async fetchData(): Promise<void> {
-    // TODO: serviceKey 등 주요 정보를 .env 파일로 분리
     const baseUrl =
       'https://apis.data.go.kr/B551011/KorService1/areaBasedList1';
     const serviceKey =
       'gYxeW4UBcFMVnEbeclSlXiybRNht4DCVRd5g7YeF8ippmVNRo9bc1rwDyu%2Fz8OT7yVPSy0%2BrLZ3LtaDUsIHrvg%3D%3D';
-    const numOfRows = '1000';
+    const numOfRows = '3000';
     const pageNo = '1';
     const mobileOS = 'ETC';
     const mobileApp = 'AppTest';
@@ -29,41 +30,66 @@ export class DestinationsService {
       const result = await response.json();
       const data = result.response.body.items.item;
 
-      await this.fetchDataIncludesOverview(data);
-    } catch (e) {
-      console.log(e);
+      // API 응답 결과를 별도의 JSON 파일로 생성하기
+      const jsonData = JSON.stringify(data, null, 2);
+      await fs.writeFile('./data/destinations.json', jsonData);
+    } catch (error) {
+      Logger.error(error);
     }
   }
 
-  async fetchDataIncludesOverview(data): Promise<void> {
-    // TODO: fetch 한 데이터의 프로퍼티들을 모두 포함하는 interface 또는 type 을 하나 만들어야할지?
-    const destinations: any[] = [];
+  async getDestinationIdsFromJSON(): Promise<void> {
+    const data: string = await fs.readFile('./data/destinations.json', 'utf-8');
+    const destinations = JSON.parse(data);
 
-    const promises = data.map(async ({ contentid }) => {
-      // TODO: API 호출 건수는 2,000건으로 제한되어있으므로, 데이터 범위를 나누어서 여러 일에 걸쳐서 데이터를 호출하여 가져와야한다.
-      // TODO: ex. 총 2,350건이라면 하루는 2,000건, 다음날에 350건...
-      const url = `https://apis.data.go.kr/B551011/KorService1/detailCommon1?serviceKey=gYxeW4UBcFMVnEbeclSlXiybRNht4DCVRd5g7YeF8ippmVNRo9bc1rwDyu%2Fz8OT7yVPSy0%2BrLZ3LtaDUsIHrvg%3D%3D&MobileOS=ETC&MobileApp=AppTest&_type=json&contentId=${contentid}&defaultYN=Y&firstImageYN=Y&addrinfoYN=Y&mapinfoYN=Y&overviewYN=Y&numOfRows=10&pageNo=1`;
+    const destinationIds = destinations.map(({ contentid, title }) => ({
+      contentid,
+      title,
+    }));
 
-      const response = await fetch(url);
-      const result = await response.json();
+    const jsonData = JSON.stringify(destinationIds, null, 2);
+    await fs.writeFile('destination-ids.json', jsonData);
+  }
 
-      // TODO: 응답이 데이터 객체 1개인데도 배열에 담겨져서 넘어오는 경우 : 이렇게 [0] 으로 인덱싱 처리해도 괜찮은가?
-      const data = result.response.body.items.item[0];
+  async fetchDestinationsWithOverview() {
+    const data: string = await fs.readFile(
+      './data/destination-ids.json',
+      'utf-8',
+    );
+    const destinationIds = JSON.parse(data);
 
-      destinations.push(data);
-    });
+    const destinations = [];
 
     try {
-      await Promise.all(promises);
+      for (let i = 1; i <= 300; i++) {
+        const { contentid, title } = destinationIds[i];
+        const url = `https://apis.data.go.kr/B551011/KorService1/detailCommon1?serviceKey=gYxeW4UBcFMVnEbeclSlXiybRNht4DCVRd5g7YeF8ippmVNRo9bc1rwDyu%2Fz8OT7yVPSy0%2BrLZ3LtaDUsIHrvg%3D%3D&MobileOS=ETC&MobileApp=AppTest&_type=json&contentId=${contentid}&defaultYN=Y&firstImageYN=Y&addrinfoYN=Y&mapinfoYN=Y&overviewYN=Y&numOfRows=10&pageNo=1`;
 
-      await this.insertDestinations(destinations);
+        const response = await fetch(url);
+        const result = await response.json();
+        const dataWithOverview = result.response.body.items.item[0];
+
+        Logger.log(dataWithOverview);
+        destinations.push(dataWithOverview);
+      }
+
+      const jsonData = JSON.stringify(destinations, null, 2);
+      await fs.writeFile(
+        './data/destinations-with-overview-1-300.json',
+        jsonData,
+      );
     } catch (e) {
-      console.log(e);
+      Logger.error(e.message());
     }
   }
 
-  async insertDestinations(destinations: any[]): Promise<void> {
-    // TODO : 테이블에 insert 하지 않을 property 를 제외해야 한다.
+  async transformDestinationsToInsert(): Promise<void> {
+    const data: string = await fs.readFile(
+      './data/destinations-with-overview-1-300.json',
+      'utf-8',
+    );
+    const destinations = JSON.parse(data);
+
     const destinationsToInsert: CreateDestinationDto[] = destinations.map(
       (data) => {
         return {
@@ -84,24 +110,103 @@ export class DestinationsService {
       },
     );
 
+    const jsonData = JSON.stringify(destinationsToInsert, null, 2);
+
+    try {
+      await fs.writeFile('./data/destinations-to-insert-1-300.json', jsonData);
+    } catch (error) {
+      Logger.error(error);
+    }
+  }
+
+  async insertDestinations(): Promise<void> {
+    const data: string = await fs.readFile(
+      './data/destinations-to-insert-1-300.json',
+      'utf-8',
+    );
+    const destinationsToInsert = JSON.parse(data);
+
     try {
       await this.destinationsRepository.insertDestinations(
         destinationsToInsert,
       );
     } catch (e) {
-      console.log(e);
+      Logger.error(e.message());
     }
   }
 
-  getAllDestinations(): Promise<Destination[]> {
-    return this.destinationsRepository.getAllDestinations();
+  // TODO: 여행지 검색 (카테고리와 여행지 타이틀)
+  async searchDestinationsWithLikesAndComments(
+    categoryIds,
+    title,
+  ): Promise<any> {
+    // categoryIds 를 배열로 변경
+    let parsedCategoryIds;
+    if (categoryIds === '') {
+      parsedCategoryIds = [];
+    } else {
+      parsedCategoryIds = categoryIds
+        .split(',')
+        .map(Number)
+        .filter((number) => !isNaN(number));
+    }
+
+    const destinations =
+      await this.destinationsRepository.searchDestinationsWithLikesAndComments(
+        parsedCategoryIds,
+        title,
+      );
+
+    const result = destinations.map((destination) => {
+      const { destination_likes } = destination;
+      // is_liked 가 false 인 항목들을 제외한다.
+      const new_destination_likes = destination_likes.filter(
+        ({ is_liked }) => is_liked === true,
+      );
+      const destination_likes_count = new_destination_likes.length;
+
+      return {
+        ...destination,
+        comment_count: destination.destination_comments.length,
+        destination_likes: new_destination_likes,
+        destination_likes_count,
+      };
+    });
+
+    return {
+      total_count: result.length,
+      destinations: result,
+    };
   }
 
-  getDestinationsByCategory(categoryId: number): Promise<Destination[]> {
-    return this.destinationsRepository.getDestinationsByCategory(categoryId);
+  async getDestinationWithLikesAndComments(
+    destination_id: number,
+  ): Promise<any> {
+    const destination =
+      await this.destinationsRepository.getDestinationWithLikesAndComments(
+        destination_id,
+      );
+
+    const { destination_likes } = destination;
+
+    // is_liked 가 false 인 항목들을 제외한다.
+    const new_destination_likes = destination_likes.filter(
+      ({ is_liked }) => is_liked === true,
+    );
+    const destination_likes_count = new_destination_likes.length;
+
+    return {
+      ...destination,
+      comment_count: destination.destination_comments.length,
+      destination_likes: new_destination_likes,
+      destination_likes_count,
+    };
   }
 
-  getDestination(destinationId: number): Promise<Destination> {
-    return this.destinationsRepository.getDestination(destinationId);
+  getDestinationsRanking(count: number): Promise<Destination[]> {
+    const destinations =
+      this.destinationsRepository.getDestinationsRanking(count);
+
+    return destinations;
   }
 }

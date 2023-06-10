@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -7,6 +7,11 @@ import { DestinationsModule } from './destinations/destinations.module';
 import { CategoriesModule } from './categories/categories.module';
 import { AuthModule } from './auth/auth.module';
 import { SchedulesModule } from './schedules/schedules.module';
+import { LoggerMiddleware } from './utils/logger/logger.middleware';
+import { DestinationsCommentsModule } from './destinations-comments/destinations-comments.module';
+import { DestinationsLikesModule } from './destinations-likes/destinations-likes.module';
+import { SchedulesLikesModule } from './schedules-likes/schedules-likes.module';
+import { SchedulesCommentsModule } from './schedules-comments/schedules-comments.module';
 
 @Module({
   imports: [
@@ -15,8 +20,16 @@ import { SchedulesModule } from './schedules/schedules.module';
     CategoriesModule,
     AuthModule,
     SchedulesModule,
+    DestinationsCommentsModule,
+    DestinationsLikesModule,
+    SchedulesLikesModule,
+    SchedulesCommentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): any {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+}
