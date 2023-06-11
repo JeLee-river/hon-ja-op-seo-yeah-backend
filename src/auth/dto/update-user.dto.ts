@@ -23,8 +23,7 @@ export class UpdateUserDto {
   gender: string;
 
   @ApiProperty({ description: '프로필 이미지', example: 'baseurl string' })
-  @IsString()
-  profile_image: string;
+  profile_image?: string;
 
   created_at: Date;
 }
