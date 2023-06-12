@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
   Param,
@@ -32,6 +33,7 @@ import { ResponseScheduleInterface } from '../types/ResponseSchedule.interface';
 import { UpdateScheduleDto } from './dto/update-schedule.dto';
 import { DeleteScheduleDto } from './dto/delete-schedule.dto';
 import { DestinationsByDayDto } from './dto/destinations-by-day.dto';
+import { ScheduleWithLikesAndComments } from '../types/ScheduleWithLikesAndComments.interface';
 
 @Controller()
 @ApiTags('여행 일정 (Schedules)')
@@ -193,5 +195,36 @@ export class SchedulesController {
     @Query('count', ParseIntPipe) count: number,
   ): Promise<Schedule[]> {
     return this.schedulesService.getSchedulesRanking(Number(count));
+  }
+
+  @Get('/schedules/ranking/likes')
+  @ApiOperation({
+    summary:
+      '공개된 전체 여행 일정을 좋아요 순으로 조회한다. (페이지네이션 적용)',
+  })
+  @ApiQuery({
+    name: 'page',
+    type: 'number',
+    description: '페이지 번호 (기본값: 1)',
+    example: 1,
+  })
+  @ApiQuery({
+    name: 'limit',
+    type: 'number',
+    description: '한 페이지에 보여줄 목적지 개수 (기본값: 10)',
+    example: 10,
+  })
+  @ApiOkResponse({
+    description:
+      '공개된 전체 여행 일정을 좋아요, 댓글 정보와 함께 조회한 목록 (좋아요 순)',
+  })
+  getSchedulesOrderByLikesCount(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+  ): Promise<ScheduleWithLikesAndComments[]> {
+    return this.schedulesService.getSchedulesOrderByLikesCount({
+      page,
+      limit,
+    });
   }
 }

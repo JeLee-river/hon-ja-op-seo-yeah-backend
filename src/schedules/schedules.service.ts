@@ -7,15 +7,21 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
+
 import { SchedulesRepository } from './schedules.repository';
-import { CreateScheduleDto } from './dto/create-schedule.dto';
-import { Schedule } from './entities/schedule.entity';
-import { ScheduleDetail } from './entities/schedule-detail.entity';
 import { SchedulesDetailRepository } from './schedules-detail.repository';
-import { ResponseScheduleInterface } from '../types/ResponseSchedule.interface';
-import { UpdateScheduleDto } from './dto/update-schedule.dto';
 import { SchedulesLikesRepository } from '../schedules-likes/schedules-likes.repository';
 import { SchedulesCommentsRepository } from '../schedules-comments/schedules-comments.repository';
+
+import { CreateScheduleDto } from './dto/create-schedule.dto';
+import { UpdateScheduleDto } from './dto/update-schedule.dto';
+
+import { Schedule } from './entities/schedule.entity';
+import { ScheduleDetail } from './entities/schedule-detail.entity';
+
+import { ScheduleWithLikesAndComments } from '../types/ScheduleWithLikesAndComments.interface';
+import { ResponseScheduleInterface } from '../types/ResponseSchedule.interface';
+import { PaginationOptions } from '../types/PaginationOptions.interface';
 
 @Injectable()
 export class SchedulesService {
@@ -410,5 +416,33 @@ export class SchedulesService {
    */
   getSchedulesRanking(count: number): Promise<Schedule[]> {
     return this.schedulesRepository.getSchedulesRanking(count);
+  }
+
+  /**
+   * 전체 일정 조회 (좋아요, 댓글 포함) - 페이지네이션 적용
+   */
+  async getSchedulesOrderByLikesCount(
+    paginationOption: PaginationOptions,
+  ): Promise<ScheduleWithLikesAndComments[]> {
+    const { page, limit } = paginationOption;
+
+    const scheduleIdsByLikesCount =
+      await this.schedulesRepository.getScheduleIdsOrderByLikesCount({
+        ...paginationOption,
+        offset: (page - 1) * limit,
+      });
+
+    const scheduleIds: number[] = scheduleIdsByLikesCount.map(
+      ({ schedule_id }) => Number(schedule_id),
+    );
+
+    const schedulesOrderByLikesCount =
+      await this.schedulesRepository.getSchedulesByScheduleIds(scheduleIds);
+
+    const result = schedulesOrderByLikesCount.map((schedule) => {
+      return this.transformSchedule(schedule);
+    });
+
+    return result;
   }
 }

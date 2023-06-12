@@ -5,6 +5,8 @@ import { CreateScheduleDto } from './dto/create-schedule.dto';
 import { UpdateScheduleDto } from './dto/update-schedule.dto';
 
 import * as config from 'config';
+import { ScheduleIdsOrderByLikesCount } from '../types/ScheduleIdsOrderByLikesCount.interface';
+import { PaginationOptions } from '../types/PaginationOptions.interface';
 
 @Injectable()
 export class SchedulesRepository extends Repository<Schedule> {
@@ -308,5 +310,32 @@ export class SchedulesRepository extends Repository<Schedule> {
       .set({ image: imagePath })
       .where('schedule_id = :schedule_id', { schedule_id })
       .execute();
+  }
+
+  async getScheduleIdsOrderByLikesCount(
+    paginationOptions: PaginationOptions,
+  ): Promise<ScheduleIdsOrderByLikesCount[]> {
+    const { limit, offset } = paginationOptions;
+
+    const query = this.createQueryBuilder('schedule')
+      .leftJoin(
+        'schedule.schedules_likes',
+        'schedules_like',
+        'schedule.schedule_id = schedules_like.schedule_id',
+      )
+      .select('schedule.schedule_id', 'schedule_id')
+      .addSelect(
+        'COUNT(case when schedules_like.is_liked = true then 1 end)',
+        'likes_count',
+      )
+      .groupBy('schedule.schedule_id')
+      .orderBy({
+        likes_count: 'DESC',
+        schedule_id: 'DESC',
+      })
+      .limit(limit)
+      .offset(offset);
+
+    return await query.getRawMany();
   }
 }
