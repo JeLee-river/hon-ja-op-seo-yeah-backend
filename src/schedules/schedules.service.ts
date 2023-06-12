@@ -158,6 +158,40 @@ export class SchedulesService {
   }
 
   /**
+   * 로그인 한 유저가 좋아요 한 모든 일정 조회 (좋아요, 댓글 포함)
+   * @param user_id
+   */
+  async getSchedulesLikedByUser(
+    user_id: string,
+  ): Promise<Schedule[] | { message: string }> {
+    const scheduleIds =
+      await this.schedulesLikesRepository.getScheduleIdsLikedByUser(user_id);
+
+    const likedSchedulesIsEmpty = scheduleIds.length === 0;
+
+    if (likedSchedulesIsEmpty) {
+      return {
+        message: '좋아요한 일정이 없습니다.',
+      };
+    }
+
+    const likedScheduleIds: number[] = scheduleIds.map(
+      (item) => item.schedule_id,
+    );
+
+    const schedulesLikedByUser =
+      await this.schedulesRepository.getSchedulesByScheduleIds(
+        likedScheduleIds,
+      );
+
+    const likedSchedules = schedulesLikedByUser.map((schedule) => {
+      return this.transformSchedule(schedule);
+    });
+
+    return likedSchedules;
+  }
+
+  /**
    * 특정 여행 일정 조회 (좋아요, 댓글 포함)
    * @param scheduleId
    */

@@ -135,6 +135,17 @@ export class SchedulesController {
     return this.schedulesService.getMySchedules(user.id);
   }
 
+  @Get('users/me/liked-schedules')
+  @ApiOperation({ summary: '로그인한 사용자가 좋아요 한 일정들만 조회한다.' })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  @ApiOkResponse({ description: '조회된 일정 목록', type: [Schedule] })
+  getSchedulesLikedByUser(
+    @GetUserFromAccessToken() user,
+  ): Promise<Schedule[] | { message: string }> {
+    return this.schedulesService.getSchedulesLikedByUser(user.id);
+  }
+
   @Post('schedules/:scheduleId')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')

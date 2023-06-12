@@ -161,6 +161,63 @@ export class SchedulesRepository extends Repository<Schedule> {
     return await query.getMany();
   }
 
+  // 전체 여행 일정을 좋아요와 댓글 모두 포함하여 조회한다.
+  async getSchedulesByScheduleIds(scheduleIds: number[]): Promise<Schedule[]> {
+    const query = this.createQueryBuilder('schedule')
+      .select([
+        'schedule.schedule_id',
+        'schedule.title',
+        'schedule.summary',
+        'schedule.start_date',
+        'schedule.end_date',
+        'schedule.duration',
+        'schedule.status',
+        'schedule.image',
+        'schedule.created_at',
+        'schedule.updated_at',
+      ])
+      .where('status = :status', { status: 'PUBLIC' })
+      .andWhere('schedule.schedule_id IN (:...scheduleIds)', {
+        scheduleIds,
+      })
+      .leftJoin('schedule.user', 'user')
+      .addSelect([
+        'user.id',
+        'user.nickname',
+        'user.phone_number',
+        'user.profile_image',
+      ])
+      .leftJoin('schedule.schedules_comments', 'schedules_comments')
+      .addSelect([
+        'schedules_comments.comment_id',
+        'schedules_comments.comment',
+        'schedules_comments.created_at',
+        'schedules_comments.updated_at',
+      ])
+      .leftJoin('schedules_comments.user', 'comments_user')
+      .addSelect([
+        'comments_user.id',
+        'comments_user.nickname',
+        'comments_user.profile_image',
+      ])
+      .leftJoinAndSelect('schedule.schedule_details', 'schedule_details')
+      .leftJoinAndSelect('schedule_details.destination', 'destination')
+      .leftJoin('schedule.schedules_likes', 'schedules_likes')
+      .addSelect(['schedules_likes.is_liked'])
+      .leftJoin('schedules_likes.user', 'schedule_likes_user')
+      .addSelect([
+        'schedule_likes_user.id',
+        'schedule_likes_user.nickname',
+        'schedule_likes_user.profile_image',
+      ])
+      .orderBy({
+        'schedule_details.day': 'ASC',
+        'schedule_details.tour_order': 'ASC',
+      });
+
+    return await query.getMany();
+  }
+
   async getSchedulesByUserId(user_id: string): Promise<Schedule[]> {
     const query = this.createQueryBuilder('schedule')
       .select([

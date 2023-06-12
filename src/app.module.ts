@@ -18,9 +18,6 @@ import { UploadImageModule } from './upload-image/upload-image.module';
 
 @Module({
   imports: [
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'public'),
-    }),
     TypeOrmModule.forRoot(typeORMConfig),
     DestinationsModule,
     CategoriesModule,
@@ -31,6 +28,9 @@ import { UploadImageModule } from './upload-image/upload-image.module';
     SchedulesLikesModule,
     SchedulesCommentsModule,
     UploadImageModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],
