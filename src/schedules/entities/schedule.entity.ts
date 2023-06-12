@@ -14,6 +14,10 @@ import { ScheduleStatus } from '../../types/ScheduleStatus.enum';
 import { SchedulesLike } from '../../schedules-likes/entities/schedules-like.entity';
 import { SchedulesComment } from '../../schedules-comments/entities/schedules-comment.entity';
 
+import * as config from 'config';
+
+const defaultImagePath = config.get('img').DEFAULT_BACKGROUND_IMG_PATH;
+
 @Entity()
 export class Schedule {
   @PrimaryGeneratedColumn()
@@ -40,7 +44,10 @@ export class Schedule {
   @Column({ default: 'PUBLIC' })
   status: ScheduleStatus;
 
-  @Column({ nullable: true })
+  @Column({
+    default: defaultImagePath,
+    nullable: true,
+  })
   image: string;
 
   @CreateDateColumn()

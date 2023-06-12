@@ -2,6 +2,9 @@ import { DataSource, DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { Schedule } from './entities/schedule.entity';
 import { CreateScheduleDto } from './dto/create-schedule.dto';
+import { UpdateScheduleDto } from './dto/update-schedule.dto';
+
+import * as config from 'config';
 
 @Injectable()
 export class SchedulesRepository extends Repository<Schedule> {
@@ -14,6 +17,25 @@ export class SchedulesRepository extends Repository<Schedule> {
     createScheduleDto: CreateScheduleDto,
   ): Promise<Schedule> {
     const schedule = this.create({ user_id: userId, ...createScheduleDto });
+
+    await this.save(schedule);
+
+    return schedule;
+  }
+
+  async updateSchedule(
+    userId: string,
+    updateScheduleDto: UpdateScheduleDto,
+  ): Promise<Schedule> {
+    const defaultImagePath = config.get('img').DEFAULT_BACKGROUND_IMG_PATH;
+
+    const { image } = updateScheduleDto;
+
+    if (!image) {
+      updateScheduleDto.image = defaultImagePath;
+    }
+
+    const schedule = this.create({ user_id: userId, ...updateScheduleDto });
 
     await this.save(schedule);
 

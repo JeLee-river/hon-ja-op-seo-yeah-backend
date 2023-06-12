@@ -65,7 +65,7 @@ export class SchedulesController {
   @ApiBearerAuth('access-token')
   @ApiOperation({
     summary: '여행 일정을 업데이트 합니다.',
-    description: '여행 기본 일정을 업데이트하고 상세 일정을 등록합니다..',
+    description: '여행 기본 일정을 업데이트하고 상세 일정을 등록합니다.',
   })
   @ApiBody({
     type: UpdateScheduleDto,

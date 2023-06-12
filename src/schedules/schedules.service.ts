@@ -67,7 +67,7 @@ export class SchedulesService {
 
     try {
       // 여행 일정 기본 정보 update
-      const schedule = await this.schedulesRepository.createSchedule(
+      const schedule = await this.schedulesRepository.updateSchedule(
         userId,
         updateScheduleDto,
       );
