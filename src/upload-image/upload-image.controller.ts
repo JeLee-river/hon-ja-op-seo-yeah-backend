@@ -22,7 +22,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 export class UploadImageController {
   constructor(private readonly uploadImageService: UploadImageService) {}
 
-  @Post('/profile')
+  @Post('/profile/image')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('file'))
   @ApiBearerAuth('access-token')
