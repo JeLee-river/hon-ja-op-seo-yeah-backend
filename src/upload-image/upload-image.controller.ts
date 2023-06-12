@@ -54,7 +54,7 @@ export class UploadImageController {
   ): Promise<{ message: string; imagePath: string }> {
     const { path } = file;
 
-    return this.uploadImageService.updateUserProfileImage(user.id, path);
+    return this.uploadImageService.uploadUserProfileImage(user.id, path);
   }
 
   @Post('/schedules/:scheduleId')
@@ -87,7 +87,7 @@ export class UploadImageController {
   ): Promise<{ message: string; imagePath: string }> {
     const { path } = file;
 
-    return this.uploadImageService.updateScheduleBackgroundImage(
+    return this.uploadImageService.uploadScheduleBackgroundImage(
       schedule_id,
       user.id,
       path,

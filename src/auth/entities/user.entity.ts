@@ -13,7 +13,6 @@ import { SchedulesLike } from '../../schedules-likes/entities/schedules-like.ent
 import { SchedulesComment } from '../../schedules-comments/entities/schedules-comment.entity';
 
 @Entity()
-// @Unique(['id', 'nickname'])
 @Unique(['id'])
 @Unique(['nickname'])
 export class User {
