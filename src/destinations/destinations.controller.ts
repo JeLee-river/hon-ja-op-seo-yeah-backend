@@ -1,4 +1,4 @@
-import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
 import { DestinationsService } from './destinations.service';
 import { Destination } from './entities/destination.entity';
 import {
@@ -7,6 +7,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { DestinationResponse } from '../utils/swagger/destination.response';
@@ -24,43 +25,73 @@ export class DestinationsController {
   })
   @ApiNoContentResponse({ description: '여행지 정보가 DB에 등록된다.' })
   async fetchData(): Promise<void> {
-    return await this.destinationsService.fetchData();
+    return await this.destinationsService.insertDestinations();
   }
 
   @Get('/destinations')
-  @ApiOperation({ summary: '전체 여행지 목록을 조회한다.' })
-  @ApiOkResponse({ type: DestinationResponse })
-  getAllDestinations(): Promise<Destination[]> {
-    return this.destinationsService.getAllDestinations();
-  }
-
-  @Get('/categories/:categoryId/destinations')
-  @ApiOperation({ summary: '특정 카테고리의 여행지 목록을 조회한다.' })
-  @ApiParam({
-    name: 'categoryId',
+  @ApiOperation({
+    summary: '여행지 목록에서 검색하기 (카테고리, 여행지 타이틀)',
+  })
+  @ApiQuery({
+    name: 'categoryIds',
     type: 'string',
     description:
-      '카테고리 ID (12:관광지, 14:문화시설, 15:축제공연행사, 25:여행코스, 28:레포츠, 32:숙박, 38:쇼핑, 39:음식점)',
-    example: '12',
+      '카테고리 ID를 콤마(,)로 전달하세요. (12:관광지, 14:문화시설, 15:축제공연행사, 25:여행코스, 28:레포츠, 32:숙박, 38:쇼핑, 39:음식점)',
+    example: '12,14',
   })
-  @ApiOkResponse({ type: Destination })
-  getDestinationsByCategory(
-    @Param('categoryId', ParseIntPipe) categoryId: number,
+  @ApiQuery({
+    name: 'title',
+    type: 'string',
+    description: '검색할 목적지 이름을 입력하세요.',
+    example: '제주',
+  })
+  @ApiOkResponse({
+    description:
+      '조건에 맞는 여행지 목록을 댓글, 좋아요 정보와 함께 반환합니다.',
+    type: DestinationResponse,
+  })
+  searchDestinationsWithLikesAndComments(
+    @Query('categoryIds') categoryIds = '',
+    @Query('title') title = '',
   ): Promise<Destination[]> {
-    return this.destinationsService.getDestinationsByCategory(categoryId);
+    return this.destinationsService.searchDestinationsWithLikesAndComments(
+      categoryIds,
+      title,
+    );
   }
 
   @Get('/destinations/:destinationId')
-  @ApiOperation({ summary: '특정 여행지의 상세 정보를 조회한다.' })
+  @ApiOperation({ summary: '특정 여행지 정보 조회' })
   @ApiParam({
     name: 'destinationId',
     type: 'number',
-    description: '여행지 ID',
-    example: 1887493,
+    description: '여행지 ID 를 전달하세요.',
+    example: 126456,
   })
-  getDestination(
-    @Param('destinationId', ParseIntPipe) destinationId,
+  @ApiOkResponse({
+    description: '해당 여행지 정보를 댓글, 좋아요 정보와 함께 반환합니다.',
+    type: DestinationResponse,
+  })
+  getAllDestinationWithLikesAndComments(
+    @Param('destinationId', ParseIntPipe) destination_id: number,
   ): Promise<Destination> {
-    return this.destinationsService.getDestination(destinationId);
+    return this.destinationsService.getDestinationWithLikesAndComments(
+      destination_id,
+    );
+  }
+
+  @ApiOperation({ summary: '인기순 여행지 목록을 요청한 갯수만큼 조회한다.' })
+  @ApiQuery({
+    name: 'count',
+    type: 'number',
+    description: '조회할 여행지 갯수',
+    example: 10,
+  })
+  @ApiOkResponse({ type: DestinationResponse })
+  @Get('/ranking/destinations')
+  getDestinationsRanking(
+    @Query('count', ParseIntPipe) count: number,
+  ): Promise<Destination[]> {
+    return this.destinationsService.getDestinationsRanking(count);
   }
 }

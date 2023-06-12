@@ -19,10 +19,16 @@ const jwtConfig = config.get('jwt');
         expiresIn: jwtConfig.ACCESS_TOKEN_EXPIRATION_TIME,
       },
     }),
+    JwtModule.register({
+      secret: jwtConfig.JWT_REFRESH_TOKEN_SECRET,
+      signOptions: {
+        expiresIn: jwtConfig.REFRESH_TOKEN_EXPIRATION_TIME,
+      },
+    }),
     TypeOrmModule.forFeature([UsersRepository]),
   ],
   controllers: [AuthController],
   providers: [AuthService, UsersRepository, JwtStrategy],
-  exports: [JwtStrategy, PassportModule],
+  exports: [JwtStrategy, PassportModule, JwtModule],
 })
 export class AuthModule {}
