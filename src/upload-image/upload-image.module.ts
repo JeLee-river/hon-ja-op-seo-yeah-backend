@@ -1,4 +1,4 @@
-import { Logger, Module } from '@nestjs/common';
+import { HttpException, Logger, Module } from '@nestjs/common';
 import { UploadImageService } from './upload-image.service';
 import { UploadImageController } from './upload-image.controller';
 import { MulterModule } from '@nestjs/platform-express';
@@ -40,7 +40,18 @@ import { SchedulesRepository } from '../schedules/schedules.repository';
       fileFilter(req, file, callback) {
         // limits 에서 파일 사이즈 등 검증 후에 파일 타입에 대한 검증을 진행한다.
         // 검증 진행 후 정상 요청이면 callback 의 두 번째 인자로 true 를 넣는다.
-        callback(null, true);
+        if (file.mimetype.match(/\/(jpg|jpeg|png)$/i)) {
+          // 이미지 형식은 jpg, jpeg, png만 허용합니다.
+          callback(null, true);
+        } else {
+          callback(
+            new HttpException(
+              '지원하지 않는 이미지 형식입니다. jpg, jpeg, png 파일만 가능합니다.',
+              415,
+            ),
+            false,
+          );
+        }
       },
     }),
   ],
