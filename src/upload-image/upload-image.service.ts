@@ -17,7 +17,6 @@ export class UploadImageService {
   }
 
   async uploadUserProfileImage(
-    userId: string,
     path: string,
   ): Promise<{ message: string; imagePath: string }> {
     const imagePath = this.createImagePath(path);
@@ -29,24 +28,9 @@ export class UploadImageService {
   }
 
   async uploadScheduleBackgroundImage(
-    schedule_id: number,
-    user_id: string,
     path: string,
   ): Promise<{ message: string; imagePath: string }> {
-    // TODO : 이 시점에 이미 파일은 업로드가 되어버리는 것 같다.
-    // TODO : FileInterceptor 가 동작하기 전에 Guard 등으로 이 내용들을 체크해야 한다.
-
-    // const scheduleToBeUpdated = await this.schedulesRepository.getScheduleById(
-    //   schedule_id,
-    // );
-    //
-    // if (!scheduleToBeUpdated) {
-    //   throw new NotFoundException('해당 여행 일정이 존재하지 않습니다.');
-    // }
-    //
-    // if (user_id !== scheduleToBeUpdated.user.id) {
-    //   throw new UnauthorizedException('이미지를 업로드할 권한이 없습니다.');
-    // }
+    // TODO: 현재 일정이 존재하는지, 로그인 유저가 작성자인지 확인 필요
 
     const imagePath = this.createImagePath(path);
 

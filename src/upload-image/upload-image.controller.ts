@@ -1,7 +1,5 @@
 import {
   Controller,
-  Param,
-  ParseIntPipe,
   Post,
   UploadedFile,
   UseGuards,
@@ -18,7 +16,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { GetUserFromAccessToken } from '../auth/get-user-from-access-token.decorator';
 
 @ApiTags('이미지 업로드 (upload)')
 @Controller('upload')
@@ -50,14 +47,13 @@ export class UploadImageController {
   @ApiCreatedResponse({ description: '프로필 이미지 경로' })
   updateProfileImage(
     @UploadedFile() file: Express.Multer.File,
-    @GetUserFromAccessToken() user,
   ): Promise<{ message: string; imagePath: string }> {
     const { path } = file;
 
-    return this.uploadImageService.uploadUserProfileImage(user.id, path);
+    return this.uploadImageService.uploadUserProfileImage(path);
   }
 
-  @Post('/schedules/:scheduleId')
+  @Post('/schedules/image')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('file'))
   @ApiBearerAuth('access-token')
@@ -82,15 +78,9 @@ export class UploadImageController {
   @ApiCreatedResponse({ description: '여행 일정 배경 이미지 경로' })
   updateScheduleBackgroundImage(
     @UploadedFile() file: Express.Multer.File,
-    @GetUserFromAccessToken() user,
-    @Param('scheduleId', ParseIntPipe) schedule_id: number,
   ): Promise<{ message: string; imagePath: string }> {
     const { path } = file;
 
-    return this.uploadImageService.uploadScheduleBackgroundImage(
-      schedule_id,
-      user.id,
-      path,
-    );
+    return this.uploadImageService.uploadScheduleBackgroundImage(path);
   }
 }
