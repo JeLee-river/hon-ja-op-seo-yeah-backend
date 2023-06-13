@@ -1,14 +1,18 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { CategoriesService } from './categories.service';
-import { Category } from './entities/category.entity';
+
 import {
   ApiOkResponse,
   ApiOperation,
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-import { DestinationResponse } from '../utils/swagger/destination.response';
+
+import { Category } from './entities/category.entity';
+
+import { CategoriesService } from './categories.service';
+
 import { ResponseCountByCategoryInterface } from '../types/ResponseCountsByCategory.interface';
+import { DestinationResponse } from '../utils/swagger/destination.response';
 
 @Controller()
 @ApiTags('여행지 카테고리 (Categories)')

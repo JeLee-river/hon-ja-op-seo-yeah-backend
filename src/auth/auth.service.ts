@@ -6,16 +6,23 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { UsersRepository } from './users.repository';
+
 import { InjectRepository } from '@nestjs/typeorm';
-import { AuthCredentialDto } from './dto/auth-credential.dto';
-import { User } from './entities/user.entity';
-import * as bcrypt from 'bcryptjs';
-import { SignInDto } from './dto/sign-in.dto';
+
 import { JwtService } from '@nestjs/jwt';
-import * as config from 'config';
+
+import { User } from './entities/user.entity';
+
+import { UsersRepository } from './users.repository';
+
+import { SignInDto } from './dto/sign-in.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { AuthCredentialDto } from './dto/auth-credential.dto';
 import { VerifyPasswordDto } from './dto/verify-password.dto';
+
+import * as bcrypt from 'bcryptjs';
+
+import * as config from 'config';
 
 const jwtConfig = config.get('jwt');
 

@@ -1,8 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { SchedulesLikesRepository } from './schedules-likes.repository';
+
 import { SchedulesLike } from './entities/schedules-like.entity';
-import { SelfLikeException } from '../utils/filters/self-like.exception';
+
 import { SchedulesRepository } from '../schedules/schedules.repository';
+import { SchedulesLikesRepository } from './schedules-likes.repository';
+
+import { SelfLikeException } from '../utils/filters/self-like.exception';
+
 import { ResponseScheduleLikesInterface } from '../types/ResponseScheduleLikes.interface';
 
 @Injectable()

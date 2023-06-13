@@ -10,7 +10,7 @@ import {
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
-import { SchedulesCommentsService } from './schedules-comments.service';
+
 import {
   ApiBearerAuth,
   ApiBody,
@@ -20,12 +20,18 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
+
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { GetUserFromAccessToken } from '../auth/get-user-from-access-token.decorator';
-import { CreateSchedulesCommentDto } from './dto/create-schedules-comment.dto';
+
 import { SchedulesComment } from './entities/schedules-comment.entity';
-import { UpdateDestinationsCommentDto } from '../destinations-comments/dto/update-destinations-comment.dto';
+
+import { SchedulesCommentsService } from './schedules-comments.service';
+
+import { CreateSchedulesCommentDto } from './dto/create-schedules-comment.dto';
 import { UpdateSchedulesCommentDto } from './dto/update-schedules-comment.dto';
+import { UpdateDestinationsCommentDto } from '../destinations-comments/dto/update-destinations-comment.dto';
+
+import { GetUserFromAccessToken } from '../auth/get-user-from-access-token.decorator';
 
 @ApiTags('여행 일정 댓글 (Schedules Comments)')
 @Controller()

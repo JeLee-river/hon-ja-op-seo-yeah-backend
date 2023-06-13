@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { SchedulesLike } from './entities/schedules-like.entity';
+
 import { DataSource, DeleteResult, Repository } from 'typeorm';
+
+import { SchedulesLike } from './entities/schedules-like.entity';
 
 @Injectable()
 export class SchedulesLikesRepository extends Repository<SchedulesLike> {

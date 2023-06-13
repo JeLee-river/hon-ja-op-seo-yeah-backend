@@ -1,13 +1,19 @@
 import { HttpException, Logger, Module } from '@nestjs/common';
-import { UploadImageService } from './upload-image.service';
-import { UploadImageController } from './upload-image.controller';
+
 import { MulterModule } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import * as mime from 'mime-types';
+
+import { UploadImageController } from './upload-image.controller';
+import { UploadImageService } from './upload-image.service';
+
 import { AuthModule } from '../auth/auth.module';
 import { SchedulesModule } from '../schedules/schedules.module';
+
 import { UsersRepository } from '../auth/users.repository';
 import { SchedulesRepository } from '../schedules/schedules.repository';
+
+import { diskStorage } from 'multer';
+
+import * as mime from 'mime-types';
 
 @Module({
   imports: [

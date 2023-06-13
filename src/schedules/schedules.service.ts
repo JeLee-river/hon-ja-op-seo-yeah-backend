@@ -8,6 +8,9 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 
+import { Schedule } from './entities/schedule.entity';
+import { ScheduleDetail } from './entities/schedule-detail.entity';
+
 import { SchedulesRepository } from './schedules.repository';
 import { SchedulesDetailRepository } from './schedules-detail.repository';
 import { SchedulesLikesRepository } from '../schedules-likes/schedules-likes.repository';
@@ -15,9 +18,6 @@ import { SchedulesCommentsRepository } from '../schedules-comments/schedules-com
 
 import { CreateScheduleDto } from './dto/create-schedule.dto';
 import { UpdateScheduleDto } from './dto/update-schedule.dto';
-
-import { Schedule } from './entities/schedule.entity';
-import { ScheduleDetail } from './entities/schedule-detail.entity';
 
 import { ScheduleWithLikesAndComments } from '../types/ScheduleWithLikesAndComments.interface';
 import { ResponseScheduleInterface } from '../types/ResponseSchedule.interface';

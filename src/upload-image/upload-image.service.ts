@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
+
 import { UsersRepository } from '../auth/users.repository';
 import { SchedulesRepository } from '../schedules/schedules.repository';
+
 import * as config from 'config';
 
 @Injectable()

@@ -8,10 +8,6 @@ import {
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { AuthCredentialDto } from './dto/auth-credential.dto';
-import { User } from './entities/user.entity';
-import { SignInDto } from './dto/sign-in.dto';
 
 import {
   ApiBearerAuth,
@@ -21,13 +17,22 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+
 import { JwtAuthGuard } from './jwt-auth.guard';
+
+import { User } from './entities/user.entity';
+
+import { AuthService } from './auth.service';
+
+import { SignInDto } from './dto/sign-in.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { AuthCredentialDto } from './dto/auth-credential.dto';
+import { VerifyPasswordDto } from './dto/verify-password.dto';
+import { CheckDuplicateIdDto } from './dto/check-duplicate-id.dto';
+import { CheckDuplicateNicknameDto } from './dto/check-duplicate-nickname.dto';
+
 import { GetUserFromAccessToken } from './get-user-from-access-token.decorator';
 import { GetRefreshToken } from './get-refresh-token.decorator';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { CheckDuplicateNicknameDto } from './dto/check-duplicate-nickname.dto';
-import { CheckDuplicateIdDto } from './dto/check-duplicate-id.dto';
-import { VerifyPasswordDto } from './dto/verify-password.dto';
 
 @Controller('auth')
 @ApiTags('사용자 (Users)')

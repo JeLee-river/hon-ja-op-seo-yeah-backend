@@ -1,5 +1,6 @@
-import { DataSource, DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { Injectable } from '@nestjs/common';
+
+import { DataSource, DeleteResult, Repository, UpdateResult } from 'typeorm';
 
 import { Schedule } from './entities/schedule.entity';
 

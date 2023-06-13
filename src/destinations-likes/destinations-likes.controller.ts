@@ -5,7 +5,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { DestinationsLikesService } from './destinations-likes.service';
+
 import {
   ApiBearerAuth,
   ApiOkResponse,
@@ -13,9 +13,14 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
+
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { GetUserFromAccessToken } from '../auth/get-user-from-access-token.decorator';
+
 import { DestinationsLike } from './entities/destinations-like.entity';
+
+import { DestinationsLikesService } from './destinations-likes.service';
+
+import { GetUserFromAccessToken } from '../auth/get-user-from-access-token.decorator';
 
 @ApiTags(`여행지 '좋아요' (Destinations Likes)`)
 @Controller('')

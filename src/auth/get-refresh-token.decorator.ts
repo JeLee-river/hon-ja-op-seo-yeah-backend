@@ -3,8 +3,9 @@ import {
   Logger,
   UnauthorizedException,
 } from '@nestjs/common';
+
 import * as jwt from 'jsonwebtoken';
-import { JwtPayload } from 'jsonwebtoken';
+
 import * as config from 'config';
 
 export const GetRefreshToken = createParamDecorator((data, context) => {

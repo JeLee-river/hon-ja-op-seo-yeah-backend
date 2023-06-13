@@ -5,8 +5,9 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { UploadImageService } from './upload-image.service';
+
 import { FileInterceptor } from '@nestjs/platform-express';
+
 import {
   ApiBearerAuth,
   ApiBody,
@@ -15,6 +16,9 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+
+import { UploadImageService } from './upload-image.service';
+
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @ApiTags('이미지 업로드 (upload)')

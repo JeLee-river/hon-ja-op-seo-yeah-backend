@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
 import { Schedule } from './schedule.entity';
 import { Destination } from '../../destinations/entities/destination.entity';
 

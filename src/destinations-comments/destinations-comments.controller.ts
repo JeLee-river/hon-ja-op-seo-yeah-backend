@@ -10,6 +10,7 @@ import {
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
+
 import {
   ApiBearerAuth,
   ApiBody,
@@ -19,12 +20,17 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { DestinationsCommentsService } from './destinations-comments.service';
+
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { GetUserFromAccessToken } from '../auth/get-user-from-access-token.decorator';
-import { CreateDestinationsCommentDto } from './dto/create-destinations-comment.dto';
+
 import { DestinationsComment } from './entities/destinations-comment.entity';
+
+import { DestinationsCommentsService } from './destinations-comments.service';
+
+import { CreateDestinationsCommentDto } from './dto/create-destinations-comment.dto';
 import { UpdateDestinationsCommentDto } from './dto/update-destinations-comment.dto';
+
+import { GetUserFromAccessToken } from '../auth/get-user-from-access-token.decorator';
 
 @ApiTags('여행지 댓글 (Destinations Comments)')
 @Controller('')

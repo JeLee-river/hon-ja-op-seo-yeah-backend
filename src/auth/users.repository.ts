@@ -1,13 +1,18 @@
-import { User } from './entities/user.entity';
-import { DataSource, Repository, UpdateResult } from 'typeorm';
 import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
+
+import { DataSource, Repository, UpdateResult } from 'typeorm';
+
+import { User } from './entities/user.entity';
+
 import { AuthCredentialDto } from './dto/auth-credential.dto';
-import * as bcrypt from 'bcryptjs';
+
 import { PostgresErrorCodesEnum } from '../types/postgresErrorCodes.enum';
+
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UsersRepository extends Repository<User> {

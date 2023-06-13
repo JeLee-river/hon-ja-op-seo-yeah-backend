@@ -1,5 +1,6 @@
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+
 import { ScheduleStatus } from '../../types/ScheduleStatus.enum';
 
 export class UpdateScheduleDto {

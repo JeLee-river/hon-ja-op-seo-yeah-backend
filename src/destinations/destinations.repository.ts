@@ -1,7 +1,10 @@
-import { DataSource, Repository } from 'typeorm';
-import { Destination } from './entities/destination.entity';
 import { Injectable, Logger } from '@nestjs/common';
+import { DataSource, Repository } from 'typeorm';
+
+import { Destination } from './entities/destination.entity';
+
 import { CreateDestinationDto } from './dto/create-destination.dto';
+
 import { ResponseCountByCategoryInterface } from '../types/ResponseCountsByCategory.interface';
 
 @Injectable()

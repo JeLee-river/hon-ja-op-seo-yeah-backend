@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { CategoriesRepository } from './categories.repository';
+
 import { Category } from './entities/category.entity';
+
+import { CategoriesRepository } from './categories.repository';
 import { DestinationsRepository } from '../destinations/destinations.repository';
+
 import { ResponseCountByCategoryInterface } from '../types/ResponseCountsByCategory.interface';
 
 @Injectable()

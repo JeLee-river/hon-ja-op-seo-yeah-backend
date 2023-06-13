@@ -8,11 +8,13 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
 import { ScheduleDetail } from './schedule-detail.entity';
-import { User } from '../../auth/entities/user.entity';
-import { ScheduleStatus } from '../../types/ScheduleStatus.enum';
 import { SchedulesLike } from '../../schedules-likes/entities/schedules-like.entity';
 import { SchedulesComment } from '../../schedules-comments/entities/schedules-comment.entity';
+import { User } from '../../auth/entities/user.entity';
+
+import { ScheduleStatus } from '../../types/ScheduleStatus.enum';
 
 import * as config from 'config';
 

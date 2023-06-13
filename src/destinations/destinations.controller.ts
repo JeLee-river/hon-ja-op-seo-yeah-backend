@@ -1,6 +1,5 @@
 import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
-import { DestinationsService } from './destinations.service';
-import { Destination } from './entities/destination.entity';
+
 import {
   ApiExcludeEndpoint,
   ApiNoContentResponse,
@@ -10,6 +9,10 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
+
+import { Destination } from './entities/destination.entity';
+import { DestinationsService } from './destinations.service';
+
 import { DestinationResponse } from '../utils/swagger/destination.response';
 
 @Controller()
