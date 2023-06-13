@@ -24,7 +24,7 @@ import { SchedulesLikesService } from './schedules-likes.service';
 
 import { GetUserFromAccessToken } from '../auth/get-user-from-access-token.decorator';
 
-import { SelfLikeExceptionFilter } from '../utils/filters/self-like.exception.filter';
+import { SelfLikeExceptionFilter } from '../utils/filter/self-like.exception.filter';
 
 import { ResponseScheduleLikesInterface } from '../types/ResponseScheduleLikes.interface';
 

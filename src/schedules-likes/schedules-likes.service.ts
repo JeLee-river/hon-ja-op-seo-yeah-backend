@@ -5,7 +5,7 @@ import { SchedulesLike } from './entities/schedules-like.entity';
 import { SchedulesRepository } from '../schedules/schedules.repository';
 import { SchedulesLikesRepository } from './schedules-likes.repository';
 
-import { SelfLikeException } from '../utils/filters/self-like.exception';
+import { SelfLikeException } from '../utils/filter/self-like.exception';
 
 import { ResponseScheduleLikesInterface } from '../types/ResponseScheduleLikes.interface';
 
