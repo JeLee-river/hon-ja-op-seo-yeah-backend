@@ -21,7 +21,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 import { SchedulesComment } from './entities/schedules-comment.entity';
 
@@ -31,7 +31,7 @@ import { CreateSchedulesCommentDto } from './dto/create-schedules-comment.dto';
 import { UpdateSchedulesCommentDto } from './dto/update-schedules-comment.dto';
 import { UpdateDestinationsCommentDto } from '../destinations-comments/dto/update-destinations-comment.dto';
 
-import { GetUserFromAccessToken } from '../auth/get-user-from-access-token.decorator';
+import { GetUserFromAccessToken } from '../auth/decorators/get-user-from-access-token.decorator';
 
 @ApiTags('여행 일정 댓글 (Schedules Comments)')
 @Controller()

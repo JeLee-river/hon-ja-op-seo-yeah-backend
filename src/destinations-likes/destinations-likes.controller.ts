@@ -14,13 +14,13 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 import { DestinationsLike } from './entities/destinations-like.entity';
 
 import { DestinationsLikesService } from './destinations-likes.service';
 
-import { GetUserFromAccessToken } from '../auth/get-user-from-access-token.decorator';
+import { GetUserFromAccessToken } from '../auth/decorators/get-user-from-access-token.decorator';
 
 @ApiTags(`여행지 '좋아요' (Destinations Likes)`)
 @Controller('')

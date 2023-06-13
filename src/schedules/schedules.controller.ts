@@ -25,7 +25,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 import { ScheduleDetail } from './entities/schedule-detail.entity';
 import { Schedule } from './entities/schedule.entity';
@@ -37,7 +37,7 @@ import { UpdateScheduleDto } from './dto/update-schedule.dto';
 import { DeleteScheduleDto } from './dto/delete-schedule.dto';
 import { DestinationsByDayDto } from './dto/destinations-by-day.dto';
 
-import { GetUserFromAccessToken } from '../auth/get-user-from-access-token.decorator';
+import { GetUserFromAccessToken } from '../auth/decorators/get-user-from-access-token.decorator';
 
 import { ResponseScheduleInterface } from '../types/ResponseSchedule.interface';
 import { ScheduleWithLikesAndComments } from '../types/ScheduleWithLikesAndComments.interface';

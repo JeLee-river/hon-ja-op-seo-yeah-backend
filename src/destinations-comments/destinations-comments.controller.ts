@@ -21,7 +21,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 import { DestinationsComment } from './entities/destinations-comment.entity';
 
@@ -30,7 +30,7 @@ import { DestinationsCommentsService } from './destinations-comments.service';
 import { CreateDestinationsCommentDto } from './dto/create-destinations-comment.dto';
 import { UpdateDestinationsCommentDto } from './dto/update-destinations-comment.dto';
 
-import { GetUserFromAccessToken } from '../auth/get-user-from-access-token.decorator';
+import { GetUserFromAccessToken } from '../auth/decorators/get-user-from-access-token.decorator';
 
 @ApiTags('여행지 댓글 (Destinations Comments)')
 @Controller('')

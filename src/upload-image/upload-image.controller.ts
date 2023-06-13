@@ -19,7 +19,7 @@ import {
 
 import { UploadImageService } from './upload-image.service';
 
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('이미지 업로드 (upload)')
 @Controller('upload')

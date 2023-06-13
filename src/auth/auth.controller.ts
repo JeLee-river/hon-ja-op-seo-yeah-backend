@@ -18,7 +18,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { JwtAuthGuard } from './jwt-auth.guard';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 import { User } from './entities/user.entity';
 
@@ -31,8 +31,8 @@ import { VerifyPasswordDto } from './dto/verify-password.dto';
 import { CheckDuplicateIdDto } from './dto/check-duplicate-id.dto';
 import { CheckDuplicateNicknameDto } from './dto/check-duplicate-nickname.dto';
 
-import { GetUserFromAccessToken } from './get-user-from-access-token.decorator';
-import { GetRefreshToken } from './get-refresh-token.decorator';
+import { GetUserFromAccessToken } from './decorators/get-user-from-access-token.decorator';
+import { GetRefreshToken } from './decorators/get-refresh-token.decorator';
 
 @Controller('auth')
 @ApiTags('사용자 (Users)')
