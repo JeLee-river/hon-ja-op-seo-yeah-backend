@@ -32,7 +32,7 @@ export class UsersRepository extends Repository<User> {
         statusCode: 409,
         error: 'Conflict',
         field: 'email',
-        message: '이미 존재하는 아이디입니다.',
+        message: '이미 존재하는 이메일입니다.',
       });
     }
 
