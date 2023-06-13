@@ -220,8 +220,8 @@ export class SchedulesController {
     example: 10,
   })
   @ApiOkResponse({
-    description:
-      '공개된 전체 여행 일정을 좋아요, 댓글 정보와 함께 조회한 목록 (좋아요 순)',
+    description: `공개된 전체 여행 일정을 좋아요, 댓글 정보와 함께 조회한 목록 (좋아요순) <br/><br/>
+       (마지막 페이지 번호보다 큰 번호로 요청 시, 마지막 페이지 번호에 해당하는 일정들을 조회합니다.)`,
   })
   getPublicSchedulesOrderByLikesCount(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
@@ -250,8 +250,8 @@ export class SchedulesController {
     example: 10,
   })
   @ApiOkResponse({
-    description:
-      '공개된 전체 여행 일정을 좋아요, 댓글 정보와 함께 조회한 목록 (좋아요 순)',
+    description: `공개된 전체 여행 일정을 좋아요, 댓글 정보와 함께 조회한 목록 (최신순) <br/><br/>
+       (마지막 페이지 번호보다 큰 번호로 요청 시, 마지막 페이지 번호에 해당하는 일정들을 조회합니다.)`,
   })
   getPublicSchedulesOrderByLatestCreatedDate(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
