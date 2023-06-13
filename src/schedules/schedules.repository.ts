@@ -333,6 +333,7 @@ export class SchedulesRepository extends Repository<Schedule> {
         'COUNT(case when schedules_like.is_liked = true then 1 end)',
         'likes_count',
       )
+      .where('schedule.status = :status', { status: 'PUBLIC' })
       .groupBy('schedule.schedule_id')
       .orderBy({
         likes_count: 'DESC',
@@ -351,6 +352,7 @@ export class SchedulesRepository extends Repository<Schedule> {
 
     const query = this.createQueryBuilder('schedule')
       .select('schedule.schedule_id', 'schedule_id')
+      .where('schedule.status = :status', { status: 'PUBLIC' })
       .orderBy({
         'schedule.created_at': 'DESC',
       })
