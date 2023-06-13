@@ -13,10 +13,6 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { SchedulesService } from './schedules.service';
-import { Schedule } from './entities/schedule.entity';
-import { CreateScheduleDto } from './dto/create-schedule.dto';
-import { ScheduleDetail } from './entities/schedule-detail.entity';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -28,11 +24,20 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { GetUserFromAccessToken } from '../auth/get-user-from-access-token.decorator';
-import { ResponseScheduleInterface } from '../types/ResponseSchedule.interface';
+
+import { ScheduleDetail } from './entities/schedule-detail.entity';
+import { Schedule } from './entities/schedule.entity';
+
+import { SchedulesService } from './schedules.service';
+
+import { CreateScheduleDto } from './dto/create-schedule.dto';
 import { UpdateScheduleDto } from './dto/update-schedule.dto';
 import { DeleteScheduleDto } from './dto/delete-schedule.dto';
 import { DestinationsByDayDto } from './dto/destinations-by-day.dto';
+
+import { GetUserFromAccessToken } from '../auth/get-user-from-access-token.decorator';
+
+import { ResponseScheduleInterface } from '../types/ResponseSchedule.interface';
 import { ScheduleWithLikesAndComments } from '../types/ScheduleWithLikesAndComments.interface';
 
 @Controller()
@@ -197,7 +202,7 @@ export class SchedulesController {
     return this.schedulesService.getSchedulesRanking(Number(count));
   }
 
-  @Get('/schedules/ranking/likes')
+  @Get('/schedules/public/order/likes')
   @ApiOperation({
     summary:
       '공개된 전체 여행 일정을 좋아요 순으로 조회한다. (페이지네이션 적용)',
@@ -218,13 +223,55 @@ export class SchedulesController {
     description:
       '공개된 전체 여행 일정을 좋아요, 댓글 정보와 함께 조회한 목록 (좋아요 순)',
   })
-  getSchedulesOrderByLikesCount(
+  getPublicSchedulesOrderByLikesCount(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
-  ): Promise<ScheduleWithLikesAndComments[]> {
-    return this.schedulesService.getSchedulesOrderByLikesCount({
+  ): Promise<ScheduleWithLikesAndComments[] | { message: string }> {
+    return this.schedulesService.getPublicSchedulesOrderByLikesCount({
       page,
       limit,
     });
+  }
+
+  @Get('/schedules/public/order/latest-created-date')
+  @ApiOperation({
+    summary: '공개된 전체 여행 일정을 최신순으로 조회한다. (페이지네이션 적용)',
+  })
+  @ApiQuery({
+    name: 'page',
+    type: 'number',
+    description: '페이지 번호 (기본값: 1)',
+    example: 1,
+  })
+  @ApiQuery({
+    name: 'limit',
+    type: 'number',
+    description: '한 페이지에 보여줄 목적지 개수 (기본값: 10)',
+    example: 10,
+  })
+  @ApiOkResponse({
+    description:
+      '공개된 전체 여행 일정을 좋아요, 댓글 정보와 함께 조회한 목록 (좋아요 순)',
+  })
+  getPublicSchedulesOrderByLatestCreatedDate(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+  ): Promise<ScheduleWithLikesAndComments[] | { message: string }> {
+    return this.schedulesService.getPublicSchedulesOrderByLatestCreatedDate({
+      page,
+      limit,
+    });
+  }
+
+  @Get('/schedules/public/count')
+  @ApiOperation({
+    summary: '공개된 전체 여행 일정의 개수를 조회한다.',
+  })
+  @ApiOkResponse({
+    description:
+      '공개된 전체 여행 일정을 좋아요, 댓글 정보와 함께 조회한 목록 (좋아요 순)',
+  })
+  getPublicSchedulesCount(): Promise<{ message: string }> {
+    return this.schedulesService.getPublicSchedulesCount();
   }
 }

@@ -1,12 +1,16 @@
 import { DataSource, DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { Injectable } from '@nestjs/common';
+
 import { Schedule } from './entities/schedule.entity';
+
 import { CreateScheduleDto } from './dto/create-schedule.dto';
 import { UpdateScheduleDto } from './dto/update-schedule.dto';
 
-import * as config from 'config';
 import { ScheduleIdsOrderByLikesCount } from '../types/ScheduleIdsOrderByLikesCount.interface';
 import { PaginationOptions } from '../types/PaginationOptions.interface';
+import { ScheduleStatus } from '../types/ScheduleStatus.enum';
+
+import * as config from 'config';
 
 @Injectable()
 export class SchedulesRepository extends Repository<Schedule> {
@@ -312,7 +316,7 @@ export class SchedulesRepository extends Repository<Schedule> {
       .execute();
   }
 
-  async getScheduleIdsOrderByLikesCount(
+  async getPublicScheduleIdsOrderByLikesCount(
     paginationOptions: PaginationOptions,
   ): Promise<ScheduleIdsOrderByLikesCount[]> {
     const { limit, offset } = paginationOptions;
@@ -337,5 +341,29 @@ export class SchedulesRepository extends Repository<Schedule> {
       .offset(offset);
 
     return await query.getRawMany();
+  }
+
+  async getPublicSchedulesIdsOrderByLatestCreatedDate(
+    paginationOptions: PaginationOptions,
+  ): Promise<ScheduleIdsOrderByLikesCount[]> {
+    const { limit, offset } = paginationOptions;
+
+    const query = this.createQueryBuilder('schedule')
+      .select('schedule.schedule_id', 'schedule_id')
+      .orderBy({
+        'schedule.created_at': 'DESC',
+      })
+      .limit(limit)
+      .offset(offset);
+
+    return await query.getRawMany();
+  }
+
+  async getTotalPublicScheduleCount(): Promise<number> {
+    return await this.count({
+      where: {
+        status: ScheduleStatus.PUBLIC,
+      },
+    });
   }
 }

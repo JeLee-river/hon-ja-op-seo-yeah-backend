@@ -419,18 +419,31 @@ export class SchedulesService {
   }
 
   /**
-   * 전체 일정 조회 (좋아요, 댓글 포함) - 페이지네이션 적용
+   * 좋아요순 전체 일정 조회 (좋아요, 댓글 포함) - 페이지네이션 적용
    */
-  async getSchedulesOrderByLikesCount(
+  async getPublicSchedulesOrderByLikesCount(
     paginationOption: PaginationOptions,
-  ): Promise<ScheduleWithLikesAndComments[]> {
+  ): Promise<ScheduleWithLikesAndComments[] | { message: string }> {
     const { page, limit } = paginationOption;
 
+    const totalScheduleCount =
+      await this.schedulesRepository.getTotalPublicScheduleCount();
+
+    const lastPageNumber = Math.ceil(totalScheduleCount / limit);
+    if (page > lastPageNumber) {
+      paginationOption.page = lastPageNumber;
+    }
+
+    paginationOption.offset = (paginationOption.page - 1) * limit;
+
     const scheduleIdsByLikesCount =
-      await this.schedulesRepository.getScheduleIdsOrderByLikesCount({
-        ...paginationOption,
-        offset: (page - 1) * limit,
-      });
+      await this.schedulesRepository.getPublicScheduleIdsOrderByLikesCount(
+        paginationOption,
+      );
+
+    if (scheduleIdsByLikesCount.length === 0) {
+      return { message: '일정이 존재하지 않습니다.' };
+    }
 
     const scheduleIds: number[] = scheduleIdsByLikesCount.map(
       ({ schedule_id }) => Number(schedule_id),
@@ -444,5 +457,57 @@ export class SchedulesService {
     });
 
     return result;
+  }
+
+  /**
+   * 최신일순 전체 일정 조회 (좋아요, 댓글 포함) - 페이지네이션 적용
+   */
+  async getPublicSchedulesOrderByLatestCreatedDate(
+    paginationOption: PaginationOptions,
+  ): Promise<ScheduleWithLikesAndComments[] | { message: string }> {
+    const { page, limit } = paginationOption;
+
+    const totalScheduleCount =
+      await this.schedulesRepository.getTotalPublicScheduleCount();
+
+    const lastPageNumber = Math.ceil(totalScheduleCount / limit);
+    if (page > lastPageNumber) {
+      paginationOption.page = lastPageNumber;
+    }
+
+    const offset = (paginationOption.page - 1) * limit;
+
+    const scheduleIdsOrderByLatestCreatedDate =
+      await this.schedulesRepository.getPublicSchedulesIdsOrderByLatestCreatedDate(
+        {
+          ...paginationOption,
+          offset,
+        },
+      );
+
+    if (scheduleIdsOrderByLatestCreatedDate.length === 0) {
+      return { message: '일정이 존재하지 않습니다.' };
+    }
+
+    const scheduleIds: number[] = scheduleIdsOrderByLatestCreatedDate.map(
+      ({ schedule_id }) => Number(schedule_id),
+    );
+
+    const schedulesOrderByLatestCreatedDate =
+      await this.schedulesRepository.getSchedulesByScheduleIds(scheduleIds);
+
+    const result = schedulesOrderByLatestCreatedDate.map((schedule) => {
+      return this.transformSchedule(schedule);
+    });
+
+    return result;
+  }
+
+  async getPublicSchedulesCount() {
+    const count = await this.schedulesRepository.getTotalPublicScheduleCount();
+    return {
+      message: `공개된 여행 일정의 총 개수는 ${count}개입니다.`,
+      count,
+    };
   }
 }
