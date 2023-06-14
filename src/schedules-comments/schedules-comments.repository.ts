@@ -45,7 +45,7 @@ export class SchedulesCommentsRepository extends Repository<SchedulesComment> {
       .leftJoin('schedules_comment.user', 'user')
       .addSelect(['user.id', 'user.nickname', 'user.profile_image'])
       .orderBy({
-        'schedules_comment.created_at': 'DESC',
+        'schedules_comment.created_at': 'ASC',
       });
 
     return await query.getMany();
@@ -67,7 +67,7 @@ export class SchedulesCommentsRepository extends Repository<SchedulesComment> {
       .leftJoin('schedules_comment.user', 'user')
       .addSelect(['user.id', 'user.nickname', 'user.profile_image'])
       .orderBy({
-        'schedules_comment.created_at': 'DESC',
+        'schedules_comment.created_at': 'ASC',
       });
 
     return await query.getMany();
