@@ -69,6 +69,20 @@ export class SchedulesService {
     schedule: Schedule;
     scheduleDetails: Omit<ScheduleDetail, 'idx'>[];
   }> {
+    const schedule = await this.schedulesRepository.getScheduleById(
+      updateScheduleDto.schedule_id,
+    );
+
+    if (!schedule) {
+      throw new NotFoundException('해당 여행 일정이 존재하지 않습니다.');
+    }
+
+    if (userId !== schedule.user.id) {
+      throw new UnauthorizedException(
+        '작성자가 아닌 유저는 일정 수정 권한이 없습니다.',
+      );
+    }
+
     const { schedule_id, destinations } = updateScheduleDto;
 
     try {
@@ -371,7 +385,7 @@ export class SchedulesService {
       throw new NotFoundException('해당 여행 일정이 존재하지 않습니다.');
     }
 
-    if (user_id === schedule.user_id) {
+    if (user_id === schedule.user.id) {
       throw new UnauthorizedException(
         `여행 일정을 작성한 작성자가 아닌 사용자는 수정할 권한이 없습니다.`,
       );
@@ -508,6 +522,31 @@ export class SchedulesService {
     return {
       message: `공개된 여행 일정의 총 개수는 ${count}개입니다.`,
       count,
+    };
+  }
+
+  async isScheduleAuthor(
+    user_id: string,
+    schedule_id: number,
+  ): Promise<{ isAuthor: boolean; message: string }> {
+    const schedule = await this.schedulesRepository.getScheduleById(
+      schedule_id,
+    );
+
+    if (!schedule) {
+      throw new NotFoundException('해당 여행 일정이 존재하지 않습니다.');
+    }
+
+    if (user_id !== schedule.user.id) {
+      return {
+        isAuthor: false,
+        message: '현재 유저는 작성자가 아닙니다.',
+      };
+    }
+
+    return {
+      isAuthor: true,
+      message: '현재 유저는 작성자가 맞습니다.',
     };
   }
 }

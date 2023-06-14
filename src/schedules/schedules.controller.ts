@@ -276,4 +276,21 @@ export class SchedulesController {
   getPublicSchedulesCount(): Promise<{ message: string }> {
     return this.schedulesService.getPublicSchedulesCount();
   }
+
+  @Get('schedules/:scheduleId/is-author')
+  @ApiOperation({
+    summary: '로그인한 사용자가 현재 여행 일정의 작성인지 체크한다.',
+  })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  @ApiOkResponse({
+    description: '로그인한 사용자가 작성자인지 여부',
+    type: 'boolean',
+  })
+  isScheduleAuthor(
+    @Param('scheduleId', ParseIntPipe) schedule_id: number,
+    @GetUserFromAccessToken() user,
+  ): Promise<{ isAuthor: boolean; message: string }> {
+    return this.schedulesService.isScheduleAuthor(user.id, schedule_id);
+  }
 }
