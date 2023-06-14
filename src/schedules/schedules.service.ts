@@ -440,15 +440,7 @@ export class SchedulesService {
   ): Promise<ScheduleWithLikesAndComments[] | { message: string }> {
     const { page, limit } = paginationOption;
 
-    const totalScheduleCount =
-      await this.schedulesRepository.getTotalPublicScheduleCount();
-
-    const lastPageNumber = Math.ceil(totalScheduleCount / limit);
-    if (page > lastPageNumber) {
-      paginationOption.page = lastPageNumber;
-    }
-
-    paginationOption.offset = (paginationOption.page - 1) * limit;
+    paginationOption.offset = (page - 1) * limit;
 
     const scheduleIdsByLikesCount =
       await this.schedulesRepository.getPublicScheduleIdsOrderByLikesCount(
@@ -456,7 +448,7 @@ export class SchedulesService {
       );
 
     if (scheduleIdsByLikesCount.length === 0) {
-      return { message: '일정이 존재하지 않습니다.' };
+      return [];
     }
 
     const scheduleIds: number[] = scheduleIdsByLikesCount.map(
@@ -481,26 +473,15 @@ export class SchedulesService {
   ): Promise<ScheduleWithLikesAndComments[] | { message: string }> {
     const { page, limit } = paginationOption;
 
-    const totalScheduleCount =
-      await this.schedulesRepository.getTotalPublicScheduleCount();
-
-    const lastPageNumber = Math.ceil(totalScheduleCount / limit);
-    if (page > lastPageNumber) {
-      paginationOption.page = lastPageNumber;
-    }
-
-    const offset = (paginationOption.page - 1) * limit;
+    paginationOption.offset = (page - 1) * limit;
 
     const scheduleIdsOrderByLatestCreatedDate =
       await this.schedulesRepository.getPublicSchedulesIdsOrderByLatestCreatedDate(
-        {
-          ...paginationOption,
-          offset,
-        },
+        paginationOption,
       );
 
     if (scheduleIdsOrderByLatestCreatedDate.length === 0) {
-      return { message: '일정이 존재하지 않습니다.' };
+      return [];
     }
 
     const scheduleIds: number[] = scheduleIdsOrderByLatestCreatedDate.map(
