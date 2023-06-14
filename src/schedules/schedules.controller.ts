@@ -18,6 +18,7 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiCreatedResponse,
+  ApiExcludeEndpoint,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
@@ -278,6 +279,7 @@ export class SchedulesController {
   }
 
   @Get('schedules/:scheduleId/is-author')
+  @ApiExcludeEndpoint()
   @ApiOperation({
     summary: '로그인한 사용자가 현재 여행 일정의 작성인지 체크한다.',
   })
