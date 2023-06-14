@@ -372,4 +372,21 @@ export class SchedulesRepository extends Repository<Schedule> {
       },
     });
   }
+
+  async getScheduleIdsByUserId(user_id: string): Promise<number[]> {
+    const results = await this.createQueryBuilder('schedule')
+      .select('schedule.schedule_id')
+      .where('schedule.user_id = :user_id', { user_id: user_id })
+      .getMany();
+
+    return results.map((result) => result.schedule_id);
+  }
+
+  async deleteSchedulesByScheduleIds(scheduleIds: number[]) {
+    await this.createQueryBuilder()
+      .delete()
+      .from(Schedule)
+      .where('schedule_id IN (:...ids)', { ids: scheduleIds })
+      .execute();
+  }
 }

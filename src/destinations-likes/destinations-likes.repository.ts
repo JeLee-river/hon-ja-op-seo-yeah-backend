@@ -35,4 +35,8 @@ export class DestinationsLikesRepository extends Repository<DestinationsLike> {
   async updatedLikedDestination(newLike: DestinationsLike) {
     return await this.save(newLike);
   }
+
+  async deleteDestinationsLikesByUserId(user_id: string): Promise<void> {
+    await this.delete({ user_id: user_id });
+  }
 }

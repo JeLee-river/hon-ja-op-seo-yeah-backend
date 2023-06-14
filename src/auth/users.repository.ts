@@ -106,16 +106,12 @@ export class UsersRepository extends Repository<User> {
     };
   }
 
-  async deleteUserInformation(userId: string): Promise<{ message: string }> {
+  async deleteUserInformation(userId: string): Promise<void> {
     const query = await this.createQueryBuilder('user')
       .delete()
       .from(User)
       .where('id = :id', { id: userId })
       .execute();
-
-    return {
-      message: '사용자 정보가 성공적으로 삭제되었습니다.',
-    };
   }
 
   async findUserByNickname(nickname: string): Promise<User> {

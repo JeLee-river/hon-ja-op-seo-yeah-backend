@@ -28,4 +28,12 @@ export class SchedulesDetailRepository extends Repository<ScheduleDetail> {
     const result = await this.delete({ schedule_id });
     return result;
   }
+
+  async deleteScheduleDetailsByIds(scheduleIds: number[]): Promise<void> {
+    await this.createQueryBuilder()
+      .delete()
+      .from(ScheduleDetail)
+      .where('schedule_id IN (:...ids)', { ids: scheduleIds })
+      .execute();
+  }
 }

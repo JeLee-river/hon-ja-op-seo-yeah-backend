@@ -14,6 +14,12 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from './entities/user.entity';
 
 import { UsersRepository } from './users.repository';
+import { SchedulesRepository } from '../schedules/schedules.repository';
+import { SchedulesDetailRepository } from '../schedules/schedules-detail.repository';
+import { SchedulesLikesRepository } from '../schedules-likes/schedules-likes.repository';
+import { SchedulesCommentsRepository } from '../schedules-comments/schedules-comments.repository';
+import { DestinationsLikesRepository } from '../destinations-likes/destinations-likes.repository';
+import { DestinationsCommentsRepository } from '../destinations-comments/destinations-comments.repository';
 
 import { SignInDto } from './dto/sign-in.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -23,6 +29,7 @@ import { VerifyPasswordDto } from './dto/verify-password.dto';
 import * as bcrypt from 'bcryptjs';
 
 import * as config from 'config';
+import { DataSource } from 'typeorm';
 
 const jwtConfig = config.get('jwt');
 
@@ -32,6 +39,14 @@ export class AuthService {
     @InjectRepository(UsersRepository)
     private usersRepository: UsersRepository,
     private jwtService: JwtService,
+    private schedulesRepository: SchedulesRepository,
+    private schedulesDetailRepository: SchedulesDetailRepository,
+    private schedulesLikesRepository: SchedulesLikesRepository,
+    private schedulesCommentsRepository: SchedulesCommentsRepository,
+    private destinationLikesRepository: DestinationsLikesRepository,
+    private destinationsCommentsRepository: DestinationsCommentsRepository,
+
+    private dataSource: DataSource,
   ) {}
 
   signUp(
@@ -217,19 +232,69 @@ export class AuthService {
   }
 
   async deleteUserInformation(userId: string): Promise<{ message: string }> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
     const user = await this.findUserById(userId);
 
     if (!user) {
       throw new HttpException(
-        '아이디 또는 비밀번호가 일치하지 않습니다.',
-        HttpStatus.UNAUTHORIZED,
+        '존재하지 않는 유저입니다.',
+        HttpStatus.NOT_FOUND,
       );
     }
 
     try {
-      return await this.usersRepository.deleteUserInformation(userId);
+      // 목적지 댓글 삭제
+      await this.destinationsCommentsRepository.deleteDestinationCommentsByUserId(
+        userId,
+      );
+
+      // 목적지 좋아요 삭제
+      await this.destinationLikesRepository.deleteDestinationsLikesByUserId(
+        userId,
+      );
+
+      // 현재 유저가 작성한 일정 ids 를 조회해야한다.
+      const scheduleIdsToBeDelete =
+        await this.schedulesRepository.getScheduleIdsByUserId(userId);
+
+      if (scheduleIdsToBeDelete.length !== 0) {
+        // 일정 좋아요 삭제
+        await this.schedulesLikesRepository.deleteScheduleLikesByScheduleIds(
+          scheduleIdsToBeDelete,
+        );
+
+        // 일정 댓글 삭제
+        await this.schedulesCommentsRepository.deleteScheduleCommentsByScheduleIds(
+          scheduleIdsToBeDelete,
+        );
+
+        // 일정 상세 삭제
+        await this.schedulesDetailRepository.deleteScheduleDetailsByIds(
+          scheduleIdsToBeDelete,
+        );
+
+        // 일정 삭제
+        await this.schedulesRepository.deleteSchedulesByScheduleIds(
+          scheduleIdsToBeDelete,
+        );
+      }
+
+      // 유저 삭제
+      await this.usersRepository.deleteUserInformation(userId);
+
+      await queryRunner.commitTransaction();
+
+      return {
+        message: '사용자 정보가 성공적으로 삭제되었습니다.',
+      };
     } catch (error) {
       Logger.error(error);
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
     }
   }
 

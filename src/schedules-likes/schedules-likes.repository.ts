@@ -52,4 +52,12 @@ export class SchedulesLikesRepository extends Repository<SchedulesLike> {
 
     return await query.getMany();
   }
+
+  async deleteScheduleLikesByScheduleIds(scheduleIds: number[]): Promise<void> {
+    await this.createQueryBuilder()
+      .delete()
+      .from(SchedulesLike)
+      .where('schedule_id IN (:...ids)', { ids: scheduleIds })
+      .execute();
+  }
 }

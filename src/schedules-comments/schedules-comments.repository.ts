@@ -96,4 +96,14 @@ export class SchedulesCommentsRepository extends Repository<SchedulesComment> {
   async deleteCommentsByScheduleId(schedule_id): Promise<DeleteResult> {
     return await this.delete({ schedule_id });
   }
+
+  async deleteScheduleCommentsByScheduleIds(
+    scheduleIds: number[],
+  ): Promise<void> {
+    await this.createQueryBuilder()
+      .delete()
+      .from(SchedulesComment)
+      .where('schedule_id IN (:...ids)', { ids: scheduleIds })
+      .execute();
+  }
 }

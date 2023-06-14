@@ -107,4 +107,8 @@ export class DestinationsCommentsRepository extends Repository<DestinationsComme
     const result = await query.getMany();
     return result;
   }
+
+  async deleteDestinationCommentsByUserId(user_id: string): Promise<void> {
+    await this.delete({ user_id: user_id });
+  }
 }
