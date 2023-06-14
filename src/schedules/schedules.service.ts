@@ -385,7 +385,7 @@ export class SchedulesService {
       throw new NotFoundException('해당 여행 일정이 존재하지 않습니다.');
     }
 
-    if (user_id === schedule.user.id) {
+    if (user_id !== schedule.user.id) {
       throw new UnauthorizedException(
         `여행 일정을 작성한 작성자가 아닌 사용자는 수정할 권한이 없습니다.`,
       );
