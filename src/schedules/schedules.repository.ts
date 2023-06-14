@@ -170,6 +170,7 @@ export class SchedulesRepository extends Repository<Schedule> {
 
   // 전체 여행 일정을 좋아요와 댓글 모두 포함하여 조회한다.
   async getSchedulesByScheduleIds(scheduleIds: number[]): Promise<Schedule[]> {
+    console.log('scheduleIds', scheduleIds);
     const query = this.createQueryBuilder('schedule')
       .select([
         'schedule.schedule_id',
@@ -217,11 +218,13 @@ export class SchedulesRepository extends Repository<Schedule> {
         'schedule_likes_user.nickname',
         'schedule_likes_user.profile_image',
       ])
-      .orderBy({
-        'schedule_details.day': 'ASC',
-        'schedule_details.tour_order': 'ASC',
-      });
-
+      .orderBy(
+        `array_position(:orderArray::integer[], "schedule"."schedule_id")`,
+        'ASC',
+      )
+      .addOrderBy('schedule_details.day', 'ASC')
+      .addOrderBy('schedule_details.tour_order', 'ASC')
+      .setParameter('orderArray', scheduleIds);
     return await query.getMany();
   }
 
