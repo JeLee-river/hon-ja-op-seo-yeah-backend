@@ -106,6 +106,7 @@ export class DestinationsController {
    * @param take
    */
   @Get('/test/destinations')
+  @ApiExcludeEndpoint()
   @ApiOperation({
     summary: '여행지 목록에서 검색하기 (카테고리, 여행지 타이틀)',
   })
