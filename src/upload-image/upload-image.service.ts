@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 import { UsersRepository } from '../auth/users.repository';
 import { SchedulesRepository } from '../schedules/schedules.repository';
-
-import dotenv from 'dotenv';
-dotenv.config();
 
 @Injectable()
 export class UploadImageService {

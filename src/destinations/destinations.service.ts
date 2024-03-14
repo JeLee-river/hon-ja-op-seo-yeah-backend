@@ -1,5 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 import { Destination } from './entities/destination.entity';
 
 import { DestinationsRepository } from './destinations.repository';
@@ -7,9 +10,6 @@ import { DestinationsRepository } from './destinations.repository';
 import { CreateDestinationDto } from './dto/create-destination.dto';
 
 import { promises as fs } from 'fs';
-
-import dotenv from 'dotenv';
-dotenv.config();
 
 @Injectable()
 export class DestinationsService {

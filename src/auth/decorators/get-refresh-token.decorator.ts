@@ -4,10 +4,10 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 
-import * as jwt from 'jsonwebtoken';
-
-import dotenv from 'dotenv';
+import * as dotenv from 'dotenv';
 dotenv.config();
+
+import * as jwt from 'jsonwebtoken';
 
 export const GetRefreshToken = createParamDecorator((data, context) => {
   const request = context.switchToHttp().getRequest();

@@ -11,6 +11,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { JwtService } from '@nestjs/jwt';
 
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 import { User } from './entities/user.entity';
 
 import { UsersRepository } from './users.repository';
@@ -28,10 +31,7 @@ import { VerifyPasswordDto } from './dto/verify-password.dto';
 
 import * as bcrypt from 'bcryptjs';
 
-import dotenv from 'dotenv';
 import { DataSource } from 'typeorm';
-
-dotenv.config();
 
 @Injectable()
 export class AuthService {

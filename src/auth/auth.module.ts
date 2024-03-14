@@ -3,13 +3,15 @@ import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PassportModule } from '@nestjs/passport';
 
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UsersRepository } from './users.repository';
 
 import { JwtStrategy } from './strategies/jwt.strategy';
 
-import dotenv from 'dotenv';
 import { SchedulesModule } from '../schedules/schedules.module';
 import { SchedulesLikesModule } from '../schedules-likes/schedules-likes.module';
 import { SchedulesCommentsModule } from '../schedules-comments/schedules-comments.module';
@@ -21,8 +23,6 @@ import { SchedulesDetailRepository } from '../schedules/schedules-detail.reposit
 import { DestinationsLikesRepository } from '../destinations-likes/destinations-likes.repository';
 import { DestinationsCommentsRepository } from '../destinations-comments/destinations-comments.repository';
 import { SchedulesCommentsRepository } from '../schedules-comments/schedules-comments.repository';
-
-dotenv.config();
 
 @Module({
   imports: [

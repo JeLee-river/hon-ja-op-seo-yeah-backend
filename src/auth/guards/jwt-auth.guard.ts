@@ -5,11 +5,12 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 import { Observable } from 'rxjs';
 
 import * as jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
-dotenv.config();
 
 export class JwtAuthGuard implements CanActivate {
   canActivate(

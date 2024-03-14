@@ -9,15 +9,15 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 import { ScheduleDetail } from './schedule-detail.entity';
 import { SchedulesLike } from '../../schedules-likes/entities/schedules-like.entity';
 import { SchedulesComment } from '../../schedules-comments/entities/schedules-comment.entity';
 import { User } from '../../auth/entities/user.entity';
 
 import { ScheduleStatus } from '../../types/ScheduleStatus.enum';
-
-import dotenv from 'dotenv';
-dotenv.config();
 
 const defaultImagePath = process.env.DEFAULT_BACKGROUND_IMG_PATH;
 

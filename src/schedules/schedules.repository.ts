@@ -2,6 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 import { DataSource, DeleteResult, Repository, UpdateResult } from 'typeorm';
 
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 import { Schedule } from './entities/schedule.entity';
 
 import { CreateScheduleDto } from './dto/create-schedule.dto';
@@ -10,9 +13,6 @@ import { UpdateScheduleDto } from './dto/update-schedule.dto';
 import { ScheduleIdsOrderByLikesCount } from '../types/ScheduleIdsOrderByLikesCount.interface';
 import { PaginationOptions } from '../types/PaginationOptions.interface';
 import { ScheduleStatus } from '../types/ScheduleStatus.enum';
-
-import dotenv from 'dotenv';
-dotenv.config();
 
 @Injectable()
 export class SchedulesRepository extends Repository<Schedule> {
