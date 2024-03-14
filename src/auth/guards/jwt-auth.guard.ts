@@ -8,7 +8,8 @@ import {
 import { Observable } from 'rxjs';
 
 import * as jwt from 'jsonwebtoken';
-import * as config from 'config';
+import dotenv from 'dotenv';
+dotenv.config();
 
 export class JwtAuthGuard implements CanActivate {
   canActivate(
@@ -27,7 +28,7 @@ export class JwtAuthGuard implements CanActivate {
     try {
       const decoded = jwt.verify(
         bearerToken,
-        config.get('jwt.JWT_ACCESS_TOKEN_SECRET'),
+        process.env.JWT_ACCESS_TOKEN_SECRET,
       );
 
       return true;

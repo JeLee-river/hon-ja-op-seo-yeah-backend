@@ -35,7 +35,7 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 # 환경 변수
-config
+.env
 
 #공공데이터 포탈에서 fetch한 데이터를 변환한 JSON 파일들
 data

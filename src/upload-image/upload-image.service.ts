@@ -3,7 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { UsersRepository } from '../auth/users.repository';
 import { SchedulesRepository } from '../schedules/schedules.repository';
 
-import * as config from 'config';
+import dotenv from 'dotenv';
+dotenv.config();
 
 @Injectable()
 export class UploadImageService {
@@ -13,7 +14,7 @@ export class UploadImageService {
   ) {}
 
   createImagePath(path: string): string {
-    const domain = config.get('server').domain;
+    const domain = process.env.SERVER_DOMAIN;
     const img = path.split('public')[1];
     return domain + img;
   }

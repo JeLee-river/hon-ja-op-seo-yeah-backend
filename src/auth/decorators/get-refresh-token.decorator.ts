@@ -6,7 +6,8 @@ import {
 
 import * as jwt from 'jsonwebtoken';
 
-import * as config from 'config';
+import dotenv from 'dotenv';
+dotenv.config();
 
 export const GetRefreshToken = createParamDecorator((data, context) => {
   const request = context.switchToHttp().getRequest();
@@ -22,7 +23,7 @@ export const GetRefreshToken = createParamDecorator((data, context) => {
   try {
     const decoded = jwt.verify(
       bearerToken,
-      config.get('jwt.JWT_REFRESH_TOKEN_SECRET'),
+      process.env.JWT_REFRESH_TOKEN_SECRET,
     );
 
     return bearerToken;

@@ -11,7 +11,8 @@ import { ScheduleIdsOrderByLikesCount } from '../types/ScheduleIdsOrderByLikesCo
 import { PaginationOptions } from '../types/PaginationOptions.interface';
 import { ScheduleStatus } from '../types/ScheduleStatus.enum';
 
-import * as config from 'config';
+import dotenv from 'dotenv';
+dotenv.config();
 
 @Injectable()
 export class SchedulesRepository extends Repository<Schedule> {
@@ -34,7 +35,7 @@ export class SchedulesRepository extends Repository<Schedule> {
     userId: string,
     updateScheduleDto: UpdateScheduleDto,
   ): Promise<Schedule> {
-    const defaultImagePath = config.get('img').DEFAULT_BACKGROUND_IMG_PATH;
+    const defaultImagePath = process.env.DEFAULT_BACKGROUND_IMG_PATH;
 
     const { image } = updateScheduleDto;
 

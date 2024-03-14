@@ -16,9 +16,10 @@ import { User } from '../../auth/entities/user.entity';
 
 import { ScheduleStatus } from '../../types/ScheduleStatus.enum';
 
-import * as config from 'config';
+import dotenv from 'dotenv';
+dotenv.config();
 
-const defaultImagePath = config.get('img').DEFAULT_BACKGROUND_IMG_PATH;
+const defaultImagePath = process.env.DEFAULT_BACKGROUND_IMG_PATH;
 
 @Entity()
 export class Schedule {

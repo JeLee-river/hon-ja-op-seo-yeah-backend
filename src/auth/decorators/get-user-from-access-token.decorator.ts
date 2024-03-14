@@ -7,7 +7,8 @@ import {
 import * as jwt from 'jsonwebtoken';
 import { JwtPayload } from 'jsonwebtoken';
 
-import * as config from 'config';
+import dotenv from 'dotenv';
+dotenv.config();
 
 export const GetUserFromAccessToken = createParamDecorator((data, context) => {
   const request = context.switchToHttp().getRequest();
@@ -23,7 +24,7 @@ export const GetUserFromAccessToken = createParamDecorator((data, context) => {
   try {
     const decoded = jwt.verify(
       bearerToken,
-      config.get('jwt.JWT_ACCESS_TOKEN_SECRET'),
+      process.env.JWT_ACCESS_TOKEN_SECRET,
     );
 
     // decoded 가 객체인지 확인한다. (string 일수도 있다고 함.)

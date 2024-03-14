@@ -8,9 +8,8 @@ import { CreateDestinationDto } from './dto/create-destination.dto';
 
 import { promises as fs } from 'fs';
 
-import * as config from 'config';
-
-const apiConfig = config.get('api');
+import dotenv from 'dotenv';
+dotenv.config();
 
 @Injectable()
 export class DestinationsService {
@@ -19,7 +18,7 @@ export class DestinationsService {
   async fetchData(): Promise<void> {
     const baseUrl =
       'https://apis.data.go.kr/B551011/KorService1/areaBasedList1';
-    const serviceKey = apiConfig.key;
+    const serviceKey = process.env.API_KEY;
     const numOfRows = '1000';
     const pageNo = '1';
     const mobileOS = 'ETC';
@@ -69,7 +68,7 @@ export class DestinationsService {
     try {
       for (let i = 1; i <= 300; i++) {
         const { contentid, title } = destinationIds[i];
-        const serviceKey = apiConfig.key;
+        const serviceKey = process.env.API_KEY;
         const url = `https://apis.data.go.kr/B551011/KorService1/detailCommon1?serviceKey=${serviceKey}&MobileOS=ETC&MobileApp=AppTest&_type=json&contentId=${contentid}&defaultYN=Y&firstImageYN=Y&addrinfoYN=Y&mapinfoYN=Y&overviewYN=Y&numOfRows=10&pageNo=1`;
 
         const response = await fetch(url);
