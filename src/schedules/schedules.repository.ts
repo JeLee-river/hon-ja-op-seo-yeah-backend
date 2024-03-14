@@ -13,6 +13,7 @@ import { UpdateScheduleDto } from './dto/update-schedule.dto';
 import { ScheduleIdsOrderByLikesCount } from '../types/ScheduleIdsOrderByLikesCount.interface';
 import { PaginationOptions } from '../types/PaginationOptions.interface';
 import { ScheduleStatus } from '../types/ScheduleStatus.enum';
+import { getRandomImagePath } from 'src/utils/utils';
 
 @Injectable()
 export class SchedulesRepository extends Repository<Schedule> {
@@ -35,12 +36,16 @@ export class SchedulesRepository extends Repository<Schedule> {
     userId: string,
     updateScheduleDto: UpdateScheduleDto,
   ): Promise<Schedule> {
-    const defaultImagePath = process.env.DEFAULT_BACKGROUND_IMG_PATH;
+    const defaultImagePath1 = process.env.DEFAULT_BACKGROUND_IMG_PATH_1;
+    const defaultImagePath2 = process.env.DEFAULT_BACKGROUND_IMG_PATH_2;
 
     const { image } = updateScheduleDto;
 
     if (!image) {
-      updateScheduleDto.image = defaultImagePath;
+      updateScheduleDto.image = getRandomImagePath(
+        defaultImagePath1,
+        defaultImagePath2,
+      );
     }
 
     const schedule = this.create({ user_id: userId, ...updateScheduleDto });

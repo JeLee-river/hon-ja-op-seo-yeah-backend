@@ -18,8 +18,10 @@ import { SchedulesComment } from '../../schedules-comments/entities/schedules-co
 import { User } from '../../auth/entities/user.entity';
 
 import { ScheduleStatus } from '../../types/ScheduleStatus.enum';
+import { getRandomImagePath } from 'src/utils/utils';
 
-const defaultImagePath = process.env.DEFAULT_BACKGROUND_IMG_PATH;
+const defaultImagePath1 = process.env.DEFAULT_BACKGROUND_IMG_PATH_1;
+const defaultImagePath2 = process.env.DEFAULT_BACKGROUND_IMG_PATH_2;
 
 @Entity()
 export class Schedule {
@@ -48,7 +50,7 @@ export class Schedule {
   status: ScheduleStatus;
 
   @Column({
-    default: defaultImagePath,
+    default: getRandomImagePath(defaultImagePath1, defaultImagePath2),
     nullable: true,
   })
   image: string;
