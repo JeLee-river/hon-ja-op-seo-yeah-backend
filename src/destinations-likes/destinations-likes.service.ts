@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { DestinationsLikesRepository } from './destinations-likes.repository';
+
 import { DestinationsLike } from './entities/destinations-like.entity';
+
+import { DestinationsLikesRepository } from './destinations-likes.repository';
 
 @Injectable()
 export class DestinationsLikesService {

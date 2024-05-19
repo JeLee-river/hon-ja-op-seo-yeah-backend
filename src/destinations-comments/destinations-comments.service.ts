@@ -5,11 +5,14 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { CreateDestinationsCommentDto } from './dto/create-destinations-comment.dto';
-import { DestinationsCommentsRepository } from './destinations-comments.repository';
+
 import { DestinationsComment } from './entities/destinations-comment.entity';
-import { UpdateDestinationsCommentDto } from './dto/update-destinations-comment.dto';
+
+import { DestinationsCommentsRepository } from './destinations-comments.repository';
 import { UsersRepository } from '../auth/users.repository';
+
+import { CreateDestinationsCommentDto } from './dto/create-destinations-comment.dto';
+import { UpdateDestinationsCommentDto } from './dto/update-destinations-comment.dto';
 
 @Injectable()
 export class DestinationsCommentsService {

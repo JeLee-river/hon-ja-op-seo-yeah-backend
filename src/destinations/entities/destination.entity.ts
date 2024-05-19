@@ -6,11 +6,13 @@ import {
   OneToMany,
   PrimaryColumn,
 } from 'typeorm';
-import { ScheduleDetail } from '../../schedules/entities/schedule-detail.entity';
+
 import { ApiProperty } from '@nestjs/swagger';
+
 import { Category } from '../../categories/entities/category.entity';
-import { DestinationsComment } from '../../destinations-comments/entities/destinations-comment.entity';
+import { ScheduleDetail } from '../../schedules/entities/schedule-detail.entity';
 import { DestinationsLike } from '../../destinations-likes/entities/destinations-like.entity';
+import { DestinationsComment } from '../../destinations-comments/entities/destinations-comment.entity';
 
 @Entity()
 export class Destination {

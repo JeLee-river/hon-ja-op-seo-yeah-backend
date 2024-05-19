@@ -22,8 +22,10 @@ export class UpdateUserDto {
   @IsString()
   gender: string;
 
-  @ApiProperty({ description: '프로필 이미지', example: 'baseurl string' })
-  @IsString()
+  @ApiProperty({
+    description: '프로필 이미지',
+    example: 'https://domain.com/imagePath',
+  })
   profile_image: string;
 
   created_at: Date;

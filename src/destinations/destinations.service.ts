@@ -1,6 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { DestinationsRepository } from './destinations.repository';
+
 import { Destination } from './entities/destination.entity';
+
+import { DestinationsRepository } from './destinations.repository';
+
 import { CreateDestinationDto } from './dto/create-destination.dto';
 
 import { promises as fs } from 'fs';
@@ -137,13 +140,21 @@ export class DestinationsService {
 
   // TODO: 여행지 검색 (카테고리와 여행지 타이틀)
   async searchDestinationsWithLikesAndComments(
-    categoryIds,
-    title,
+    categoryIds: string,
+    title: string,
   ): Promise<any> {
-    // categoryIds 를 배열로 변경
+    console.log('categoryIds', categoryIds);
+    console.log('title', title);
+
     let parsedCategoryIds;
     if (categoryIds === '') {
-      parsedCategoryIds = [];
+      // ! 선택한 카테고리가 아예 없는 경우
+      // ? 선택된 카테고리가 아예 없다면 데이터를 전달하지 않는다.
+      // ? -> [전체] 카테고리를 선택한 것과 다르다고 한다...
+      return {
+        total_count: 0,
+        destinations: [],
+      };
     } else {
       parsedCategoryIds = categoryIds
         .split(',')
@@ -208,5 +219,71 @@ export class DestinationsService {
       this.destinationsRepository.getDestinationsRanking(count);
 
     return destinations;
+  }
+
+  async searchDestinationsAndPagination(
+    categoryIds: string,
+    title: string,
+    page: number,
+    take: number,
+  ): Promise<any> {
+    // page 가 전달되지 않았거나 숫자가 아닐 경우 1로 고정한다.
+    if (!page) {
+      page = 1;
+    }
+
+    // take 가 전달되지 않았거나 숫자가 아닐 경우 10으로 고정한다.
+    if (!take) {
+      take = 10;
+    }
+
+    let parsedCategoryIds;
+    if (categoryIds === '') {
+      // ! 선택한 카테고리가 아예 없는 경우
+      // ? 선택된 카테고리가 아예 없다면 데이터를 전달하지 않는다.
+      // ? -> [전체] 카테고리를 선택한 것과 다르다고 한다...
+      return {
+        total_count: 0,
+        destinations: [],
+      };
+    } else {
+      parsedCategoryIds = categoryIds
+        .split(',')
+        .map(Number)
+        .filter((number) => !isNaN(number));
+    }
+
+    const paginationOptions = {
+      take,
+      skip: (page - 1) * take,
+    };
+
+    const destinations =
+      await this.destinationsRepository.searchDestinationsAndPagination(
+        parsedCategoryIds,
+        title,
+        paginationOptions,
+      );
+
+    const result = destinations.map((destination) => {
+      const { destination_likes } = destination;
+      // is_liked 가 false 인 항목들을 제외한다.
+      const new_destination_likes = destination_likes.filter(
+        ({ is_liked }) => is_liked === true,
+      );
+      const destination_likes_count = new_destination_likes.length;
+
+      return {
+        ...destination,
+        comment_count: destination.destination_comments.length,
+        destination_likes: new_destination_likes,
+        destination_likes_count,
+      };
+    });
+
+    return {
+      total_count: result.length,
+      destinations: result,
+    };
   }
 }

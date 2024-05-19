@@ -1,13 +1,18 @@
-import { User } from './entities/user.entity';
-import { DataSource, Repository } from 'typeorm';
 import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
+
+import { DataSource, Repository, UpdateResult } from 'typeorm';
+
+import { User } from './entities/user.entity';
+
 import { AuthCredentialDto } from './dto/auth-credential.dto';
-import * as bcrypt from 'bcryptjs';
+
 import { PostgresErrorCodesEnum } from '../types/postgresErrorCodes.enum';
+
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UsersRepository extends Repository<User> {
@@ -27,7 +32,7 @@ export class UsersRepository extends Repository<User> {
         statusCode: 409,
         error: 'Conflict',
         field: 'email',
-        message: '이미 존재하는 아이디입니다.',
+        message: '이미 존재하는 이메일입니다.',
       });
     }
 
@@ -101,16 +106,12 @@ export class UsersRepository extends Repository<User> {
     };
   }
 
-  async deleteUserInformation(userId: string): Promise<{ message: string }> {
+  async deleteUserInformation(userId: string): Promise<void> {
     const query = await this.createQueryBuilder('user')
       .delete()
       .from(User)
       .where('id = :id', { id: userId })
       .execute();
-
-    return {
-      message: '사용자 정보가 성공적으로 삭제되었습니다.',
-    };
   }
 
   async findUserByNickname(nickname: string): Promise<User> {
@@ -121,5 +122,16 @@ export class UsersRepository extends Repository<User> {
     });
 
     return user;
+  }
+
+  async saveUserProfileImagePath(
+    userId: string,
+    imagePath: string,
+  ): Promise<UpdateResult> {
+    return await this.createQueryBuilder('user')
+      .update(User)
+      .set({ profile_image: imagePath })
+      .where('id = :id', { id: userId })
+      .execute();
   }
 }

@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
+
 import { DataSource, Repository } from 'typeorm';
+
 import { DestinationsLike } from './entities/destinations-like.entity';
 
 @Injectable()
@@ -32,5 +34,9 @@ export class DestinationsLikesRepository extends Repository<DestinationsLike> {
 
   async updatedLikedDestination(newLike: DestinationsLike) {
     return await this.save(newLike);
+  }
+
+  async deleteDestinationsLikesByUserId(user_id: string): Promise<void> {
+    await this.delete({ user_id: user_id });
   }
 }

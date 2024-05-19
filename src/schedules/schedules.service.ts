@@ -7,15 +7,21 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { SchedulesRepository } from './schedules.repository';
-import { CreateScheduleDto } from './dto/create-schedule.dto';
+
 import { Schedule } from './entities/schedule.entity';
 import { ScheduleDetail } from './entities/schedule-detail.entity';
+
+import { SchedulesRepository } from './schedules.repository';
 import { SchedulesDetailRepository } from './schedules-detail.repository';
-import { ResponseScheduleInterface } from '../types/ResponseSchedule.interface';
-import { UpdateScheduleDto } from './dto/update-schedule.dto';
 import { SchedulesLikesRepository } from '../schedules-likes/schedules-likes.repository';
 import { SchedulesCommentsRepository } from '../schedules-comments/schedules-comments.repository';
+
+import { CreateScheduleDto } from './dto/create-schedule.dto';
+import { UpdateScheduleDto } from './dto/update-schedule.dto';
+
+import { ScheduleWithLikesAndComments } from '../types/ScheduleWithLikesAndComments.interface';
+import { ResponseScheduleInterface } from '../types/ResponseSchedule.interface';
+import { PaginationOptions } from '../types/PaginationOptions.interface';
 
 @Injectable()
 export class SchedulesService {
@@ -63,11 +69,25 @@ export class SchedulesService {
     schedule: Schedule;
     scheduleDetails: Omit<ScheduleDetail, 'idx'>[];
   }> {
+    const schedule = await this.schedulesRepository.getScheduleById(
+      updateScheduleDto.schedule_id,
+    );
+
+    if (!schedule) {
+      throw new NotFoundException('해당 여행 일정이 존재하지 않습니다.');
+    }
+
+    if (userId !== schedule.user.id) {
+      throw new UnauthorizedException(
+        '작성자가 아닌 유저는 일정 수정 권한이 없습니다.',
+      );
+    }
+
     const { schedule_id, destinations } = updateScheduleDto;
 
     try {
       // 여행 일정 기본 정보 update
-      const schedule = await this.schedulesRepository.createSchedule(
+      const schedule = await this.schedulesRepository.updateSchedule(
         userId,
         updateScheduleDto,
       );
@@ -127,8 +147,12 @@ export class SchedulesService {
     }
   }
 
-  async getAllPublicSchedules(): Promise<Schedule[]> {
-    const schedules = await this.schedulesRepository.getAllPublicSchedules();
+  /**
+   * 전체 일정 조회 (좋아요, 댓글 포함)
+   */
+  async getAllSchedulesWithLikesAndComments(): Promise<Schedule[]> {
+    const schedules =
+      await this.schedulesRepository.getAllSchedulesWithLikesAndComments();
 
     const newSchedules = schedules.map((schedule) => {
       return this.transformSchedule(schedule);
@@ -137,6 +161,60 @@ export class SchedulesService {
     return newSchedules;
   }
 
+  /**
+   * 로그인 한 유저가 작성한 모든 일정 조회 (좋아요, 댓글 포함)
+   * @param user_id
+   */
+  async getMySchedules(user_id: string): Promise<Schedule[]> {
+    const schedules = await this.schedulesRepository.getSchedulesByUserId(
+      user_id,
+    );
+
+    const newSchedules = schedules.map((schedule) => {
+      return this.transformSchedule(schedule);
+    });
+
+    return newSchedules;
+  }
+
+  /**
+   * 로그인 한 유저가 좋아요 한 모든 일정 조회 (좋아요, 댓글 포함)
+   * @param user_id
+   */
+  async getSchedulesLikedByUser(
+    user_id: string,
+  ): Promise<Schedule[] | { message: string }> {
+    const scheduleIds =
+      await this.schedulesLikesRepository.getScheduleIdsLikedByUser(user_id);
+
+    const likedSchedulesIsEmpty = scheduleIds.length === 0;
+
+    if (likedSchedulesIsEmpty) {
+      return {
+        message: '좋아요한 일정이 없습니다.',
+      };
+    }
+
+    const likedScheduleIds: number[] = scheduleIds.map(
+      (item) => item.schedule_id,
+    );
+
+    const schedulesLikedByUser =
+      await this.schedulesRepository.getSchedulesByScheduleIds(
+        likedScheduleIds,
+      );
+
+    const likedSchedules = schedulesLikedByUser.map((schedule) => {
+      return this.transformSchedule(schedule);
+    });
+
+    return likedSchedules;
+  }
+
+  /**
+   * 특정 여행 일정 조회 (좋아요, 댓글 포함)
+   * @param scheduleId
+   */
   async getScheduleById(
     scheduleId: number,
   ): Promise<ResponseScheduleInterface> {
@@ -149,6 +227,12 @@ export class SchedulesService {
     return this.transformSchedule(schedule);
   }
 
+  /**
+   * 특정 일정 삭제
+   * - 해당 일정의 좋아요, 댓글, 상세 정보까지 모두 삭제한다. (외래 키 참조 때문)
+   * @param user_id
+   * @param schedule_id
+   */
   async deleteScheduleById(
     user_id: string,
     schedule_id: number,
@@ -197,19 +281,27 @@ export class SchedulesService {
     };
   }
 
-  transformSchedule(schedule) {
-    const { duration, schedule_details, schedules_likes } = schedule;
+  /**
+   * DB 에서 조회한 여행 일정 데이터를 클라이언트에 실제 응답할 형식으로 변환한다.
+   * @param schedule
+   */
+  transformSchedule(schedule: Schedule) {
+    const { duration, schedule_details, schedules_likes, schedules_comments } =
+      schedule;
 
     // TODO : 이 일정의 좋아요 개수를 카운트하고, 좋아요 한 유저 목록을 확인한다.
     const likes = schedules_likes.filter(({ is_liked }) => is_liked === true);
     const newLikes = likes.map(({ is_liked, user }) => user);
 
+    // 이 일정의 댓글 갯수를 카운트한다
+    const comments_count = schedules_comments.length;
+
     // 일자(day)별 목적지 목록 및 지도 좌표를 담도록 데이터를 가공한다.
-    const { destinationsByDay, destinationMaps } =
+    const { destinationIds, destinationTitles, destinationMaps } =
       this.transformDestinationsByDay(duration, schedule_details);
 
     // 여행지 목록을 담은 배열을 만들고, 첫번째와 마지막 목적지를 찾는다.
-    const flattedDestinations = destinationsByDay.flat();
+    const flattedDestinations = destinationTitles.flat();
     const first_destination = flattedDestinations[0];
     const last_destination =
       flattedDestinations[flattedDestinations.length - 1];
@@ -221,29 +313,39 @@ export class SchedulesService {
 
     return {
       ...schedule,
+      comments_count,
       likes_count: likes.length,
       likes: newLikes,
       first_destination,
       last_destination,
       destination_count,
-      destinations: destinationsByDay,
+      destinationIds,
+      destinations: destinationTitles,
       destinationMaps,
     };
   }
 
+  /**
+   * 여행기간에 따라 일자별 destination 정보를 변환한다.
+   * @param duration
+   * @param schedule_details
+   */
   transformDestinationsByDay(duration, schedule_details) {
-    const destinationsByDay = [];
     const FIRST_DAY_OF_DURATION = 1;
+    const destinationIds = [];
+    const destinationTitles = [];
     const destinationMaps = [];
 
     for (let day = FIRST_DAY_OF_DURATION; day <= duration; day++) {
-      const destinations = [];
-      const destinationMap = [];
+      const ids: number[] = [];
+      const titles: string[] = [];
+      const maps = [];
 
       schedule_details.forEach((detail) => {
         if (detail.day === day) {
-          destinations.push(detail.destination.title);
-          destinationMap.push({
+          ids.push(detail.destination_id);
+          titles.push(detail.destination.title);
+          maps.push({
             id: detail.destination.id,
             title: detail.destination.title,
             mapx: detail.destination.mapx,
@@ -252,29 +354,20 @@ export class SchedulesService {
         }
       });
 
-      destinationsByDay.push(destinations);
-      destinationMaps.push(destinationMap);
+      destinationIds.push(ids);
+      destinationTitles.push(titles);
+      destinationMaps.push(maps);
     }
 
-    return { destinationsByDay, destinationMaps };
+    return { destinationIds, destinationTitles, destinationMaps };
   }
 
-  getSchedulesRanking(count: number): Promise<Schedule[]> {
-    return this.schedulesRepository.getSchedulesRanking(count);
-  }
-
-  async getMySchedules(user_id: string): Promise<Schedule[]> {
-    const schedules = await this.schedulesRepository.getSchedulesByUserId(
-      user_id,
-    );
-
-    const newSchedules = schedules.map((schedule) => {
-      return this.transformSchedule(schedule);
-    });
-
-    return newSchedules;
-  }
-
+  /**
+   * 여행 일정 작성 중 여행지를 추가할 경우, 상세 일정을 업데이트한다.
+   * @param user_id
+   * @param schedule_id
+   * @param destinations
+   */
   async saveDestinationsForScheduleDetails(
     user_id: string,
     schedule_id: number,
@@ -292,7 +385,7 @@ export class SchedulesService {
       throw new NotFoundException('해당 여행 일정이 존재하지 않습니다.');
     }
 
-    if (user_id === schedule.user_id) {
+    if (user_id !== schedule.user.id) {
       throw new UnauthorizedException(
         `여행 일정을 작성한 작성자가 아닌 사용자는 수정할 권한이 없습니다.`,
       );
@@ -322,7 +415,7 @@ export class SchedulesService {
     const destinationTitles = this.transformDestinationsByDay(
       requestedDuration,
       updatedSchedule.schedule_details,
-    ).destinationsByDay;
+    ).destinationTitles;
 
     // 일자별 여행지 id 와 title 을 각 배열에 담아 전달한다.
     return {
@@ -331,15 +424,110 @@ export class SchedulesService {
     };
   }
 
-  // todo : test :: 전체 여행 일정을 좋아요와 댓글 모두 포함하여 조회한다.
-  async getAllSchedulesWithLikesAndComments() {
-    const schedules =
-      await this.schedulesRepository.getAllSchedulesWithLikesAndComments();
+  /**
+   * 메인 화면에서 사용할 여행 일정 좋아요 순 랭킹
+   * @param count
+   */
+  getSchedulesRanking(count: number): Promise<Schedule[]> {
+    return this.schedulesRepository.getSchedulesRanking(count);
+  }
 
-    const newSchedules = schedules.map((schedule) => {
+  /**
+   * 좋아요순 전체 일정 조회 (좋아요, 댓글 포함) - 페이지네이션 적용
+   */
+  async getPublicSchedulesOrderByLikesCount(
+    paginationOption: PaginationOptions,
+  ): Promise<ScheduleWithLikesAndComments[] | { message: string }> {
+    const { page, limit } = paginationOption;
+
+    paginationOption.offset = (page - 1) * limit;
+
+    const scheduleIdsByLikesCount =
+      await this.schedulesRepository.getPublicScheduleIdsOrderByLikesCount(
+        paginationOption,
+      );
+
+    if (scheduleIdsByLikesCount.length === 0) {
+      return [];
+    }
+
+    const scheduleIds: number[] = scheduleIdsByLikesCount.map(
+      ({ schedule_id }) => Number(schedule_id),
+    );
+
+    const schedulesOrderByLikesCount =
+      await this.schedulesRepository.getSchedulesByScheduleIds(scheduleIds);
+
+    const result = schedulesOrderByLikesCount.map((schedule) => {
       return this.transformSchedule(schedule);
     });
 
-    return newSchedules;
+    return result;
+  }
+
+  /**
+   * 최신일순 전체 일정 조회 (좋아요, 댓글 포함) - 페이지네이션 적용
+   */
+  async getPublicSchedulesOrderByLatestCreatedDate(
+    paginationOption: PaginationOptions,
+  ): Promise<ScheduleWithLikesAndComments[] | { message: string }> {
+    const { page, limit } = paginationOption;
+
+    paginationOption.offset = (page - 1) * limit;
+
+    const scheduleIdsOrderByLatestCreatedDate =
+      await this.schedulesRepository.getPublicSchedulesIdsOrderByLatestCreatedDate(
+        paginationOption,
+      );
+
+    if (scheduleIdsOrderByLatestCreatedDate.length === 0) {
+      return [];
+    }
+
+    const scheduleIds: number[] = scheduleIdsOrderByLatestCreatedDate.map(
+      ({ schedule_id }) => Number(schedule_id),
+    );
+
+    const schedulesOrderByLatestCreatedDate =
+      await this.schedulesRepository.getSchedulesByScheduleIds(scheduleIds);
+
+    const result = schedulesOrderByLatestCreatedDate.map((schedule) => {
+      return this.transformSchedule(schedule);
+    });
+
+    return result;
+  }
+
+  async getPublicSchedulesCount() {
+    const count = await this.schedulesRepository.getTotalPublicScheduleCount();
+    return {
+      message: `공개된 여행 일정의 총 개수는 ${count}개입니다.`,
+      count,
+    };
+  }
+
+  async isScheduleAuthor(
+    user_id: string,
+    schedule_id: number,
+  ): Promise<{ isAuthor: boolean; message: string }> {
+    const schedule = await this.schedulesRepository.getScheduleById(
+      schedule_id,
+    );
+
+    if (!schedule) {
+      throw new NotFoundException('해당 여행 일정이 존재하지 않습니다.');
+    }
+
+    if (user_id !== schedule.user.id) {
+      return {
+        isAuthor: false,
+        message: '현재 유저는 작성자가 아닙니다.',
+      };
+    }
+
+    return {
+      isAuthor: true,
+      message: '현재 유저는 작성자가 맞습니다.',
+    };
   }
 }

@@ -7,9 +7,11 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
+import { ApiProperty } from '@nestjs/swagger';
+
 import { User } from '../../auth/entities/user.entity';
 import { Destination } from '../../destinations/entities/destination.entity';
-import { ApiProperty } from '@nestjs/swagger';
 
 @Entity()
 export class DestinationsLike {

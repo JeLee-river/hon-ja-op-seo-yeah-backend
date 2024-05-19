@@ -7,6 +7,7 @@ import {
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
+
 import {
   ApiBearerAuth,
   ApiOkResponse,
@@ -14,11 +15,17 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { SchedulesLikesService } from './schedules-likes.service';
+
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+
 import { SchedulesLike } from './entities/schedules-like.entity';
-import { GetUserFromAccessToken } from '../auth/get-user-from-access-token.decorator';
-import { SelfLikeExceptionFilter } from '../utils/filters/self-like.exception.filter';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+
+import { SchedulesLikesService } from './schedules-likes.service';
+
+import { GetUserFromAccessToken } from '../auth/decorators/get-user-from-access-token.decorator';
+
+import { SelfLikeExceptionFilter } from './filters/self-like.exception.filter';
+
 import { ResponseScheduleLikesInterface } from '../types/ResponseScheduleLikes.interface';
 
 @ApiTags(`여행 일정 '좋아요' (Schedules Likes)`)

@@ -1,7 +1,10 @@
-import { DataSource, DeleteResult, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
-import { CreateScheduleDetailDto } from './dto/create-schedule-detail.dto';
+
+import { DataSource, DeleteResult, Repository } from 'typeorm';
+
 import { ScheduleDetail } from './entities/schedule-detail.entity';
+
+import { CreateScheduleDetailDto } from './dto/create-schedule-detail.dto';
 
 @Injectable()
 export class SchedulesDetailRepository extends Repository<ScheduleDetail> {
@@ -24,5 +27,13 @@ export class SchedulesDetailRepository extends Repository<ScheduleDetail> {
   async deleteScheduleDetailsById(schedule_id: number): Promise<DeleteResult> {
     const result = await this.delete({ schedule_id });
     return result;
+  }
+
+  async deleteScheduleDetailsByIds(scheduleIds: number[]): Promise<void> {
+    await this.createQueryBuilder()
+      .delete()
+      .from(ScheduleDetail)
+      .where('schedule_id IN (:...ids)', { ids: scheduleIds })
+      .execute();
   }
 }

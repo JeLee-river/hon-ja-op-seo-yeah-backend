@@ -1,5 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateSchedulesCommentDto {
   @ApiProperty({ description: '댓글 내용', example: '이 일정을 추천합니다!' })

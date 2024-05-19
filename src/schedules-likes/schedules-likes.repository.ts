@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { SchedulesLike } from './entities/schedules-like.entity';
+
 import { DataSource, DeleteResult, Repository } from 'typeorm';
+
+import { SchedulesLike } from './entities/schedules-like.entity';
 
 @Injectable()
 export class SchedulesLikesRepository extends Repository<SchedulesLike> {
@@ -40,5 +42,22 @@ export class SchedulesLikesRepository extends Repository<SchedulesLike> {
 
   async deleteLikesByScheduleId(schedule_id: number): Promise<DeleteResult> {
     return await this.delete({ schedule_id });
+  }
+
+  async getScheduleIdsLikedByUser(user_id: string): Promise<SchedulesLike[]> {
+    const query = this.createQueryBuilder('schedules_like')
+      .select('schedules_like.schedule_id')
+      .where('schedules_like.user_id = :user_id', { user_id })
+      .andWhere('schedules_like.is_liked = :isLiked', { isLiked: true });
+
+    return await query.getMany();
+  }
+
+  async deleteScheduleLikesByScheduleIds(scheduleIds: number[]): Promise<void> {
+    await this.createQueryBuilder()
+      .delete()
+      .from(SchedulesLike)
+      .where('schedule_id IN (:...ids)', { ids: scheduleIds })
+      .execute();
   }
 }

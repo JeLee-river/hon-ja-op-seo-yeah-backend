@@ -1,9 +1,13 @@
 import { Module } from '@nestjs/common';
-import { SchedulesLikesService } from './schedules-likes.service';
-import { SchedulesLikesController } from './schedules-likes.controller';
-import { SchedulesLikesRepository } from './schedules-likes.repository';
+
 import { TypeOrmModule } from '@nestjs/typeorm';
+
+import { SchedulesLikesController } from './schedules-likes.controller';
+import { SchedulesLikesService } from './schedules-likes.service';
+import { SchedulesLikesRepository } from './schedules-likes.repository';
+
 import { SchedulesModule } from '../schedules/schedules.module';
+
 import { SchedulesRepository } from '../schedules/schedules.repository';
 
 @Module({

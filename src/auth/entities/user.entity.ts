@@ -6,14 +6,14 @@ import {
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
+
 import { Schedule } from '../../schedules/entities/schedule.entity';
-import { DestinationsComment } from '../../destinations-comments/entities/destinations-comment.entity';
-import { DestinationsLike } from '../../destinations-likes/entities/destinations-like.entity';
 import { SchedulesLike } from '../../schedules-likes/entities/schedules-like.entity';
 import { SchedulesComment } from '../../schedules-comments/entities/schedules-comment.entity';
+import { DestinationsLike } from '../../destinations-likes/entities/destinations-like.entity';
+import { DestinationsComment } from '../../destinations-comments/entities/destinations-comment.entity';
 
 @Entity()
-// @Unique(['id', 'nickname'])
 @Unique(['id'])
 @Unique(['nickname'])
 export class User {

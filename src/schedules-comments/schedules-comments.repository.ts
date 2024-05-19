@@ -1,6 +1,9 @@
-import { DataSource, DeleteResult, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
+
+import { DataSource, DeleteResult, Repository } from 'typeorm';
+
 import { SchedulesComment } from './entities/schedules-comment.entity';
+
 import { CreateSchedulesCommentDto } from './dto/create-schedules-comment.dto';
 import { UpdateSchedulesCommentDto } from './dto/update-schedules-comment.dto';
 
@@ -42,7 +45,7 @@ export class SchedulesCommentsRepository extends Repository<SchedulesComment> {
       .leftJoin('schedules_comment.user', 'user')
       .addSelect(['user.id', 'user.nickname', 'user.profile_image'])
       .orderBy({
-        'schedules_comment.created_at': 'DESC',
+        'schedules_comment.created_at': 'ASC',
       });
 
     return await query.getMany();
@@ -64,7 +67,7 @@ export class SchedulesCommentsRepository extends Repository<SchedulesComment> {
       .leftJoin('schedules_comment.user', 'user')
       .addSelect(['user.id', 'user.nickname', 'user.profile_image'])
       .orderBy({
-        'schedules_comment.created_at': 'DESC',
+        'schedules_comment.created_at': 'ASC',
       });
 
     return await query.getMany();
@@ -92,5 +95,15 @@ export class SchedulesCommentsRepository extends Repository<SchedulesComment> {
 
   async deleteCommentsByScheduleId(schedule_id): Promise<DeleteResult> {
     return await this.delete({ schedule_id });
+  }
+
+  async deleteScheduleCommentsByScheduleIds(
+    scheduleIds: number[],
+  ): Promise<void> {
+    await this.createQueryBuilder()
+      .delete()
+      .from(SchedulesComment)
+      .where('schedule_id IN (:...ids)', { ids: scheduleIds })
+      .execute();
   }
 }

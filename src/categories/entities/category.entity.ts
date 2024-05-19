@@ -1,4 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+
 import { Destination } from '../../destinations/entities/destination.entity';
 
 @Entity()

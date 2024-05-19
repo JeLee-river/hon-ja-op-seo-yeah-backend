@@ -1,7 +1,11 @@
 import { NestFactory } from '@nestjs/core';
+
 import { AppModule } from './app.module';
-import { setupSwagger } from './utils/swagger/setupSwagger';
+
 import * as cookieParser from 'cookie-parser';
+
+import { setupSwagger } from './utils/swagger/setupSwagger';
+
 import { winstonLogger } from './utils/logger/winston.util';
 
 async function bootstrap() {
