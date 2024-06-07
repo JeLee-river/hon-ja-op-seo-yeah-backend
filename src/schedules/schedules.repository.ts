@@ -2,6 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 import { DataSource, DeleteResult, Repository, UpdateResult } from 'typeorm';
 
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 import { Schedule } from './entities/schedule.entity';
 
 import { CreateScheduleDto } from './dto/create-schedule.dto';
@@ -10,8 +13,6 @@ import { UpdateScheduleDto } from './dto/update-schedule.dto';
 import { ScheduleIdsOrderByLikesCount } from '../types/ScheduleIdsOrderByLikesCount.interface';
 import { PaginationOptions } from '../types/PaginationOptions.interface';
 import { ScheduleStatus } from '../types/ScheduleStatus.enum';
-
-import * as config from 'config';
 
 @Injectable()
 export class SchedulesRepository extends Repository<Schedule> {
@@ -34,7 +35,7 @@ export class SchedulesRepository extends Repository<Schedule> {
     userId: string,
     updateScheduleDto: UpdateScheduleDto,
   ): Promise<Schedule> {
-    const defaultImagePath = config.get('img').DEFAULT_BACKGROUND_IMG_PATH;
+    const defaultImagePath = process.env.DEFAULT_BACKGROUND_IMG_PATH;
 
     const { image } = updateScheduleDto;
 

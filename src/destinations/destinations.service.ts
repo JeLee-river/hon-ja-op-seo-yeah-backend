@@ -1,5 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 import { Destination } from './entities/destination.entity';
 
 import { DestinationsRepository } from './destinations.repository';
@@ -15,9 +18,8 @@ export class DestinationsService {
   async fetchData(): Promise<void> {
     const baseUrl =
       'https://apis.data.go.kr/B551011/KorService1/areaBasedList1';
-    const serviceKey =
-      'gYxeW4UBcFMVnEbeclSlXiybRNht4DCVRd5g7YeF8ippmVNRo9bc1rwDyu%2Fz8OT7yVPSy0%2BrLZ3LtaDUsIHrvg%3D%3D';
-    const numOfRows = '3000';
+    const serviceKey = process.env.API_KEY;
+    const numOfRows = '1000';
     const pageNo = '1';
     const mobileOS = 'ETC';
     const mobileApp = 'AppTest';
@@ -66,7 +68,8 @@ export class DestinationsService {
     try {
       for (let i = 1; i <= 300; i++) {
         const { contentid, title } = destinationIds[i];
-        const url = `https://apis.data.go.kr/B551011/KorService1/detailCommon1?serviceKey=gYxeW4UBcFMVnEbeclSlXiybRNht4DCVRd5g7YeF8ippmVNRo9bc1rwDyu%2Fz8OT7yVPSy0%2BrLZ3LtaDUsIHrvg%3D%3D&MobileOS=ETC&MobileApp=AppTest&_type=json&contentId=${contentid}&defaultYN=Y&firstImageYN=Y&addrinfoYN=Y&mapinfoYN=Y&overviewYN=Y&numOfRows=10&pageNo=1`;
+        const serviceKey = process.env.API_KEY;
+        const url = `https://apis.data.go.kr/B551011/KorService1/detailCommon1?serviceKey=${serviceKey}&MobileOS=ETC&MobileApp=AppTest&_type=json&contentId=${contentid}&defaultYN=Y&firstImageYN=Y&addrinfoYN=Y&mapinfoYN=Y&overviewYN=Y&numOfRows=10&pageNo=1`;
 
         const response = await fetch(url);
         const result = await response.json();

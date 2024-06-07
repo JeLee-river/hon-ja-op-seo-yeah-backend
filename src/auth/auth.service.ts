@@ -11,6 +11,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { JwtService } from '@nestjs/jwt';
 
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 import { User } from './entities/user.entity';
 
 import { UsersRepository } from './users.repository';
@@ -28,10 +31,7 @@ import { VerifyPasswordDto } from './dto/verify-password.dto';
 
 import * as bcrypt from 'bcryptjs';
 
-import * as config from 'config';
 import { DataSource } from 'typeorm';
-
-const jwtConfig = config.get('jwt');
 
 @Injectable()
 export class AuthService {
@@ -67,12 +67,12 @@ export class AuthService {
       const payload = { id: user.id };
 
       const accessToken = this.jwtService.sign(payload, {
-        secret: jwtConfig.JWT_ACCESS_TOKEN_SECRET,
-        expiresIn: jwtConfig.ACCESS_TOKEN_EXPIRATION_TIME,
+        secret: process.env.JWT_ACCESS_TOKEN_SECRET,
+        expiresIn: process.env.ACCESS_TOKEN_EXPIRATION_TIME,
       });
       const refreshToken = this.jwtService.sign(payload, {
-        secret: jwtConfig.JWT_REFRESH_TOKEN_SECRET,
-        expiresIn: jwtConfig.REFRESH_TOKEN_EXPIRATION_TIME,
+        secret: process.env.JWT_REFRESH_TOKEN_SECRET,
+        expiresIn: process.env.REFRESH_TOKEN_EXPIRATION_TIME,
       });
 
       await this.usersRepository.saveRefreshToken(user.id, refreshToken);
@@ -123,7 +123,7 @@ export class AuthService {
     try {
       // Verify the refresh token
       const payload = this.jwtService.verify(refreshToken, {
-        secret: jwtConfig.JWT_REFRESH_TOKEN_SECRET,
+        secret: process.env.JWT_REFRESH_TOKEN_SECRET,
       });
 
       // Find the user associated with the refresh token
@@ -137,14 +137,14 @@ export class AuthService {
 
       // Create a new access token
       const newAccessToken = this.jwtService.sign(newPayload, {
-        secret: jwtConfig.JWT_ACCESS_TOKEN_SECRET,
-        expiresIn: jwtConfig.ACCESS_TOKEN_EXPIRATION_TIME,
+        secret: process.env.JWT_ACCESS_TOKEN_SECRET,
+        expiresIn: process.env.ACCESS_TOKEN_EXPIRATION_TIME,
       });
 
       // Optionally, create a new refresh token
       const newRefreshToken = this.jwtService.sign(newPayload, {
-        secret: jwtConfig.JWT_REFRESH_TOKEN_SECRET,
-        expiresIn: jwtConfig.REFRESH_TOKEN_EXPIRATION_TIME,
+        secret: process.env.JWT_REFRESH_TOKEN_SECRET,
+        expiresIn: process.env.REFRESH_TOKEN_EXPIRATION_TIME,
       });
 
       await this.usersRepository.saveRefreshToken(user.id, newRefreshToken);
