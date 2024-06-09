@@ -36,8 +36,7 @@ export class SchedulesRepository extends Repository<Schedule> {
     userId: string,
     updateScheduleDto: UpdateScheduleDto,
   ): Promise<Schedule> {
-    const defaultImagePath1 = process.env.DEFAULT_BACKGROUND_IMG_PATH_1;
-    const defaultImagePath2 = process.env.DEFAULT_BACKGROUND_IMG_PATH_2;
+    const defaultImagePath = process.env.DEFAULT_BACKGROUND_IMG_PATH;
 
     const { image } = updateScheduleDto;
 
