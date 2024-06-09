@@ -41,10 +41,7 @@ export class SchedulesRepository extends Repository<Schedule> {
     const { image } = updateScheduleDto;
 
     if (!image) {
-      updateScheduleDto.image = getRandomImagePath(
-        defaultImagePath1,
-        defaultImagePath2,
-      );
+      updateScheduleDto.image = defaultImagePath;
     }
 
     const schedule = this.create({ user_id: userId, ...updateScheduleDto });
