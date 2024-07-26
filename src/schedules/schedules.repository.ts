@@ -13,7 +13,6 @@ import { UpdateScheduleDto } from './dto/update-schedule.dto';
 import { ScheduleIdsOrderByLikesCount } from '../types/ScheduleIdsOrderByLikesCount.interface';
 import { PaginationOptions } from '../types/PaginationOptions.interface';
 import { ScheduleStatus } from '../types/ScheduleStatus.enum';
-import { getRandomImagePath } from 'src/utils/utils';
 
 @Injectable()
 export class SchedulesRepository extends Repository<Schedule> {
