@@ -12,4 +12,6 @@ export const typeORMConfig: TypeOrmModuleOptions = {
   entities: [__dirname + '/../**/*.entity.{js,ts}'],
   synchronize: true,
   logging: true,
+  poolSize: 10,
+  connectTimeoutMS: 10000,
 };
