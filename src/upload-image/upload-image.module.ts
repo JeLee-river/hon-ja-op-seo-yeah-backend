@@ -15,6 +15,7 @@ import { diskStorage } from 'multer';
 
 import * as mime from 'mime-types';
 import { existsSync, mkdirSync } from 'fs';
+import * as path from 'path';
 
 @Module({
   imports: [
@@ -26,12 +27,12 @@ import { existsSync, mkdirSync } from 'fs';
           try {
             // callback 함수의 두번째 인자로 파일 저장 경로를 지정할 수 있다.
             Logger.log(file);
-            const path = 'public/img';
-            if (!existsSync(path)) {
-              mkdirSync(path);
+            const imagePath = path.join(__dirname, '..', 'public', 'img');
+            if (!existsSync(imagePath)) {
+              mkdirSync(imagePath);
             }
 
-            callback(null, path);
+            callback(null, imagePath);
           } catch (error) {
             callback(error, null);
             Logger.error(error);
