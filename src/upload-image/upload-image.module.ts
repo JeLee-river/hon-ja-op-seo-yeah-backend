@@ -14,6 +14,7 @@ import { SchedulesRepository } from '../schedules/schedules.repository';
 import { diskStorage } from 'multer';
 
 import * as mime from 'mime-types';
+import { existsSync, mkdirSync } from 'fs';
 
 @Module({
   imports: [
@@ -25,7 +26,12 @@ import * as mime from 'mime-types';
           try {
             // callback 함수의 두번째 인자로 파일 저장 경로를 지정할 수 있다.
             Logger.log(file);
-            callback(null, 'public/img');
+            const path = 'public/img';
+            if (!existsSync(path)) {
+              mkdirSync(path);
+            }
+
+            callback(null, path);
           } catch (error) {
             callback(error, null);
             Logger.error(error);
