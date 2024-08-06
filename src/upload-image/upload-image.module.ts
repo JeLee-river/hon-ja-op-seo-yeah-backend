@@ -27,9 +27,9 @@ import * as path from 'path';
           try {
             // callback 함수의 두번째 인자로 파일 저장 경로를 지정할 수 있다.
             Logger.log(file);
-            const imagePath = path.join(__dirname, '..', 'public', 'img');
+            const imagePath = path.join(__dirname, '..', '..', 'public', 'img');
             if (!existsSync(imagePath)) {
-              mkdirSync(imagePath);
+              mkdirSync(imagePath, { recursive: true });
             }
 
             callback(null, imagePath);
